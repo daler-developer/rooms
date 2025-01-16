@@ -1,0 +1,1 @@
+ALTER TABLE "rooms" ADD COLUMN "messages_count" integer DEFAULT 0;
