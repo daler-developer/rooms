@@ -1,0 +1,6 @@
+enum Event {
+  ME_EXCLUDED_FROM_CURRENTLY_OPENED_ROOM_NOTIFIED,
+  MESSAGES_IS_VIEWED,
+}
+
+export default Event;

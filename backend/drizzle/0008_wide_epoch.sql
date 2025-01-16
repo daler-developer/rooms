@@ -1,0 +1,1 @@
+ALTER TABLE "messages" ADD COLUMN "send_at" timestamp DEFAULT null;

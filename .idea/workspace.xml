@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="9d8dd518-8c4b-4bd6-b4e8-e875abc9fa9e" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/client/src/shared/ui/components/Accordion/Accordion.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client/src/shared/ui/components/Alert/Alert.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client/src/shared/ui/components/Avatar/Avatar.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client/src/shared/ui/components/Breadcrumb/Breadcrumb.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client/src/shared/ui/components/Button/Button.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client/src/shared/ui/components/Checkbox/Checkbox.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client/src/shared/ui/components/Datepicker/CalendarDaysOfTheWeek.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client/src/shared/ui/components/Datepicker/CalendarHeader.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client/src/shared/ui/components/Datepicker/CalendarItem.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client/src/shared/ui/components/Datepicker/DateContext.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client/src/shared/ui/components/Datepicker/Datepicker.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client/src/shared/ui/components/Dropdown/Dropdown.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client/src/shared/ui/components/HStack/HStack.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client/src/shared/ui/components/IconButton/IconButton.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client/src/shared/ui/components/Input/Input.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client/src/shared/ui/components/Modal/Modal.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client/src/shared/ui/components/Overlay/Overlay.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client/src/shared/ui/components/Pagination/Dots.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client/src/shared/ui/components/Pagination/PageButton.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client/src/shared/ui/components/Pagination/Pagination.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client/src/shared/ui/components/Pagination/PrevButton.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client/src/shared/ui/components/PhoneInput/PhoneInput.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client/src/shared/ui/components/Popover/Popover.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client/src/shared/ui/components/Progress/Progress.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client/src/shared/ui/components/Select/Select.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client/src/shared/ui/components/Sidebar/Sidebar.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client/src/shared/ui/components/Sidebar/SidebarItem.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client/src/shared/ui/components/Sidebar/types.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client/src/shared/ui/components/Skeleton/Skeleton.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client/src/shared/ui/components/Spinner/Spinner.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client/src/shared/ui/components/Stepper/Stepper.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client/src/shared/ui/components/Table/Table.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client/src/shared/ui/components/Tabs/Tab.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client/src/shared/ui/components/Tabs/Tabs.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client/src/shared/ui/components/Toggle/Toggle.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client/src/shared/ui/components/Tooltip/Tooltip.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client/src/shared/ui/components/VStack/VStack.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client/src/shared/ui/hooks/useFloating.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/client/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/client/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/app/App.css" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/app/App.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/app/App.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/app/App.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/index.css" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/index.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/main.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/shared/ui/components/Button.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/shared/ui/components/Input.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/shared/ui/components/TimeInput.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/shared/ui/components/TimeInput.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/shared/ui/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/shared/ui/index.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/widgets/login-form/ui/LoginForm.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/widgets/login-form/ui/LoginForm.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/tailwind.config.js" beforeDir="false" afterPath="$PROJECT_DIR$/client/tailwind.config.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/controllers/auth/checkUsernameController.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/controllers/auth/getProfileController.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/controllers/auth/loginController.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/controllers/auth/registerController.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/controllers/auth/router.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/controllers/friends/getUserFriendsController.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/controllers/friends/router.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/controllers/notifications/getNotificationsController.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/controllers/notifications/router.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/controllers/profile/getFriendshipRequestsController.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/controllers/profile/getProfileController.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/controllers/profile/resetPasswordController.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/controllers/profile/router.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/controllers/profile/toggleAcceptFriendshipRequestsController.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/controllers/stories/createStoryController.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/controllers/stories/router.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/controllers/users/accessFriendshipRequestController.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/controllers/users/cancelRequestFriendshipController.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/controllers/users/getUserFriendController.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/controllers/users/getUsersController.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/controllers/users/rejectFriendshipRequestController.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/controllers/users/requestFriendshipController.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/controllers/users/router.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/errors/auth.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/errors/common.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/errors/index.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/errors/users.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/index.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/knex.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/middleware/errorHandleMiddleware.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/middleware/validateMiddleware.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/package-lock.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/package.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/repository/notificationRepository.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/repository/userRepository.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/service/tokenService.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/service/usersService.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/strategy/jwtStrategy.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/strategy/localStrategy.js" beforeDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProjectColorInfo"><![CDATA[{
+  "associatedIndex": 0
+}]]></component>
+  <component name="ProjectId" id="2dEQIcmhkUevkawt2CrDIvj0eJU" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "WebServerToolWindowFactoryState": "false",
+    "git-widget-placeholder": "master",
+    "last_opened_file_path": "/Users/dalersaidov/Desktop/audio-player",
+    "nodejs_package_manager_path": "npm",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="9d8dd518-8c4b-4bd6-b4e8-e875abc9fa9e" name="Changes" comment="" />
+      <created>1709570678819</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1709570678819</updated>
+      <workItem from="1709570679846" duration="26000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+</project>
