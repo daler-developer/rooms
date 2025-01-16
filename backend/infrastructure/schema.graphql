@@ -1,0 +1,297 @@
+scalar Upload
+
+enum RoomsSortBy {
+    CREATED_AT_DESC
+    CREATED_AT_ASC
+    JOINED_AT_DESC
+    JOINED_AT_ASC
+}
+
+input LoginInput {
+    email: String!
+    password: String!
+}
+
+input BlockUserInput {
+    userId: Int!
+}
+
+input UnblockUserInput {
+    userId: Int!
+}
+
+input EditMyEmailInput {
+    newEmail: String!
+}
+
+input EditMyPasswordInput {
+    oldPassword: String!
+    newPassword: String!
+    newPasswordRepeat: String!
+}
+
+input UploadProfilePictureInput {
+    profilePictureUrl: String!
+}
+
+input CreateRoomInput {
+    name: String!
+    usersInvitedIds: [Int!]!
+    thumbnailUrl: String!
+}
+
+input GetUserInvitationsInput {
+    limit: Int!
+    offset: Int!
+}
+
+type Invitation {
+    userId: Int!
+    roomId: Int!
+    inviterId: Int!
+    room: Room!
+    inviter: User!
+    invitedUser: User!
+    createdAt: String!
+}
+
+type User {
+    id: Int!
+    email: String!
+    firstName: String!
+    lastName: String!
+    password: String!
+    passwordLength: Int!
+    isAdmin: Boolean!
+    profilePictureUrl: String
+    isBlocked: Boolean!
+    invitations: [Invitation!]!
+    rooms: [Room!]!
+    invitationsCount: Int!
+    isOnline: Boolean!
+}
+
+type RoomMessagesList {
+    data: [Message!]!
+    hasMore: Boolean!
+}
+
+type Room {
+    id: Int!
+    name: String!
+    creatorId: Int!
+    createdAt: String!
+    participantsCount: Int!
+    participants: [User!]!
+    participantsTyping: [User!]!
+    messages(offset: Int!): RoomMessagesList!
+    scheduledMessages(offset: Int!): RoomMessagesList!
+    pendingInvitationsCount: Int!
+    pendingInvitations: [Invitation!]!
+    participantsOnlineCount: Int!
+    myScheduledMessagesCount: Int!
+    lastMessage: Message
+    unreadMessagesCount: Int!
+    thumbnailUrl: String!
+}
+
+type MessageImage {
+    id: Int!
+    url: String!
+}
+
+type Message {
+    id: Int!
+    text: String
+    roomId: Int!
+    senderId: Int!
+    room: Room!
+    sender: User!
+    images: [MessageImage!]!
+    viewsCount: Int!
+    isViewedByMe: Boolean!
+    viewers: [User!]!
+    scheduledAt: String
+    sentAt: String
+    sessionId: String!
+}
+
+type LoginResult {
+    user: User!
+    token: String!
+}
+
+type MeIsBlockedStatusResult {
+    userId: Int!
+    isBlocked: Boolean!
+}
+
+type MeIsInvitedToRoomResult {
+    invitation: Invitation!
+    room: Room!
+}
+
+type ReplyToInvitation {
+    accepted: Boolean!
+    invitation: Invitation!
+}
+
+type NewMessageEvent {
+    message: Message!
+    room: Room!
+}
+
+type RejectedMyInvitationSubscriptionResult {
+    inviterId: Int!
+    userId: Int!
+    roomId: Int!
+    user: User!
+    room: Room!
+}
+
+type SearchUsersResult {
+    users: [User!]!
+    hasMore: Boolean!
+}
+
+type UserOnlineStatusChangeSubscriptionResult {
+    isOnline: Boolean!
+}
+
+type RoomParticipantLeftEvent {
+    userId: Int!
+}
+
+input AcceptInvitationInput {
+    roomId: Int!
+}
+
+input RejectInvitationInput {
+    roomId: Int!
+}
+
+input LeaveRoomInput {
+    roomId: Int!
+}
+
+input SendMessageInput {
+    roomId: Int!
+    text: String
+    imageUrls: [String!]!
+}
+
+input ScheduleMessage {
+    roomId: Int!
+    text: String
+    imageUrls: [String!]!
+    scheduleAt: String!
+}
+
+input SearchUsersInput {
+    q: String!
+    offset: Int!
+    limit: Int!
+    excludeMe: Boolean!
+}
+
+input UserOnlineStatusChangeSubscriptionInput {
+    userId: Int!
+}
+
+input RoomParticipantLeftSubscriptionInput {
+    roomId: Int!
+}
+
+type UserTypingStatusChangeEvent {
+    isTyping: Boolean!
+    user: User!
+}
+
+type MessageViewedEvent {
+    viewer: User!
+    message: Message!
+}
+
+type MessagesDeletedEvent {
+    messageIds: [Int!]!
+}
+
+type RegisterResult {
+    user: User!
+    token: String!
+}
+
+input RegisterInput {
+    email: String!
+    firstName: String!
+    lastName: String!
+    password: String!
+    passwordRepeat: String!
+    profilePictureUrl: String
+}
+
+input TestInput {
+    foo: String!
+    bar: Int!
+}
+
+type TestResult {
+    result: String
+}
+
+type StartSessionResult {
+    sessionToken: String!
+}
+
+type Query {
+    me: User!
+    users: [User!]!
+    searchUsers(input: SearchUsersInput!): SearchUsersResult!
+    room(id: Int!): Room!
+    message(id: Int!): Message!
+    checkEmailAvailability(email: String!): Boolean!
+}
+
+type Mutation {
+    startSession: StartSessionResult!
+    register(input: RegisterInput!): RegisterResult!
+    login(input: LoginInput!): LoginResult!
+    blockUser(input: BlockUserInput!): User!
+    unblockUser(input: UnblockUserInput!): User!
+    editMyEmail(input: EditMyEmailInput!): User!
+    editMyPassword(input: EditMyPasswordInput!): User!
+    uploadProfilePicture(input: UploadProfilePictureInput!): User!
+    removeMyAvatar: User!
+    createRoom(input: CreateRoomInput!): Room!
+    acceptInvitation(input: AcceptInvitationInput!): Boolean!
+    rejectInvitation(input: RejectInvitationInput!): Boolean!
+    leaveRoom(input: LeaveRoomInput!): Boolean!
+    sendMessage(input: SendMessageInput!): Message!
+    scheduleMessage(input: ScheduleMessage!): Message!
+    notifyMeTypingStatusChange(roomId: Int!, isTyping: Boolean): Boolean!
+    markMessageAsViewedByMe(messageId: Int!): Message!
+    inviteUsersToRoom(roomId: Int!, invitedUsersIds: [Int!]!): Boolean!
+    notifyMeOnlineStatusChange(status: String!): User!
+    excludeUserFromRoom(roomId: Int!, userId: Int!): Room!
+    deleteMessages(roomId: Int!, messageIds: [Int!]!): Boolean!
+    userUpdateFirstName(newFirstName: String!): User!
+    userUpdateLastName(newLastName: String!): User!
+    sendScheduledMessagesNow(messageIds: [Int!]!): Boolean!
+    test(input: TestInput!): TestResult!
+}
+
+type Subscription {
+    meIsBlockedStatus: MeIsBlockedStatusResult!
+    meIsInvitedToRoom: MeIsInvitedToRoomResult!
+    meIsExcludedFromRoom: Room!
+    repliedToMyInvitation: ReplyToInvitation!
+    userOnlineStatusChange(input: UserOnlineStatusChangeSubscriptionInput!): UserOnlineStatusChangeSubscriptionResult!
+    usersOnlineStatusChange(userIds: [Int!]!): User!
+    roomParticipantLeft(roomId: Int!): User!
+    roomParticipantJoined(roomId: Int!): User!
+    newMessage(skipFromCurrentSession: Boolean!): NewMessageEvent!
+    userTypingStatusChange(roomId: Int!): UserTypingStatusChangeEvent!
+    messageViewed(messageId: Int!): MessageViewedEvent!
+    roomPendingInvitationsCountChange(roomId: Int!): Room!
+    messagesDeleted(roomId: Int!): MessagesDeletedEvent!
+}

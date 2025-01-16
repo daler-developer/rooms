@@ -1,0 +1,33 @@
+import { createZustandStoreFactory } from "@/shared/lib/zustand";
+
+export enum Step {
+  EnterRoomName,
+  UploadThumbnail,
+  InviteUsers,
+}
+
+type CreateRoomStore = {
+  step: Step;
+  setStep: (step: Step) => void;
+
+  showCurrentStep: boolean;
+  setShowCurrentStep: (to: boolean) => void;
+};
+
+const { Provider: CreateRoomStoreProvider, useStore: useCreateRoomStore } = createZustandStoreFactory<CreateRoomStore>((set) => ({
+  step: Step.EnterRoomName,
+  setStep(to) {
+    set({
+      step: to,
+    });
+  },
+
+  showCurrentStep: false,
+  setShowCurrentStep: (to) => {
+    set({
+      showCurrentStep: to,
+    });
+  },
+}));
+
+export { CreateRoomStoreProvider, useCreateRoomStore };

@@ -1,0 +1,1 @@
+ALTER TABLE "messages" ADD COLUMN "schedule_at" timestamp DEFAULT null;
