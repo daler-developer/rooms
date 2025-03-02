@@ -1,9 +1,9 @@
 import { createContext, ReactNode, useContext, useId } from "react";
-import { CreateRoomStoreProvider, useCreateRoomStore } from "@/features/create-room/store.ts";
-import { FormProvider, useFormContext } from "@/shared/lib/form";
+import { useCreateRoomStore } from "@/features/create-room/store.ts";
+import { useFormContext } from "@/shared/lib/form";
 import { FormValues } from "./types";
 
-const CreateRoomContext = createContext();
+const CreateRoomContext = createContext<any>(null);
 
 type Props = {
   children: ReactNode;

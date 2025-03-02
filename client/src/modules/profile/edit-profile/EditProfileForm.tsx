@@ -9,6 +9,7 @@ import EditFirstName from "./edit-first-name/EditFirstName.tsx";
 import EditLastName from "./edit-last-name/EditLastName.tsx";
 import { supabaseClient } from "@/shared/lib/superbase";
 import { v4 as uuidv4 } from "uuid";
+import EditMyPasswordForm from "./reset-password/ui/EditMyPasswordForm.tsx";
 
 async function getFileFromUrl(url, filename) {
   try {
@@ -112,6 +113,9 @@ const EditProfileForm = ({ profilePictureFile }: { profilePictureFile: File | nu
         </div>
         <div className="mt-6">
           <EditLastName />
+        </div>
+        <div className="mt-6">
+          <EditMyPasswordForm />
         </div>
 
         {form.isEdited() && (

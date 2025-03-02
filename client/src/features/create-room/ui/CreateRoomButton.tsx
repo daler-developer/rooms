@@ -9,16 +9,16 @@ import * as yup from "yup";
 import { useMutation } from "@apollo/client";
 import { CREATE_ROOM } from "@/features/create-room/gql";
 import { CreateRoomContextProvider, useCreateRoomContext } from "@/features/create-room/context.tsx";
-import { supabaseClient } from "@/shared/lib/superbase";
-import { v4 as uuidv4 } from "uuid";
 import { useAuth } from "@/modules/auth";
 import { FormValues } from "../types";
 import { useCreateRoomForm } from "../hooks.ts";
+import { roomThumbnailRepository } from "@/global/superbase/repository";
+import { useSupabaseOperation, SupabaseErrorMessage } from "@/global/superbase";
 
 type Props = {};
 
 const CreateRoomButton = ({}: Props) => {
-  const { formId, store } = useCreateRoomContext();
+  const { formId, store } = useCreateRoomContext() as any;
   const form = useCreateRoomForm();
 
   return (
@@ -58,6 +58,10 @@ const CreateRoomButtonWrapper = (props: Props) => {
     },
   });
 
+  const addRoomThumbnail = useSupabaseOperation((file) => {
+    return roomThumbnailRepository.addOne({ file });
+  });
+
   const form = useForm<FormValues>({
     resetAfterSubmit: false,
     initialValues: {
@@ -67,23 +71,17 @@ const CreateRoomButtonWrapper = (props: Props) => {
     },
     validationSchema,
     async onSubmit(values) {
-      const fileName = uuidv4();
+      const thumbnailUrl = await addRoomThumbnail.run(values.thumbnail!);
 
-      const { data } = await supabaseClient.storage.from("message_files").upload(fileName, values.thumbnail!);
-
-      if (data) {
-        const { publicUrl } = supabaseClient.storage.from("message_files").getPublicUrl(fileName).data;
-
-        await createRoom({
-          variables: {
-            input: {
-              name: values.name,
-              usersInvitedIds: values.invitedUsers.map((user) => user.id),
-              thumbnailUrl: publicUrl,
-            },
+      await createRoom({
+        variables: {
+          input: {
+            name: values.name,
+            usersInvitedIds: values.invitedUsers.map((user) => user.id),
+            thumbnailUrl,
           },
-        });
-      }
+        },
+      });
     },
   });
 

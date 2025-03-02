@@ -1,9 +1,11 @@
 import { useContext } from "react";
 import { FormContext } from "./FormProvider.tsx";
-import useForm from "./useForm.ts";
+import { UseFormReturn } from "./useForm.ts";
 
 const useFormContext = <TFields>() => {
-  return useContext<ReturnType<typeof useForm<TFields>>>(FormContext);
+  const form = useContext(FormContext);
+
+  return form as UseFormReturn<TFields>;
 };
 
 export default useFormContext;

@@ -9,11 +9,14 @@ import { useCreateRoomContext } from "@/features/create-room/context.tsx";
 import BaseStepModal from "@/features/create-room/ui/steps/BaseStepModal.tsx";
 import Scroll from "@/shared/ui/components/ScrollV2/Scroll.tsx";
 import useSearchUsersQuery from "../../gql/useSearchUsersQuery";
+import { useCreateRoomForm } from "../../hooks";
 
 const LIMIT = 7;
 
 const InviteUsersStepModal = () => {
-  const { formId, form, store } = useCreateRoomContext();
+  const { formId, store } = useCreateRoomContext();
+
+  const form = useCreateRoomForm();
 
   const [searchInput, setSearchInput] = useState("");
 

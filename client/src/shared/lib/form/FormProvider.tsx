@@ -1,14 +1,14 @@
 import { createContext, ReactNode } from "react";
-import useForm from "./useForm";
+import useForm, { UseFormReturn } from "./useForm";
 
-export const FormContext = createContext<ReturnType<typeof useForm<unknown>>>(null!);
+export const FormContext = createContext<any>(null);
 
-type Props = {
+type Props<TValues> = {
   children: ReactNode;
-  form: ReturnType<typeof useForm<unknown>>;
+  form: UseFormReturn<TValues>;
 };
 
-const FormProvider = ({ children, form }: Props) => {
+const FormProvider = <TValues,>({ children, form }: Props<TValues>) => {
   return <FormContext.Provider value={form}>{children}</FormContext.Provider>;
 };
 

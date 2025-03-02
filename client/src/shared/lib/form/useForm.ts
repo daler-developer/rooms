@@ -32,7 +32,7 @@ type RenderArrayOptions<TValues, TPath extends NestedPaths<TValues>> = {
   generateKey: (arg: { index: number; value: PathValue<TValues, TPath> }) => string | number;
 };
 
-type UseFormReturn<TValues> = {
+export type UseFormReturn<TValues> = {
   getValue<TPath extends NestedPaths<TValues>>(path: TPath): PathValue<TValues, TPath>;
   setValue<TPath extends NestedPaths<TValues>>(path: TPath, value: PathValue<TValues, TPath>): void;
   renderField<TPath extends NestedPaths<TValues>>(path: TPath, callback: RenderFieldCallback<TValues, TPath>): ReactNode;

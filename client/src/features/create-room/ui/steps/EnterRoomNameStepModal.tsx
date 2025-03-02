@@ -1,10 +1,10 @@
-import { Button, Input, Modal } from "@/shared/ui";
-import { useState } from "react";
-import { useFormContext } from "@/shared/lib/form";
-import { useCreateRoomStore, Step } from "@/features/create-room/store.ts";
+import { Button, Input } from "@/shared/ui";
+
+import { Step } from "@/features/create-room/store.ts";
 import { useCreateRoomContext } from "@/features/create-room/context.tsx";
 import BaseStepModal from "@/features/create-room/ui/steps/BaseStepModal.tsx";
 import { useCreateRoomForm } from "../../hooks.ts";
+import { KeyboardEventHandler } from "react";
 
 const EnterRoomNameStepModal = () => {
   const { store } = useCreateRoomContext();
@@ -22,7 +22,7 @@ const EnterRoomNameStepModal = () => {
     }
   };
 
-  const handleKeyDown = async (e: KeyboardEvent) => {
+  const handleKeyDown: KeyboardEventHandler<HTMLInputElement> = (e) => {
     if (e.key === "Enter") {
       e.preventDefault();
 

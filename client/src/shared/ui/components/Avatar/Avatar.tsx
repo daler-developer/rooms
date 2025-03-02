@@ -12,7 +12,10 @@ type AvatarSize = "xs" | "sm" | "md" | "lg" | "xl";
 
 export type AvatarActions = DropdownItem[];
 
-type Props = ComponentProps<"img"> & {
+type Props = {
+  alt?: string;
+  className?: string;
+  src?: string | null;
   status?: "online" | "offline";
   size?: AvatarSize;
   actions?: AvatarActions;
