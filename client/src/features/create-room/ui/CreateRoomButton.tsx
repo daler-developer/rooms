@@ -13,7 +13,7 @@ import { useAuth } from "@/modules/auth";
 import { FormValues } from "../types";
 import { useCreateRoomForm } from "../hooks.ts";
 import { roomThumbnailRepository } from "@/global/superbase/repository";
-import { useSupabaseOperation, SupabaseErrorMessage } from "@/global/superbase";
+import { useSupabaseOperation } from "@/global/superbase";
 
 type Props = {};
 
