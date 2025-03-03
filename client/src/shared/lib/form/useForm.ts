@@ -42,7 +42,7 @@ export type UseFormReturn<TValues> = {
   handleSubmit(e: FormEvent<HTMLFormElement>): void | Promise<void>;
   setInitialValues(arg: TValues): void;
   reset(): void;
-  appendArrayItem<TPath extends NestedPaths<TValues>>(path: TPath, value: PathValue<TValues, TPath>): void;
+  appendArrayItem<TPath extends NestedPaths<TValues>>(path: TPath, value: Flatten<PathValue<TValues, TPath>>): void;
   removeArrayItem<TPath extends NestedPaths<TValues>>(path: TPath, at: number): void;
   findArrayItemIndex<TPath extends NestedPaths<TValues>>(path: TPath, callback: (item: PathValue<TValues, TPath>) => boolean): number;
   runValidationOnChange<TPath extends NestedPaths<TValues>>(path: TPath): void;
@@ -50,7 +50,7 @@ export type UseFormReturn<TValues> = {
   isSubmitting: boolean;
 };
 
-const useForm = <TValues>({ initialValues, validationSchema, onSubmit, resetAfterSubmit }: UseFormOptions<TValues>): UseFormReturn<TValues> => {
+const useForm = <TValues extends { [key: string]: any }>({ initialValues, validationSchema, onSubmit, resetAfterSubmit }: UseFormOptions<TValues>) => {
   const forceUpdate = useForceUpdate();
 
   const form = useRef<Form<TValues>>(null!);
@@ -90,27 +90,13 @@ const useForm = <TValues>({ initialValues, validationSchema, onSubmit, resetAfte
         form.current.setIsSubmitting(false);
       }
     },
-    setInitialValues(initialValues) {
-      form.current.setInitialValues(initialValues);
-    },
-    reset() {
-      form.current.reset();
-    },
-    getValue(path) {
-      return form.current.getValue(path);
-    },
-    setValue(path, value) {
-      form.current.setValue(path, value);
-    },
-    validate(path) {
-      return form.current.validate(path);
-    },
-    appendArrayItem(path, value) {
-      form.current.appendArrayItem(path, value);
-    },
-    removeArrayItem(path, at) {
-      form.current.removeArrayFieldAt(path, at);
-    },
+    setInitialValues: form.current.setInitialValues,
+    reset: form.current.reset,
+    getValue: form.current.getValue,
+    setValue: form.current.setValue,
+    validate: form.current.validate,
+    appendArrayItem: form.current.appendArrayItem,
+    removeArrayItem: form.current.removeArrayFieldAt,
     findArrayItemIndex(path, callback) {
       const arrayValue = form.current.getValue(path);
 
@@ -159,7 +145,7 @@ const useForm = <TValues>({ initialValues, validationSchema, onSubmit, resetAfte
       const result: any = [];
 
       for (let i = 0; i < arrayLength; i++) {
-        const finalPath = `${basePath}.${i}`;
+        const finalPath = `${basePath}.${i}` as NestedPaths<TValues>;
 
         const el = callback({
           index: i,

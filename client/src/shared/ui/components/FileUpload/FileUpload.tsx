@@ -26,6 +26,8 @@ const FileUpload = ({ multiple = false, onUpload, accept, label }: Props) => {
     if (files.length) {
       onUpload?.(files);
     }
+
+    filesInputRef.current.value = "";
   };
 
   const formattedAcceptedTypes = useMemo(() => {

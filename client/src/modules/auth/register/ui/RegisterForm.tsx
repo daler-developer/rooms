@@ -6,10 +6,11 @@ import { REGISTER } from "../gql/tags.ts";
 import { Errors, useCustomMutation } from "@/shared/lib/graphql";
 import RegisterFormEmailInput from "./RegisterFormEmailInput.tsx";
 import RegisterFormProfilePictureUpload from "./RegisterFormProfilePictureUpload.tsx";
-import { useEffect } from "react";
+import { SupabaseErrorMessage, useSupabaseOperation } from "@/global/superbase";
+import { RegisterFromValues } from "../types";
 
 const validationSchema = yup.object({
-  email: yup.string().email().required().min(3).max(100),
+  email: yup.string().email().required().min(3),
   firstName: yup.string().required().min(3).max(255),
   lastName: yup.string().required().min(3).max(255),
   password: yup.string().required().min(3).max(255),
@@ -19,24 +20,15 @@ const validationSchema = yup.object({
     .oneOf([yup.ref("password")]),
 });
 
-type Fields = {
-  email: string;
-  firstName: string;
-  lastName: string;
-  password: string;
-  passwordRepeat: string;
-  profilePicture: File | null;
-  inner: {
-    foo: string[];
-  };
-};
-
 const RegisterForm = () => {
   const mutations = {
     register: useCustomMutation(REGISTER),
   };
+  const supabaseAddOneProfilePicture = useSupabaseOperation(async (file: File) => {
+    return await profilePictureRepository.addOne({ file });
+  });
 
-  const form = useForm<Fields>({
+  const form = useForm<RegisterFromValues>({
     initialValues: {
       email: "",
       firstName: "",
@@ -44,9 +36,6 @@ const RegisterForm = () => {
       password: "",
       passwordRepeat: "",
       profilePicture: null,
-      inner: {
-        foo: ["first", "second", "third"],
-      },
     },
     validationSchema,
     async onSubmit(values) {
@@ -59,7 +48,7 @@ const RegisterForm = () => {
       };
 
       if (values.profilePicture) {
-        const url = await profilePictureRepository.addOne({ file: values.profilePicture! });
+        const url = await supabaseAddOneProfilePicture.run(values.profilePicture!);
 
         payload.profilePictureUrl = url;
       }
@@ -75,8 +64,6 @@ const RegisterForm = () => {
       });
     },
   });
-
-  useEffect(() => {}, []);
 
   return (
     <FormProvider form={form}>
@@ -114,6 +101,7 @@ const RegisterForm = () => {
             </Button>
           </div>
           <Errors className="mt-1" error={mutations.register.error} />
+          <SupabaseErrorMessage error={supabaseAddOneProfilePicture.error} />
         </div>
       </form>
     </FormProvider>

@@ -1,6 +1,7 @@
-class Field {
-  public initialValue: unknown;
-  public value: any;
+// @ts-nocheck
+class Field<TValue> {
+  public initialValue: TValue;
+  public value: TValue;
   public validationErrors: string[];
   public additionalErrors: string[];
   public isTouched: boolean;
@@ -15,7 +16,7 @@ class Field {
     this.shouldValidateOnChange = false;
   }
 
-  public setValue(_, value: any) {
+  public setValue(_: never, value: TValue): void {
     this.value = value;
   }
 
@@ -23,76 +24,72 @@ class Field {
     return this.value;
   }
 
-  public setIsTouched(_: unknown, isTouched: boolean) {
+  public setIsTouched(_: unknown, isTouched: boolean): void {
     this.isTouched = isTouched;
   }
 
-  public setValidationErrors(_: unknown, validationErrors: string[]) {
+  public setValidationErrors(_: unknown, validationErrors: string[]): void {
     this.validationErrors = validationErrors;
   }
 
-  public appendValidationErrors(validationError: string) {
+  public appendValidationErrors(validationError: string): void {
     this.validationErrors.push(validationError);
   }
 
-  public constructValues() {
+  public constructValues(): TValue {
     return this.getValue();
   }
 
-  public getValidationErrors() {
+  public getValidationErrors(): string[] {
     return this.validationErrors;
   }
 
-  public getAdditionalErrors() {
+  public getAdditionalErrors(): string[] {
     return this.additionalErrors;
   }
 
-  public hasValidationErrors() {
+  public hasValidationErrors(): boolean {
     return this.getValidationErrors().length > 0;
   }
 
-  public hasAdditionalErrors() {
+  public hasAdditionalErrors(): boolean {
     return this.getAdditionalErrors().length > 0;
   }
 
-  public hasErrors() {
+  public hasErrors(): boolean {
     return this.hasValidationErrors() || this.hasAdditionalErrors();
   }
 
-  public getIsTouched() {
+  public getIsTouched(): boolean {
     return this.isTouched;
   }
 
-  public getIsEdited() {
+  public getIsEdited(): boolean {
     return this.value !== this.initialValue;
   }
 
-  public setIsEdited(to: boolean) {
-    this.isEdited = to;
-  }
-
-  public clearValidationErrors() {
+  public clearValidationErrors(): void {
     this.validationErrors = [];
   }
 
-  public clearAdditionalErrors() {
+  public clearAdditionalErrors(): void {
     this.additionalErrors = [];
   }
 
-  public clearErrors() {
+  public clearErrors(): void {
     this.clearValidationErrors();
     this.clearAdditionalErrors();
   }
 
-  public setShouldValidateOnChange(to: boolean) {
+  public setShouldValidateOnChange(_: never, to: boolean): void {
     this.shouldValidateOnChange = to;
   }
 
-  public getShouldValidateOnChange() {
+  public getShouldValidateOnChange(): boolean {
     return this.shouldValidateOnChange;
   }
 
-  public setInitialValue(initialValue: unknown) {
+  public setInitialValue(initialValue: TValue): void {
     this.initialValue = initialValue;
   }
 

@@ -1,12 +1,12 @@
-import { useFormContext } from "@/shared/lib/form";
 import { Avatar, Dropdown, FileUpload } from "@/shared/ui";
 import { useMemo } from "react";
 import { useCrop } from "@/shared/crop";
 import IconButton from "../../../../shared/ui/components/IconButton/IconButton.tsx";
 import { HiMiniEllipsisVertical } from "react-icons/hi2";
+import { useRegisterForm } from "../hooks.ts";
 
 const RegisterFormProfilePictureUpload = () => {
-  const form = useFormContext();
+  const form = useRegisterForm();
 
   const crop = useCrop();
 

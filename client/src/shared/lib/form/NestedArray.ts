@@ -1,13 +1,16 @@
+// @ts-nocheck
 import NestedObject from "./NestedObject.ts";
 import Field from "./Field.ts";
-import { isArray, isPlainObject } from "./utils.ts";
-import Parts from "./Parts.ts";
+import { isArray, isPlainObject, pathSlice, pathIsEmpty } from "./utils.ts";
+import { NestedPaths, PathValue } from "./types";
 
-class NestedArray {
-  private values: Array<NestedObject | NestedArray | Field<any>>;
-  private initialValues: Array<unknown>;
+type CompiledValues<TValues extends { [key: number]: any }> = Array<Field<TValues[any]> | NestedObject<TValues[any]> | NestedArray<TValues[any]>>;
 
-  constructor(initialValues: Array<unknown>) {
+class NestedArray<TValues extends any[]> {
+  private values: CompiledValues<TValues>;
+  private initialValues: TValues;
+
+  constructor(initialValues: TValues) {
     this.values = [];
     this.initialValues = initialValues;
     this.init();
@@ -26,22 +29,22 @@ class NestedArray {
     }
   }
 
-  public getValue(pathParts: Parts) {
-    if (pathParts.isEmpty()) {
-      const result = [];
+  public getValue<TPath extends NestedPaths<TValues>>(path: TPath) {
+    if (pathIsEmpty(path)) {
+      const result = [] as TValues;
 
       for (const value of this.values) {
-        result.push(value.getValue(pathParts));
+        result.push(value.getValue(path));
       }
 
       return result;
     } else {
-      return this.values[pathParts.first() as number].getValue(pathParts.slice(1));
+      return (this.values as any)[pathSlice(path, 1)[0]].getValue(pathSlice(path, 1)[1]);
     }
   }
 
-  public setValue(pathParts: Parts, value: unknown) {
-    this.values[pathParts.first() as number].setValue(pathParts.slice(1), value);
+  public setValue<TPath extends NestedPaths<TValues>>(path: TPath, value: PathValue<TValues, TPath>) {
+    (this.values as any)[pathSlice(path, 1)[0]].setValue(pathSlice(path, 1)[1], value);
   }
 
   public constructValues() {
@@ -54,15 +57,15 @@ class NestedArray {
     return result;
   }
 
-  public setValidationErrors(pathParts: Parts, messages: string) {
-    this.values[pathParts.first()].setValidationErrors(pathParts.slice(1), messages);
+  public setValidationErrors(path, messages: string) {
+    this.values[pathSlice(path, 1)[0]].setValidationErrors(pathSlice(path, 1)[1], messages);
   }
 
-  public getValidationErrors(pathParts: Parts) {
-    return this.values[pathParts.first()].getValidationErrors(pathParts.slice(1));
+  public getValidationErrors(path) {
+    return this.values[pathSlice(path, 1)[0]].getValidationErrors(pathSlice(path, 1)[1]);
   }
 
-  public hasErrors(pathParts?: Parts) {
+  public hasErrors(path) {
     if (pathParts) {
       return this.values[pathParts.first()].hasErrors(pathParts.slice(1));
     } else {
@@ -76,12 +79,12 @@ class NestedArray {
     }
   }
 
-  public setIsTouched(pathParts: Parts, isTouched: boolean) {
-    this.values[pathParts.first()].setIsTouched(pathParts.slice(1), isTouched);
+  public setIsTouched(path, isTouched: boolean) {
+    this.values[pathSlice(path, 1)[0]].setIsTouched(pathSlice(path, 1)[1], isTouched);
   }
 
-  public getIsTouched(pathParts: Parts) {
-    return this.values[pathParts.first()].getIsTouched(pathParts.slice(1));
+  public getIsTouched(path) {
+    return this.values[pathSlice(path, 1)[0]].getIsTouched(pathSlice(path, 1)[1]);
   }
 
   public clearErrors() {
@@ -90,8 +93,8 @@ class NestedArray {
     }
   }
 
-  public appendArrayItem(pathParts: Parts, value: unknown) {
-    if (pathParts.isEmpty()) {
+  public appendArrayItem(path, value: unknown) {
+    if (pathIsEmpty(path)) {
       let generatedValue;
 
       if (isArray(value)) {
@@ -105,32 +108,32 @@ class NestedArray {
 
       this.values.push(generatedValue);
     } else {
-      this.values[pathParts.first()].appendArrayItem(pathParts.slice(1), value);
+      this.values[pathSlice(path, 1)[0]].appendArrayItem(pathSlice(path, 1)[1], value);
     }
   }
 
-  public getArrayLength(pathParts: Parts) {
-    if (pathParts.isEmpty()) {
+  public getArrayLength(path) {
+    if (pathIsEmpty(path)) {
       return this.values.length;
     } else {
-      return this.values[pathParts.first()].getArrayLength(pathParts.slice(1));
+      return this.values[pathSlice(path, 1)[0]].getArrayLength(pathSlice(path, 1)[1]);
     }
   }
 
-  public removeArrayFieldAt(pathParts: Parts, at: number) {
-    if (pathParts.isEmpty()) {
+  public removeArrayFieldAt(path, at: number) {
+    if (pathIsEmpty(path)) {
       this.values.splice(at, 1);
     } else {
-      this.values[pathParts.first()].removeArrayFieldAt(pathParts.slice(1), at);
+      this.values[pathSlice(path, 1)[0]].removeArrayFieldAt(pathSlice(path, 1)[1], at);
     }
   }
 
-  public setShouldValidateOnChange(pathParts: Parts, to: boolean) {
-    this.values[pathParts.first()].setShouldValidateOnChange(pathParts.slice(1), to);
+  public setShouldValidateOnChange(path, to: boolean) {
+    this.values[pathSlice(path, 1)[0]].setShouldValidateOnChange(pathSlice(path, 1)[1], to);
   }
 
-  public getShouldValidateOnChange(pathParts: Parts) {
-    return this.values[pathParts.first()].getShouldValidateOnChange(pathParts.slice(1));
+  public getShouldValidateOnChange(path) {
+    return this.values[pathSlice(path, 1)[0]].getShouldValidateOnChange(pathSlice(path, 1)[1]);
   }
 
   public reset() {
@@ -140,8 +143,8 @@ class NestedArray {
     }
   }
 
-  public getIsEdited(pathParts?: Parts) {
-    if (!pathParts || pathParts.isEmpty()) {
+  public getIsEdited(path) {
+    if (!path || pathIsEmpty(path)) {
       for (let value of this.values) {
         if (value.getIsEdited()) {
           return true;
@@ -150,7 +153,7 @@ class NestedArray {
 
       return false;
     } else {
-      return this.values[pathParts.first()].getIsEdited(pathParts.slice(1));
+      return this.values[pathSlice(path, 1)[0]].getIsEdited(pathSlice(path, 1)[1]);
     }
   }
 

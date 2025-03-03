@@ -1,12 +1,13 @@
 import { Schema, ValidationError } from "yup";
 import NestedObject from "./NestedObject.ts";
-import Parts from "./Parts.ts";
+import { convertYupPath } from "./utils.ts";
+import { NestedPaths, PathValue } from "./types";
 
-class Form<TValues> {
+class Form<TValues extends { [key: string]: any }> {
   private onStateUpdated: () => void;
   private initialValues: TValues;
   private validationSchema: Schema;
-  private root: NestedObject;
+  private root: NestedObject<TValues>;
   private submitCount: number;
   private isLastSubmitFailed: boolean;
   private isSubmitting: boolean;
@@ -21,42 +22,34 @@ class Form<TValues> {
     this.isSubmitting = false;
   }
 
-  public getValue(path: string) {
-    const pathParts = Parts.createFromString(path);
-
-    return this.root.getValue(pathParts);
+  public getValue<TPath extends NestedPaths<TValues>>(path: TPath): PathValue<TValues, TPath> {
+    return this.root.getValue(path);
   }
 
-  public setValue(path: string, value: unknown) {
-    const parts = Parts.createFromString(path);
+  public setValue<TPath extends NestedPaths<TValues>>(path: TPath, value: PathValue<TValues, TPath>) {
+    this.root.setValue(path, value);
 
-    this.root.setValue(parts, value);
-
-    if (this.root.getShouldValidateOnChange(parts)) {
+    if (this.root.getShouldValidateOnChange(path)) {
       this.validate(path);
     }
 
     this.onStateUpdated();
   }
 
-  public setValidationErrors(path: string, messages: string) {
-    const parts = Parts.createFromString(path);
-
-    this.root.setValidationErrors(parts, messages);
+  public setValidationErrors<TPath extends NestedPaths<TValues>>(path: TPath, messages: string[]) {
+    this.root.setValidationErrors(path, messages);
     this.onStateUpdated();
   }
 
-  public getValidationErrors(path: string): string[] {
-    const parts = Parts.createFromString(path);
-
-    return this.root.getValidationErrors(parts);
+  public getValidationErrors<TPath extends NestedPaths<TValues>>(path: TPath): string[] {
+    return this.root.getValidationErrors(path);
   }
 
   public constructValues(): TValues {
     return this.root.constructValues();
   }
 
-  public validate(path?: string) {
+  public validate<TPath extends NestedPaths<TValues>>(path?: TPath) {
     this.clearErrors();
     const values = this.constructValues();
 
@@ -71,7 +64,9 @@ class Form<TValues> {
     } catch (e) {
       if (e instanceof ValidationError) {
         for (const innerError of e.inner) {
-          this.setValidationErrors(Parts.fromYupPath(innerError.path).toStr(), [innerError.message]);
+          if (innerError.path) {
+            this.setValidationErrors(convertYupPath(innerError.path) as NestedPaths<TValues>, [innerError.message]);
+          }
         }
       }
 
@@ -81,56 +76,52 @@ class Form<TValues> {
     }
   }
 
-  public hasErrors(path?: string) {
-    if (path) {
-      return this.root.hasErrors(Parts.createFromString(path));
-    } else {
-      return this.root.hasErrors();
-    }
+  public hasErrors<TPath extends NestedPaths<TValues>>(path?: TPath): boolean {
+    return this.root.hasErrors(path);
   }
 
-  public setIsTouched(path: string, isTouched: boolean) {
-    this.root.setIsTouched(Parts.createFromString(path), isTouched);
+  public setIsTouched<TPath extends NestedPaths<TValues>>(path: TPath, isTouched: boolean): void {
+    this.root.setIsTouched(path, isTouched);
     this.onStateUpdated();
   }
 
-  public getIsTouched(path: string) {
-    return this.root.getIsTouched(Parts.createFromString(path));
+  public getIsTouched<TPath extends NestedPaths<TValues>>(path: TPath): boolean {
+    return this.root.getIsTouched(path);
   }
 
-  public getSubmitCount() {
+  public getSubmitCount(): number {
     return this.submitCount;
   }
 
-  public incrementSubmitCount() {
+  public incrementSubmitCount(): void {
     this.submitCount += 1;
     this.onStateUpdated();
   }
 
-  public clearErrors() {
+  public clearErrors(): void {
     this.root.clearErrors();
     this.onStateUpdated();
   }
 
-  public appendArrayItem(path: string, value: unknown) {
-    this.root.appendArrayItem(Parts.createFromString(path), value);
+  public appendArrayItem<TPath extends NestedPaths<TValues>>(path: TPath, value: Flatten<PathValue<TValues, TPath>>) {
+    this.root.appendArrayItem(path, value);
     this.onStateUpdated();
   }
 
-  public getArrayLength(path: string) {
-    return this.root.getArrayLength(Parts.createFromString(path));
+  public getArrayLength<TPath extends NestedPaths<TValues>>(path: TPath): number {
+    return this.root.getArrayLength(path);
   }
 
-  public removeArrayFieldAt(path: string, at: number) {
-    this.root.removeArrayFieldAt(Parts.createFromString(path), at);
+  public removeArrayFieldAt<TPath extends NestedPaths<TValues>>(path: TPath, at: number): void {
+    this.root.removeArrayFieldAt(path, at);
     this.onStateUpdated();
   }
 
-  public getIsLastSubmitFailed() {
+  public getIsLastSubmitFailed(): boolean {
     return this.isLastSubmitFailed;
   }
 
-  public setIsLastSubmitFailed(to: boolean) {
+  public setIsLastSubmitFailed(to: boolean): void {
     this.isLastSubmitFailed = to;
     this.onStateUpdated();
   }
@@ -139,12 +130,12 @@ class Form<TValues> {
     return this.isSubmitting;
   }
 
-  public setIsSubmitting(to: boolean) {
+  public setIsSubmitting(to: boolean): void {
     this.isSubmitting = to;
     this.onStateUpdated();
   }
 
-  public reset() {
+  public reset(): void {
     this.submitCount = 0;
     this.root = new NestedObject(this.initialValues);
     this.isLastSubmitFailed = false;
@@ -152,14 +143,14 @@ class Form<TValues> {
     this.onStateUpdated();
   }
 
-  public setShouldValidateOnChange(path: string, to: boolean) {
-    this.root.setShouldValidateOnChange(Parts.createFromString(path), to);
+  public setShouldValidateOnChange<TPath extends NestedPaths<TValues>>(path: TPath, to: boolean): void {
+    this.root.setShouldValidateOnChange(path, to);
     this.onStateUpdated();
   }
 
-  public getIsEdited(path?: string) {
+  public getIsEdited<TPath extends NestedPaths<TValues>>(path?: TPath): boolean {
     if (path) {
-      return this.root.getIsEdited(Parts.createFromString(path));
+      return this.root.getIsEdited(path);
     } else {
       return this.root.getIsEdited();
     }
