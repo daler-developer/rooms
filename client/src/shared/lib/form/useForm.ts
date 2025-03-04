@@ -32,24 +32,6 @@ type RenderArrayOptions<TValues, TPath extends NestedPaths<TValues>> = {
   generateKey: (arg: { index: number; value: PathValue<TValues, TPath> }) => string | number;
 };
 
-export type UseFormReturn<TValues> = {
-  getValue<TPath extends NestedPaths<TValues>>(path: TPath): PathValue<TValues, TPath>;
-  setValue<TPath extends NestedPaths<TValues>>(path: TPath, value: PathValue<TValues, TPath>): void;
-  renderField<TPath extends NestedPaths<TValues>>(path: TPath, callback: RenderFieldCallback<TValues, TPath>): ReactNode;
-  renderArray<TPath extends NestedPaths<TValues>>(path: TPath, callback: RenderArrayCallback, options: RenderArrayOptions<TValues, TPath>): ReactNode;
-  isEdited<TPath extends NestedPaths<TValues>>(path: TPath): boolean;
-  validate<TPath extends NestedPaths<TValues>>(path?: TPath): boolean;
-  handleSubmit(e: FormEvent<HTMLFormElement>): void | Promise<void>;
-  setInitialValues(arg: TValues): void;
-  reset(): void;
-  appendArrayItem<TPath extends NestedPaths<TValues>>(path: TPath, value: Flatten<PathValue<TValues, TPath>>): void;
-  removeArrayItem<TPath extends NestedPaths<TValues>>(path: TPath, at: number): void;
-  findArrayItemIndex<TPath extends NestedPaths<TValues>>(path: TPath, callback: (item: PathValue<TValues, TPath>) => boolean): number;
-  runValidationOnChange<TPath extends NestedPaths<TValues>>(path: TPath): void;
-  stopValidationOnChange<TPath extends NestedPaths<TValues>>(path: TPath): void;
-  isSubmitting: boolean;
-};
-
 const useForm = <TValues extends { [key: string]: any }>({ initialValues, validationSchema, onSubmit, resetAfterSubmit }: UseFormOptions<TValues>) => {
   const forceUpdate = useForceUpdate();
 
@@ -66,10 +48,18 @@ const useForm = <TValues extends { [key: string]: any }>({ initialValues, valida
   }
 
   return {
-    isEdited(path) {
-      return form.current.getIsEdited(path);
-    },
-    isSubmitting: form.current.getIsSubmitting(),
+    isEdited: form.current.getIsEdited.bind(form.current),
+    isSubmitting: form.current.getIsSubmitting.call(form.current),
+    setInitialValues: form.current.setInitialValues.bind(form.current),
+    reset: form.current.reset.bind(form.current),
+    getValue: form.current.getValue.bind(form.current),
+    setValue: form.current.setValue.bind(form.current),
+    validate: form.current.validate.bind(form.current),
+    appendArrayItem: form.current.appendArrayItem.bind(form.current),
+    removeArrayItem: form.current.removeArrayFieldAt.bind(form.current),
+    findArrayItemIndex: form.current.findArrayItemIndex.bind(form.current),
+    runValidationOnChange: form.current.runValidationOnChange.bind(form.current),
+    stopValidationOnChange: form.current.stopValidationOnChange.bind(form.current),
     async handleSubmit(e: FormEvent<HTMLFormElement>) {
       try {
         e.preventDefault();
@@ -90,31 +80,7 @@ const useForm = <TValues extends { [key: string]: any }>({ initialValues, valida
         form.current.setIsSubmitting(false);
       }
     },
-    setInitialValues: form.current.setInitialValues,
-    reset: form.current.reset,
-    getValue: form.current.getValue,
-    setValue: form.current.setValue,
-    validate: form.current.validate,
-    appendArrayItem: form.current.appendArrayItem,
-    removeArrayItem: form.current.removeArrayFieldAt,
-    findArrayItemIndex(path, callback) {
-      const arrayValue = form.current.getValue(path);
-
-      for (let i = 0; i < arrayValue.length; i++) {
-        if (callback(arrayValue[i])) {
-          return i;
-        }
-      }
-
-      return -1;
-    },
-    runValidationOnChange(path: string) {
-      form.current.setShouldValidateOnChange(path, true);
-    },
-    stopValidationOnChange(path: string) {
-      form.current.setShouldValidateOnChange(path, false);
-    },
-    renderField(path, callback) {
+    renderField<TPath extends NestedPaths<TValues>>(path: TPath, callback: RenderFieldCallback<TValues, TPath>) {
       const errors = form.current.getValidationErrors(path);
 
       return callback({
@@ -122,7 +88,7 @@ const useForm = <TValues extends { [key: string]: any }>({ initialValues, valida
           return {
             value: form.current.getValue(path),
             onChange(e) {
-              const value = e.target.value;
+              const value = e.target.value as PathValue<TValues, TPath>;
               form.current.setValue(path, value);
               if (form.current.getIsLastSubmitFailed()) {
                 form.current.validate();
@@ -139,7 +105,7 @@ const useForm = <TValues extends { [key: string]: any }>({ initialValues, valida
         hasErrors: errors.length > 0,
       });
     },
-    renderArray(basePath, callback, { generateKey }) {
+    renderArray<TPath extends NestedPaths<TValues>>(basePath: TPath, callback: RenderArrayCallback, { generateKey }: RenderArrayOptions<TValues, TPath>) {
       const arrayLength = form.current.getArrayLength(basePath);
 
       const result: any = [];
@@ -154,12 +120,34 @@ const useForm = <TValues extends { [key: string]: any }>({ initialValues, valida
           },
         });
 
-        result.push(createElement(Fragment, { key: generateKey({ index: i, value: form.current.getValue(finalPath) }), children: el }));
+        result.push(
+          createElement(Fragment, { key: generateKey({ index: i, value: form.current.getValue(finalPath) as PathValue<TValues, TPath> }), children: el }),
+        );
       }
 
       return result;
     },
   };
 };
+
+export type UseFormReturn<TValues extends { [key: string]: any }> = ReturnType<typeof useForm<TValues>>;
+
+// export type UseFormReturn<TValues> = {
+//   getValue<TPath extends NestedPaths<TValues>>(path: TPath): PathValue<TValues, TPath>;
+//   setValue<TPath extends NestedPaths<TValues>>(path: TPath, value: PathValue<TValues, TPath>): void;
+//   renderField<TPath extends NestedPaths<TValues>>(path: TPath, callback: RenderFieldCallback<TValues, TPath>): ReactNode;
+//   renderArray<TPath extends NestedPaths<TValues>>(path: TPath, callback: RenderArrayCallback, options: RenderArrayOptions<TValues, TPath>): ReactNode;
+//   isEdited<TPath extends NestedPaths<TValues>>(path: TPath): boolean;
+//   validate<TPath extends NestedPaths<TValues>>(path?: TPath): boolean;
+//   handleSubmit(e: FormEvent<HTMLFormElement>): void | Promise<void>;
+//   setInitialValues(arg: TValues): void;
+//   reset(): void;
+//   appendArrayItem<TPath extends NestedPaths<TValues>>(path: TPath, value: Flatten<PathValue<TValues, TPath>>): void;
+//   removeArrayItem<TPath extends NestedPaths<TValues>>(path: TPath, at: number): void;
+//   findArrayItemIndex<TPath extends NestedPaths<TValues>>(path: TPath, callback: (item: PathValue<TValues, TPath>) => boolean): number;
+//   runValidationOnChange<TPath extends NestedPaths<TValues>>(path: TPath): void;
+//   stopValidationOnChange<TPath extends NestedPaths<TValues>>(path: TPath): void;
+//   isSubmitting: boolean;
+// };
 
 export default useForm;

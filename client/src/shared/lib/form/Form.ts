@@ -161,6 +161,28 @@ class Form<TValues extends { [key: string]: any }> {
     this.root.setInitialValue(initialValues);
     this.onStateUpdated();
   }
+
+  public findArrayItemIndex<TPath extends NestedPaths<TValues>>(path: TPath, callback: (item: Flatten<PathValue<TValues, TPath>>) => boolean) {
+    const arrayValue = this.getValue(path);
+
+    for (let i = 0; i < arrayValue.length; i++) {
+      if (callback(arrayValue[i])) {
+        return i;
+      }
+    }
+
+    return -1;
+  }
+
+  public runValidationOnChange<TPath extends NestedPaths<TValues>>(path: TPath): void {
+    this.root.setShouldValidateOnChange(path, true);
+    this.onStateUpdated();
+  }
+
+  public stopValidationOnChange<TPath extends NestedPaths<TValues>>(path: TPath) {
+    this.root.setShouldValidateOnChange(path, false);
+    this.onStateUpdated();
+  }
 }
 
 export default Form;

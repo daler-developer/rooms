@@ -1,6 +1,6 @@
-import { Button, Empty, Input, Popover, Spinner } from "@/shared/ui";
+import { Button, Input, Popover, Spinner } from "@/shared/ui";
 import { Step } from "@/features/create-room/store.ts";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { useDebouncedFn, useDebouncedValue } from "@/shared/hooks";
 import { NetworkStatus } from "@apollo/client";
 import InvitedMember from "@/features/create-room/ui/InvitedMember.tsx";

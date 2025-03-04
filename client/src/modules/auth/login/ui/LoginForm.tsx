@@ -42,7 +42,7 @@ const LoginForm = ({ onSuccess }: Props) => {
       <div className="mt-2 flex flex-col gap-[10px]">
         {form.renderField("email", ({ getFieldProps, errors }) => (
           <div>
-            <Input label="Username" type="text" errors={errors} {...getFieldProps()} />
+            <Input label="Email" type="text" errors={errors} {...getFieldProps()} />
           </div>
         ))}
 
