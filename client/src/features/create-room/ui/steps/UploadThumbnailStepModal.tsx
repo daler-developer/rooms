@@ -1,8 +1,7 @@
 import { Avatar, Button, FileUpload, IconButton, type ModalActions } from "@/shared/ui";
-import { useMemo, useRef } from "react";
+import { useMemo } from "react";
 import { HiOutlineTrash } from "react-icons/hi2";
 import { Step } from "@/features/create-room/store.ts";
-import { CropFileModal, CropFileModalHandle } from "@/modules/crop-file";
 import BaseStepModal from "@/features/create-room/ui/steps/BaseStepModal.tsx";
 import { useCreateRoomStore } from "../../store.ts";
 import { useCrop } from "@/shared/crop";
@@ -24,8 +23,6 @@ const UploadThumbnailStepModal = () => {
   }, [thumbnail]);
 
   const crop = useCrop();
-
-  const cropFileModal = useRef<CropFileModalHandle>(null!);
 
   const handleFilesUpload = async (files: File[]) => {
     try {
@@ -72,8 +69,6 @@ const UploadThumbnailStepModal = () => {
           )}
         </div>
       </BaseStepModal>
-
-      <CropFileModal ref={cropFileModal} />
     </>
   );
 };
