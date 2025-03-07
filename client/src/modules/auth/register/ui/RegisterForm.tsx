@@ -8,6 +8,7 @@ import RegisterFormEmailInput from "./RegisterFormEmailInput.tsx";
 import RegisterFormProfilePictureUpload from "./RegisterFormProfilePictureUpload.tsx";
 import { SupabaseErrorDisplay, useSupabaseOperation } from "@/global/superbase";
 import { RegisterFromValues } from "../types";
+import { RegisterInput } from "@/__generated__/graphql.ts";
 
 const validationSchema = yup.object({
   email: yup.string().email().required().min(3),
@@ -39,23 +40,23 @@ const RegisterForm = () => {
     },
     validationSchema,
     async onSubmit(values) {
-      const payload = {
+      const registerInput = {
         email: values.email,
         firstName: values.firstName,
         lastName: values.lastName,
         password: values.password,
         passwordRepeat: values.passwordRepeat,
-      };
+      } as RegisterInput;
 
       if (values.profilePicture) {
-        const url = await supabaseAddOneProfilePicture.run(values.profilePicture!);
+        const profilePictureUrl = await supabaseAddOneProfilePicture.run(values.profilePicture!);
 
-        payload.profilePictureUrl = url;
+        registerInput.profilePictureUrl = profilePictureUrl;
       }
 
       await mutations.register.mutate({
         variables: {
-          input: payload,
+          input: registerInput,
         },
         onCompleted(data) {
           localStorage.setItem("token", data.register.token);

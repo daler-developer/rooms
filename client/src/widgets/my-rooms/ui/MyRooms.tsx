@@ -7,7 +7,7 @@ import useGetRoomsQuery from "../gql/useGetRoomsQuery.ts";
 import { useMemo, useState } from "react";
 import RoomsListSkeletons from "@/widgets/my-rooms/ui/RoomsListSkeletons.tsx";
 import Scroll from "@/shared/ui/components/ScrollV2/Scroll.tsx";
-import { CreateRoomButton } from "@/features/create-room";
+import { CreateRoomButton } from "@/modules/room/create";
 
 const MyRooms = () => {
   const [search, setSearch] = useState("");

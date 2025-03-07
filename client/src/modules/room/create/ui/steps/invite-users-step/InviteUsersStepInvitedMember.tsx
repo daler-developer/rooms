@@ -2,13 +2,13 @@ import { CreateRoomSearchUsersQuery } from "@/__generated__/graphql.ts";
 import { Chip, ChipColor } from "@/shared/ui";
 import { useMemo } from "react";
 import { arrayGetRandomElement } from "@/shared/lib/utils";
-import { useCreateRoomForm } from "../hooks.ts";
+import { useCreateRoomForm } from "../../../hooks.ts";
 
 type Props = {
   user: Flatten<CreateRoomSearchUsersQuery["searchUsers"]["data"]>;
 };
 
-const InvitedMember = ({ user }: Props) => {
+const InviteUsersStepInvitedMember = ({ user }: Props) => {
   const form = useCreateRoomForm();
 
   const chipColor = useMemo(() => {
@@ -37,4 +37,4 @@ const InvitedMember = ({ user }: Props) => {
   );
 };
 
-export default InvitedMember;
+export default InviteUsersStepInvitedMember;

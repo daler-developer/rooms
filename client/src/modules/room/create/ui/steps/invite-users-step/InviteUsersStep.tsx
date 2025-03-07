@@ -1,16 +1,15 @@
 import { Button, Input, type ModalActions, Popover, Spinner } from "@/shared/ui";
-import { Step } from "@/features/create-room/store.ts";
 import { useMemo, useState, useId, ReactNode } from "react";
 import { useDebouncedFn } from "@/shared/hooks";
 import { NetworkStatus, useSubscription } from "@apollo/client";
-import InvitedMember from "@/features/create-room/ui/InvitedMember.tsx";
-import UserSearchResultCard from "@/features/create-room/ui/UserSearchResultCard.tsx";
-import { useCreateRoomStore } from "../../store";
-import BaseStepModal from "@/features/create-room/ui/steps/BaseStepModal.tsx";
+import InviteUsersStepInvitedMember from "./InviteUsersStepInvitedMember";
+import InviteUsersStepUserSearchResultCard from "./InviteUsersStepUserSearchResultCard";
+import { useCreateRoomStore, Step } from "../../../store";
+import BaseStep from "../BaseStep.tsx";
 import Scroll from "@/shared/ui/components/ScrollV2/Scroll.tsx";
-import useSearchUsersQuery from "../../gql/useSearchUsersQuery";
-import { USERS_ONLINE_STATUS_CHANGE } from "../../gql";
-import { useCreateRoomForm } from "../../hooks";
+import useSearchUsersQuery from "../../../gql/useSearchUsersQuery";
+import { USERS_ONLINE_STATUS_CHANGE } from "../../../gql";
+import { useCreateRoomForm } from "../../../hooks";
 
 const LIMIT = 6;
 
@@ -19,7 +18,7 @@ type Props = {
   errors: ReactNode;
 };
 
-const InviteUsersStepModal = ({ formId, errors }: Props) => {
+const InviteUsersStep = ({ formId, errors }: Props) => {
   const store = useCreateRoomStore();
 
   const form = useCreateRoomForm();
@@ -102,7 +101,7 @@ const InviteUsersStepModal = ({ formId, errors }: Props) => {
   ];
 
   return (
-    <BaseStepModal
+    <BaseStep
       title="Invite users"
       isOpen={store.showCurrentStep && store.step === Step.InviteUsers}
       onClose={() => {
@@ -118,7 +117,7 @@ const InviteUsersStepModal = ({ formId, errors }: Props) => {
             <Scroll>
               <div className="flex items-start gap-x-1">
                 {invitedUsers.map((user) => (
-                  <InvitedMember key={user.id} user={user} />
+                  <InviteUsersStepInvitedMember key={user.id} user={user} />
                 ))}
               </div>
             </Scroll>
@@ -167,7 +166,7 @@ const InviteUsersStepModal = ({ formId, errors }: Props) => {
                   >
                     <ul className="flex flex-col gap-2 p-2">
                       {[...queries.searchUsers.data!.searchUsers.data].map((user) => (
-                        <UserSearchResultCard key={user.id} user={user} />
+                        <InviteUsersStepUserSearchResultCard key={user.id} user={user} />
                       ))}
                     </ul>
                   </Scroll>
@@ -185,8 +184,8 @@ const InviteUsersStepModal = ({ formId, errors }: Props) => {
 
         {errors}
       </div>
-    </BaseStepModal>
+    </BaseStep>
   );
 };
 
-export default InviteUsersStepModal;
+export default InviteUsersStep;

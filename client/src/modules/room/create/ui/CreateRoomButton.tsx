@@ -5,9 +5,9 @@ import { ApolloErrorDisplay } from "@/shared/lib/graphql";
 import { CreateRoomInput } from "@/__generated__/graphql.ts";
 import { withCreateRoomStore } from "../store";
 import { FormProvider, useForm } from "@/shared/lib/form";
-import EnterRoomNameStepModal from "@/features/create-room/ui/steps/EnterRoomNameStepModal.tsx";
-import UploadThumbnailStepModal from "./steps/UploadThumbnailStepModal.tsx";
-import InviteUsersStepModal from "@/features/create-room/ui/steps/InviteUsersStepModal.tsx";
+import EnterRoomNameStep from "./steps/enter-room-name-step/EnterRoomNameStep.tsx";
+import UploadThumbnailStep from "./steps/upload-thumbnail-step/UploadThumbnailStep.tsx";
+import InviteUsersStep from "./steps/invite-users-step/InviteUsersStep.tsx";
 import * as yup from "yup";
 import { useCreateRoomStore } from "../store.ts";
 import { FormValues } from "../types";
@@ -69,9 +69,9 @@ const CreateRoomButton = () => {
         }}
       />
 
-      <EnterRoomNameStepModal />
-      <UploadThumbnailStepModal />
-      <InviteUsersStepModal
+      <EnterRoomNameStep />
+      <UploadThumbnailStep />
+      <InviteUsersStep
         formId={formId}
         errors={
           <div className="mt-2">

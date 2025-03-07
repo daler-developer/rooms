@@ -1,12 +1,12 @@
 import { Button, Input, type ModalActions } from "@/shared/ui";
 
-import { Step } from "@/features/create-room/store.ts";
-import { useCreateRoomStore } from "../../store.ts";
-import BaseStepModal from "@/features/create-room/ui/steps/BaseStepModal.tsx";
-import { useCreateRoomForm } from "../../hooks.ts";
+import { Step } from "../../../store.ts";
+import { useCreateRoomStore } from "../../../store.ts";
+import BaseStep from "../BaseStep.tsx";
+import { useCreateRoomForm } from "../../../hooks.ts";
 import { KeyboardEventHandler } from "react";
 
-const EnterRoomNameStepModal = () => {
+const EnterRoomNameStep = () => {
   const store = useCreateRoomStore();
 
   const form = useCreateRoomForm();
@@ -37,7 +37,7 @@ const EnterRoomNameStepModal = () => {
   ];
 
   return (
-    <BaseStepModal
+    <BaseStep
       title="Enter room name"
       isOpen={store.showCurrentStep && store.step === Step.EnterRoomName}
       actions={actions}
@@ -54,8 +54,8 @@ const EnterRoomNameStepModal = () => {
           </div>
         ))}
       </div>
-    </BaseStepModal>
+    </BaseStep>
   );
 };
 
-export default EnterRoomNameStepModal;
+export default EnterRoomNameStep;

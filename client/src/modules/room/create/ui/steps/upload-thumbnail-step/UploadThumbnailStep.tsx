@@ -1,13 +1,13 @@
 import { Avatar, Button, FileUpload, IconButton, type ModalActions } from "@/shared/ui";
 import { useMemo } from "react";
 import { HiOutlineTrash } from "react-icons/hi2";
-import { Step } from "@/features/create-room/store.ts";
-import BaseStepModal from "@/features/create-room/ui/steps/BaseStepModal.tsx";
-import { useCreateRoomStore } from "../../store.ts";
+import { Step } from "../../../store.ts";
+import BaseStep from "../BaseStep.tsx";
+import { useCreateRoomStore } from "../../../store.ts";
 import { useCrop } from "@/shared/crop";
-import { useCreateRoomForm } from "../../hooks.ts";
+import { useCreateRoomForm } from "../../../hooks.ts";
 
-const UploadThumbnailStepModal = () => {
+const UploadThumbnailStep = () => {
   const store = useCreateRoomStore();
 
   const form = useCreateRoomForm();
@@ -49,7 +49,7 @@ const UploadThumbnailStepModal = () => {
 
   return (
     <>
-      <BaseStepModal
+      <BaseStep
         title="Upload thumbnail"
         isOpen={store.showCurrentStep && store.step === Step.UploadThumbnail}
         actions={actions}
@@ -68,9 +68,9 @@ const UploadThumbnailStepModal = () => {
             <FileUpload multiple={false} accept="image/*" onUpload={handleFilesUpload} />
           )}
         </div>
-      </BaseStepModal>
+      </BaseStep>
     </>
   );
 };
 
-export default UploadThumbnailStepModal;
+export default UploadThumbnailStep;

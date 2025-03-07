@@ -8,7 +8,7 @@ type Props = {
   user: Flatten<CreateRoomSearchUsersQuery["searchUsers"]["data"]>;
 };
 
-const UserSearchResultCard = ({ user }: Props) => {
+const InviteUsersStepUserSearchResultCard = ({ user }: Props) => {
   const form = useFormContext<FormValues>();
 
   const handleInvite = () => {
@@ -44,4 +44,4 @@ const UserSearchResultCard = ({ user }: Props) => {
   );
 };
 
-export default UserSearchResultCard;
+export default InviteUsersStepUserSearchResultCard;

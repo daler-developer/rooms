@@ -9,7 +9,7 @@ type Props = {
   actions: ComponentProps<typeof Modal>["actions"];
 };
 
-const BaseStepModal = ({ children, title, isOpen, onClose, actions }: Props) => {
+const BaseStep = ({ children, title, isOpen, onClose, actions }: Props) => {
   return (
     <Modal title={title} isOpen={isOpen} onClose={onClose} actions={actions}>
       {children}
@@ -17,4 +17,4 @@ const BaseStepModal = ({ children, title, isOpen, onClose, actions }: Props) => 
   );
 };
 
-export default BaseStepModal;
+export default BaseStep;
