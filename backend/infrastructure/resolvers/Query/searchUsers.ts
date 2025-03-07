@@ -4,7 +4,7 @@ import { CustomContext } from "../../types";
 import { composeResolvers, authRequired, withValidation, checkBlockedStatus } from "../../lib/graphql/resolver-wrappers";
 
 const validationSchema = yup.object({
-  input: yup.object({
+  filter: yup.object({
     q: yup.string(),
     offset: yup.number().required().min(0),
     limit: yup.number().required().min(1),
@@ -21,18 +21,11 @@ const resolver = async (_, args: Args, { userService, userId }: CustomContext) =
 
   const excludeIds: number[] = [];
 
-  if (args.input.excludeMe) {
+  if (args.filter.excludeMe) {
     excludeIds.push(userId);
   }
 
-  const users = await userService.fetchUsers({ offset: args.input.offset, limit: args.input.limit, excludeIds, q: args.input.q });
-
-  const allUsers = await userService.fetchUsersCount({ offset: 0, excludeIds, q: args.input.q });
-
-  return {
-    users,
-    hasMore: allUsers.length - (users.length + args.input.offset) > 0,
-  };
+  return userService.fetchUsers({ offset: args.filter.offset, limit: args.filter.limit, excludeIds, q: args.filter.q });
 };
 
 export default composeResolvers(authRequired, checkBlockedStatus, withValidation(validationSchema))(resolver);

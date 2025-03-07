@@ -3,6 +3,7 @@ import cls from "@/shared/lib/classnames";
 import { usePrevValue } from "@/shared/hooks";
 import { MdOutlineArrowDownward } from "react-icons/md";
 import { IconButton } from "@/shared/ui";
+import ScrollHint from "./ScrollHint";
 
 type Props = {
   children: ReactNode;
@@ -18,6 +19,8 @@ type Props = {
   topThreshold?: number;
   showScrollToBottomButton?: boolean;
   maxHeight?: number;
+  onReachBottomThreshold?: () => void;
+  bottomThreshold?: number;
 };
 
 export type ScrollHandle = {
@@ -25,8 +28,6 @@ export type ScrollHandle = {
   isScrolledToBottom: () => boolean;
   subscribeToIsScrolledToBottomChanged: (handler: (to: boolean) => void) => () => void;
 };
-
-const OVERLAY_SIZE = 20;
 
 const Scroll = forwardRef<ScrollHandle, Props>(
   (
@@ -39,11 +40,12 @@ const Scroll = forwardRef<ScrollHandle, Props>(
       onScrollToTop,
       onScrollToTopWithThreshold,
       onScrollToLeft,
-      scrollToBottomOnMount = false,
       onReachTopThreshold,
       topThreshold = 100,
       showScrollToBottomButton = true,
-      maxHeight,
+
+      onReachBottomThreshold,
+      bottomThreshold = 100,
     },
     ref,
   ) => {
@@ -119,7 +121,7 @@ const Scroll = forwardRef<ScrollHandle, Props>(
     }, [scrollHeight]);
 
     const isScrolledToBottom = useMemo(() => {
-      return Math.ceil(scrollTop) >= scrollHeight - clientHeight;
+      return scrollHeight - scrollTop <= clientHeight + 5;
     }, [scrollTop, scrollHeight, clientHeight]);
 
     const isScrolledToTop = useMemo(() => {
@@ -156,19 +158,19 @@ const Scroll = forwardRef<ScrollHandle, Props>(
       },
     }));
 
-    const showTopOverlay = useMemo(() => {
+    const showTopScrollHint = useMemo(() => {
       return !isScrolledToTop;
     }, [isScrolledToTop]);
 
-    const showBottomOverlay = useMemo(() => {
+    const showBottomScrollHint = useMemo(() => {
       return !isScrolledToBottom;
     }, [isScrolledToBottom]);
 
-    const showLeftOverlay = useMemo(() => {
+    const showLeftScrollHint = useMemo(() => {
       return !isScrolledToLeft;
     }, [isScrolledToLeft]);
 
-    const showRightOverlay = useMemo(() => {
+    const showRightScrollHint = useMemo(() => {
       return !isScrolledToRight;
     }, [isScrolledToRight]);
 
@@ -179,71 +181,25 @@ const Scroll = forwardRef<ScrollHandle, Props>(
       const newScrollLeft = e.currentTarget.scrollLeft;
 
       const isScrolledToTop = newScrollTop === 0;
-      const isScrolledToTopWithThreshold = newScrollTop <= topThreshold && oldScrollTop > topThreshold;
+      const isScrolledToBottom = scrollHeight - newScrollTop <= clientHeight;
+      const temp = newScrollTop <= topThreshold && oldScrollTop > topThreshold;
+      const isReachedBottomThreshold = newScrollTop > oldScrollTop && scrollHeight - (newScrollTop + clientHeight) <= bottomThreshold;
 
       if (isScrolledToTop) {
         onScrollToTop?.();
       }
 
-      if (isScrolledToTopWithThreshold) {
-        onScrollToTopWithThreshold?.();
+      if (isScrolledToBottom) {
+        onScrollToBottom?.();
+      }
+
+      if (isReachedBottomThreshold) {
+        onReachBottomThreshold?.();
       }
 
       setScrollTop(newScrollTop);
       setScrollLeft(newScrollLeft);
     };
-
-    const rootElStyles = useMemo(() => {
-      const result: CSSProperties = {};
-
-      if (height === "full") {
-        result.height = "100%";
-        result.overflow = "hidden";
-        result.position = "relative";
-      }
-
-      if (typeof height === "number") {
-        result.height = height + "px";
-        result.overflow = "hidden";
-        result.position = "relative";
-      }
-
-      if (typeof height === "string" && height.startsWith("max-")) {
-        const value = height.split("-")[1];
-
-        result.maxHeight = value;
-        result.position = "relative";
-      }
-
-      return result;
-    }, [height]);
-
-    const scrollableElStyles = useMemo(() => {
-      const result: CSSProperties = {
-        overflow: "scroll",
-      };
-
-      if (typeof height === "number") {
-        result.position = "absolute";
-        result.top = "0px";
-        result.left = "0px";
-        result.bottom = "0px";
-        result.right = "0px";
-      }
-
-      if (height === "full") {
-        result.height = "100%";
-      }
-
-      if (typeof height === "string" && height.startsWith("max-")) {
-        const value = height.split("-")[1];
-
-        result.maxHeight = value;
-        result.overflowY = "scroll";
-      }
-
-      return result;
-    }, [height]);
 
     const styles = useMemo<{ containerEl: CSSProperties; scrollableEl: CSSProperties }>(() => {
       if (height === "full") {
@@ -304,23 +260,15 @@ const Scroll = forwardRef<ScrollHandle, Props>(
         };
       }
 
-      throw new Error("test");
+      throw new Error("invalid value for prop 'height'");
     }, [height]);
 
     return (
       <div ref={containerEl} style={styles.containerEl}>
-        {showTopOverlay && (
-          <div className={cls(`absolute top-0 left-0 right-0 h-[${OVERLAY_SIZE}px] z-[2] bg-gradient-to-b from-white to-transparent pointer-events-none`)} />
-        )}
-        {showBottomOverlay && (
-          <div className={cls(`absolute bottom-0 left-0 right-0 h-[${OVERLAY_SIZE}px] z-[2] bg-gradient-to-t from-white to-transparent pointer-events-none`)} />
-        )}
-        {showLeftOverlay && (
-          <div className={cls(`absolute left-0 top-0 bottom-0 w-[${OVERLAY_SIZE}px] z-[2] bg-gradient-to-r from-white to-transparent pointer-events-none`)} />
-        )}
-        {showRightOverlay && (
-          <div className={cls(`absolute right-0 top-0 bottom-0 w-[${OVERLAY_SIZE}px] z-[2] bg-gradient-to-l from-white to-transparent pointer-events-none`)} />
-        )}
+        {showTopScrollHint && <ScrollHint position="top" />}
+        {showBottomScrollHint && <ScrollHint position="bottom" />}
+        {showLeftScrollHint && <ScrollHint position="left" />}
+        {showRightScrollHint && <ScrollHint position="right" />}
 
         {isLastScrollToBottom && !isScrolledToBottom && showScrollToBottomButton && (
           <div className="absolute bottom-[20px] right-[20px] z-[10]">

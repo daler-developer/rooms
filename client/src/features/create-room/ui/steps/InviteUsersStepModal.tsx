@@ -1,30 +1,34 @@
-import { Button, Input, Popover, Spinner } from "@/shared/ui";
+import { Button, Input, type ModalActions, Popover, Spinner } from "@/shared/ui";
 import { Step } from "@/features/create-room/store.ts";
-import { useMemo, useState } from "react";
-import { useDebouncedFn, useDebouncedValue } from "@/shared/hooks";
-import { NetworkStatus } from "@apollo/client";
+import { useMemo, useState, useId, ReactNode } from "react";
+import { useDebouncedFn } from "@/shared/hooks";
+import { NetworkStatus, useSubscription } from "@apollo/client";
 import InvitedMember from "@/features/create-room/ui/InvitedMember.tsx";
 import UserSearchResultCard from "@/features/create-room/ui/UserSearchResultCard.tsx";
-import { useCreateRoomContext } from "@/features/create-room/context.tsx";
+import { useCreateRoomStore } from "../../store";
 import BaseStepModal from "@/features/create-room/ui/steps/BaseStepModal.tsx";
 import Scroll from "@/shared/ui/components/ScrollV2/Scroll.tsx";
 import useSearchUsersQuery from "../../gql/useSearchUsersQuery";
+import { USERS_ONLINE_STATUS_CHANGE } from "../../gql";
 import { useCreateRoomForm } from "../../hooks";
 
-const LIMIT = 7;
+const LIMIT = 6;
 
-const InviteUsersStepModal = () => {
-  const { formId, store } = useCreateRoomContext();
+type Props = {
+  formId: ReturnType<typeof useId>;
+  errors: ReactNode;
+};
+
+const InviteUsersStepModal = ({ formId, errors }: Props) => {
+  const store = useCreateRoomStore();
 
   const form = useCreateRoomForm();
 
   const [searchInput, setSearchInput] = useState("");
 
-  const debouncedSearchInput = useDebouncedValue(searchInput);
-
   const queries = {
     searchUsers: useSearchUsersQuery({
-      input: {
+      filter: {
         q: "",
         offset: 0,
         limit: LIMIT,
@@ -33,9 +37,18 @@ const InviteUsersStepModal = () => {
     }),
   };
 
+  const userIds = queries.searchUsers.data?.searchUsers.data.map((user) => user.id) || [];
+
+  useSubscription(USERS_ONLINE_STATUS_CHANGE, {
+    variables: {
+      userIds,
+    },
+    skip: !userIds.length,
+  });
+
   const refetchDebounced = useDebouncedFn((q: string) => {
     queries.searchUsers.refetch({
-      input: {
+      filter: {
         q,
         offset: 0,
         limit: LIMIT,
@@ -44,50 +57,49 @@ const InviteUsersStepModal = () => {
     });
   }, 300);
 
-  // useEffect(() => {
-  //   queries.searchUsers.refetch({
-  //     input: {
-  //       q: debouncedSearchInput,
-  //       offset: 0,
-  //       limit: LIMIT,
-  //       excludeMe: true,
-  //     },
-  //   });
-  // }, [debouncedSearchInput]);
-
   const invitedUsers = form.getValue("invitedUsers");
 
-  const handleScrollToBottom = async () => {
-    console.log("bottom");
-    // if (loading) {
-    //   return;
-    // }
-    //
-    // if (!data!.searchUsers.hasMore) {
-    //   return;
-    // }
-    //
-    // await fetchMore({
-    //   variables: {
-    //     input: {
-    //       ...variables!.input,
-    //       offset: data!.searchUsers.users.length,
-    //     },
-    //   },
-    // });
+  const fetchMoreUsersIfHasMore = async () => {
+    if (!queries.searchUsers.data!.searchUsers.hasMore) {
+      return;
+    }
+
+    await queries.searchUsers.fetchMore({
+      variables: {
+        filter: {
+          ...queries.searchUsers.variables!.filter,
+          offset: queries.searchUsers.data!.searchUsers.data.length,
+        },
+      },
+    });
   };
 
   const showSpinner = useMemo(() => {
-    return [NetworkStatus.loading, NetworkStatus.refetch, NetworkStatus.setVariables].includes(queries.searchUsers.networkStatus);
+    return [NetworkStatus.loading, NetworkStatus.setVariables].includes(queries.searchUsers.networkStatus);
   }, [queries.searchUsers.networkStatus]);
 
   const showResults = useMemo(() => {
-    return queries.searchUsers.networkStatus === NetworkStatus.ready && queries.searchUsers.data;
+    return (
+      [NetworkStatus.fetchMore, NetworkStatus.ready].includes(queries.searchUsers.networkStatus) &&
+      queries.searchUsers.data &&
+      queries.searchUsers.data.searchUsers.data.length > 0
+    );
   }, [queries.searchUsers.networkStatus, queries.searchUsers.data]);
 
   const showEmpty = useMemo(() => {
-    return queries.searchUsers.networkStatus === NetworkStatus.ready && queries.searchUsers.data && queries.searchUsers.data.searchUsers.users.length === 0;
+    return (
+      [NetworkStatus.ready].includes(queries.searchUsers.networkStatus) && queries.searchUsers.data && queries.searchUsers.data.searchUsers.data.length === 0
+    );
   }, [queries.searchUsers.networkStatus, queries.searchUsers.data]);
+
+  const actions: ModalActions = [
+    <Button color="light" type="button" onClick={() => store.setStep(Step.UploadThumbnail)}>
+      Prev
+    </Button>,
+    <Button isLoading={form.isSubmitting} type="submit" form={formId}>
+      Create
+    </Button>,
+  ];
 
   return (
     <BaseStepModal
@@ -98,16 +110,7 @@ const InviteUsersStepModal = () => {
         store.setShowCurrentStep(false);
         store.setStep(Step.EnterRoomName);
       }}
-      prevStep={
-        <Button color="light" type="button" onClick={() => store.setStep(Step.UploadThumbnail)}>
-          Prev
-        </Button>
-      }
-      submitButton={
-        <Button isLoading={form.isSubmitting} type="submit" form={formId}>
-          Create
-        </Button>
-      }
+      actions={actions}
     >
       <div>
         {invitedUsers.length > 0 && (
@@ -143,7 +146,7 @@ const InviteUsersStepModal = () => {
               await queries.searchUsers.fetch();
             }}
           >
-            <div className="bg-white shadow-xl border border-gray-00 rounded-lg">
+            <div className="bg-white shadow-xl border border-gray-00">
               {showSpinner && (
                 <div className="h-[50px] flex items-center justify-center bg-white shadow-xl">
                   <Spinner />
@@ -152,25 +155,18 @@ const InviteUsersStepModal = () => {
 
               {showResults && (
                 <div>
-                  <Scroll height="max-200px" showScrollToBottomButton={false} onScrollToBottom={handleScrollToBottom}>
+                  <Scroll
+                    height="max-200px"
+                    showScrollToBottomButton={false}
+                    onScrollToBottom={() => {
+                      fetchMoreUsersIfHasMore();
+                    }}
+                    onReachBottomThreshold={() => {
+                      // fetchMoreUsersIfHasMore();
+                    }}
+                  >
                     <ul className="flex flex-col gap-2 p-2">
-                      {[
-                        ...queries.searchUsers.data!.searchUsers.users,
-                        // queries.searchUsers.data!.searchUsers.users[0],
-                        // ...queries.searchUsers.data!.searchUsers.users,
-                        // ...queries.searchUsers.data!.searchUsers.users,
-                        // ...queries.searchUsers.data!.searchUsers.users,
-                        // queries.searchUsers.data!.searchUsers.users[0],
-                        // queries.searchUsers.data!.searchUsers.users[0],
-                        // queries.searchUsers.data!.searchUsers.users[0],
-                        // queries.searchUsers.data!.searchUsers.users[0],
-                        // queries.searchUsers.data!.searchUsers.users[0],
-                        // queries.searchUsers.data!.searchUsers.users[0],
-                        // queries.searchUsers.data!.searchUsers.users[0],
-                        // queries.searchUsers.data!.searchUsers.users[0],
-                        // queries.searchUsers.data!.searchUsers.users[0],
-                        // queries.searchUsers.data!.searchUsers.users[0],
-                      ].map((user) => (
+                      {[...queries.searchUsers.data!.searchUsers.data].map((user) => (
                         <UserSearchResultCard key={user.id} user={user} />
                       ))}
                     </ul>
@@ -186,6 +182,8 @@ const InviteUsersStepModal = () => {
             </div>
           </Popover>
         </div>
+
+        {errors}
       </div>
     </BaseStepModal>
   );

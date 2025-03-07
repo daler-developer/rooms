@@ -1,7 +1,7 @@
-import { SearchUsersQuery } from "@/__generated__/graphql.ts";
+import { CreateRoomSearchUsersQuery } from "@/__generated__/graphql.ts";
 
 export type FormValues = {
   name: string;
-  invitedUsers: SearchUsersQuery["searchUsers"]["users"];
+  invitedUsers: CreateRoomSearchUsersQuery["searchUsers"]["data"];
   thumbnail: File | null;
 };

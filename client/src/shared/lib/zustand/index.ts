@@ -1,3 +1,3 @@
-import createZustandStoreFactory from "./createZustandStoreFactory.ts";
+import createZustandStoreFactory from "./createZustandStoreFactory.tsx";
 
 export { createZustandStoreFactory };

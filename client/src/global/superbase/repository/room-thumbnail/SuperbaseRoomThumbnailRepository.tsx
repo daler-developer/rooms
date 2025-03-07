@@ -3,7 +3,7 @@ import AddRoomThumbnailDTO from "./dto/AddRoomThumbnailDTO.ts";
 import { v4 as uuidv4 } from "uuid";
 import SupabaseError from "../../SupabaseError.ts";
 
-const BUCKET_NAME = "profile_imagesa";
+const BUCKET_NAME = "profile_images";
 
 class SuperbaseRoomThumbnailRepository {
   async addOne({ file }: AddRoomThumbnailDTO) {

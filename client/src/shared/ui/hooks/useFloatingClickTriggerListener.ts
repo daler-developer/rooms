@@ -25,7 +25,7 @@ const useFloatingClickTriggerListener = ({
     };
 
     const referenceElHandler = () => {
-      updatedFn((prev) => !prev);
+      updatedFn(true);
     };
 
     if (enabled) {

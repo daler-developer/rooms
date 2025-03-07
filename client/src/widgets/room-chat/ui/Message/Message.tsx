@@ -10,7 +10,6 @@ import { RefObject, SyntheticEvent, useEffect, useMemo, useRef, useState } from 
 import { useRoomChatStore } from "@/widgets/room-chat/context";
 import { HiOutlineCheckCircle } from "react-icons/hi2";
 import { TemporaryMessage } from "@/widgets/room-chat/store";
-import { SUBSCRIBE_TO_USER_ONLINE_STATUS_CHANGE } from "@/features/create-room/gql";
 import BaseMessage from "@/widgets/room-chat/ui/base/BaseMessage.tsx";
 import dayjs from "dayjs";
 import useRoomQuery from "@/widgets/room-chat/hooks/useRoomQuery.ts";

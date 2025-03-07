@@ -1,11 +1,11 @@
-import { SearchUsersQuery } from "@/__generated__/graphql.ts";
+import { CreateRoomSearchUsersQuery } from "@/__generated__/graphql.ts";
 import { Chip, ChipColor } from "@/shared/ui";
 import { useMemo } from "react";
 import { arrayGetRandomElement } from "@/shared/lib/utils";
 import { useCreateRoomForm } from "../hooks.ts";
 
 type Props = {
-  user: Flatten<SearchUsersQuery["searchUsers"]["users"]>;
+  user: Flatten<CreateRoomSearchUsersQuery["searchUsers"]["data"]>;
 };
 
 const InvitedMember = ({ user }: Props) => {
@@ -25,7 +25,16 @@ const InvitedMember = ({ user }: Props) => {
     form.removeArrayItem("invitedUsers", idx);
   };
 
-  return <Chip key={user.id} text={user.email} withAvatar={true} avatar={user.profilePictureUrl} onDelete={handleDelete} color={chipColor} />;
+  return (
+    <Chip
+      key={user.id}
+      text={`${user.firstName} ${user.lastName}`}
+      withAvatar={true}
+      avatar={user.profilePictureUrl}
+      onDelete={handleDelete}
+      color={chipColor}
+    />
+  );
 };
 
 export default InvitedMember;

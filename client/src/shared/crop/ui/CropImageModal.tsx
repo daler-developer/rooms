@@ -1,4 +1,4 @@
-import { forwardRef, useImperativeHandle, useState, ComponentProps, EventHandler, MouseEvent, useEffect, useRef, useLayoutEffect } from "react";
+import { forwardRef, useMemo, useImperativeHandle, useState, ComponentProps, useEffect, useRef, useLayoutEffect, MouseEventHandler } from "react";
 import { HiMiniPlus, HiMiniMinus } from "react-icons/hi2";
 
 import { Button, Modal, Slider } from "@/shared/ui";
@@ -16,7 +16,6 @@ const CropImageModal = forwardRef<CropFileModalHandle, Props>(({ title }, ref) =
   const [zoom, setZoom] = useState(1);
   const [showModal, setShowModal] = useState(false);
   const [image, setImage] = useState<File | null>(null);
-  const [imageUrl, setImageUrl] = useState(null);
   const [isDragging, setIsDragging] = useState(false);
   const [relativeCursorPosition, setRelativeCursorPosition] = useState({
     x: 0,
@@ -29,6 +28,13 @@ const CropImageModal = forwardRef<CropFileModalHandle, Props>(({ title }, ref) =
     height: 200,
   });
 
+  const imageUrl = useMemo(() => {
+    if (image) {
+      return URL.createObjectURL(image);
+    }
+    return null;
+  }, [image]);
+
   const draggableInitialCoords = useRef({
     width: 0,
     height: 0,
@@ -36,20 +42,8 @@ const CropImageModal = forwardRef<CropFileModalHandle, Props>(({ title }, ref) =
     left: 0,
   });
 
-  const resolveFunc = useRef(null!);
-  const rejectFunc = useRef(null!);
-
-  useEffect(() => {
-    if (image) {
-      const fileReader = new FileReader();
-
-      fileReader.onload = (e) => {
-        setImageUrl(e.target.result);
-      };
-
-      fileReader.readAsDataURL(image);
-    }
-  }, [image]);
+  const resolveFunc = useRef<(croppedImage: File) => void>(null!);
+  const rejectFunc = useRef<() => void>(null!);
 
   useEffect(() => {
     if (!showModal) {
@@ -135,7 +129,7 @@ const CropImageModal = forwardRef<CropFileModalHandle, Props>(({ title }, ref) =
   });
 
   useEffect(() => {
-    const handleMouseMove: EventHandler<MouseEvent> = (e) => {
+    const handleMouseMove = (e: MouseEvent) => {
       setDraggableCoords((prev) => {
         let left = e.clientX - rootEl.current.getBoundingClientRect().left - relativeCursorPosition.x;
 
@@ -188,7 +182,7 @@ const CropImageModal = forwardRef<CropFileModalHandle, Props>(({ title }, ref) =
     };
   }, [isDragging, showModal]);
 
-  const handleDraggableMouseDown: EventHandler<MouseEvent> = (e) => {
+  const handleDraggableMouseDown: MouseEventHandler<HTMLDivElement> = (e) => {
     setIsDragging(true);
 
     setRelativeCursorPosition({
@@ -201,7 +195,7 @@ const CropImageModal = forwardRef<CropFileModalHandle, Props>(({ title }, ref) =
     const image = new Image();
 
     image.crossOrigin = "anonymous";
-    image.src = imageUrl;
+    image.src = imageUrl!;
 
     image.onload = () => {
       const canvas = document.createElement("canvas");
@@ -244,7 +238,7 @@ const CropImageModal = forwardRef<CropFileModalHandle, Props>(({ title }, ref) =
 
   const handleCancel = () => {
     setShowModal(false);
-    rejectFunc.current(null);
+    rejectFunc.current();
   };
 
   const modalActions = [
@@ -282,7 +276,7 @@ const CropImageModal = forwardRef<CropFileModalHandle, Props>(({ title }, ref) =
               }}
               onMouseDown={handleDraggableMouseDown}
             >
-              <img src={imageUrl} className="h-full w-full select-none" alt="image" draggable={false} />
+              <img src={imageUrl || undefined} className="h-full w-full select-none" alt="image" draggable={false} />
             </div>
 
             <div

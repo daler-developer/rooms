@@ -7,7 +7,7 @@ type Props = {
   className?: string;
 };
 
-const SupabaseErrorMessage = ({ error, className }: Props) => {
+const SupabaseErrorDisplay = ({ error, className }: Props) => {
   if (!error) return null;
 
   return (
@@ -17,4 +17,4 @@ const SupabaseErrorMessage = ({ error, className }: Props) => {
   );
 };
 
-export default SupabaseErrorMessage;
+export default SupabaseErrorDisplay;

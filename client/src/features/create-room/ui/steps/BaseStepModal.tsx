@@ -1,35 +1,17 @@
-import { Button, Modal } from "@/shared/ui";
-import { ComponentProps, ReactElement, ReactNode, useMemo } from "react";
-import { useCreateRoomContext } from "@/features/create-room/context.tsx";
-import { Step } from "../../store";
+import { Modal } from "@/shared/ui";
+import { ComponentProps } from "react";
 
 type Props = {
-  children: ReactNode;
+  children: ComponentProps<typeof Modal>["children"];
   title: ComponentProps<typeof Modal>["title"];
-  prevStep?: ReactElement;
-  nextStep?: ReactElement;
-  submitButton?: ReactElement;
-  isOpen: boolean;
-  onClose: () => void;
+  isOpen: ComponentProps<typeof Modal>["isOpen"];
+  onClose: ComponentProps<typeof Modal>["onClose"];
+  actions: ComponentProps<typeof Modal>["actions"];
 };
 
-const BaseStepModal = ({ children, title, prevStep, nextStep, submitButton, isOpen, onClose }: Props) => {
-  const actions = [];
-
-  if (prevStep) {
-    actions.push(prevStep);
-  }
-
-  if (nextStep) {
-    actions.push(nextStep);
-  }
-
-  if (submitButton) {
-    actions.push(submitButton);
-  }
-
+const BaseStepModal = ({ children, title, isOpen, onClose, actions }: Props) => {
   return (
-    <Modal title={title} isOpen={isOpen} onClose={() => onClose()} actions={actions}>
+    <Modal title={title} isOpen={isOpen} onClose={onClose} actions={actions}>
       {children}
     </Modal>
   );

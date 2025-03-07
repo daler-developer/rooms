@@ -1,30 +1,19 @@
 import clsx from "clsx";
-import { ComponentProps, forwardRef, ReactNode, useEffect, useState } from "react";
-import { HiMiniEllipsisVertical } from "react-icons/hi2";
-
+import { forwardRef, ReactNode, useEffect, useState } from "react";
 import Skeleton from "../Skeleton/Skeleton.tsx";
-import IconButton from "../IconButton/IconButton.tsx";
-
-import Dropdown, { type DropdownItem } from "../Dropdown/Dropdown.tsx";
-import { Badge, BadgeColor } from "@/shared/ui";
 
 type AvatarSize = "xs" | "sm" | "md" | "lg" | "xl";
-
-export type AvatarActions = DropdownItem[];
 
 type Props = {
   alt?: string;
   className?: string;
   src?: string | null;
-  status?: "online" | "offline";
   size?: AvatarSize;
-  actions?: AvatarActions;
-  withBadge?: boolean;
-  badgeColor?: BadgeColor;
   badgeContent?: ReactNode;
+  onClick?: () => void;
 };
 
-const Avatar = forwardRef(({ src, className, alt, actions, status, size = "lg", withBadge, badgeColor, badgeContent, ...restProps }: Props, ref) => {
+const Avatar = forwardRef<HTMLDivElement, Props>(({ src, className, alt, size = "lg", badgeContent, onClick }, ref) => {
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
 
@@ -47,12 +36,10 @@ const Avatar = forwardRef(({ src, className, alt, actions, status, size = "lg", 
     };
   }, [src]);
 
-  const withStatus = Boolean(status);
-
   const wrapperClasses = clsx(
     "inline-block relative",
     {
-      "cursor-pointer": Boolean(restProps.onClick),
+      "cursor-pointer": Boolean(onClick),
 
       "h-5 w-5": size === "xs",
       "h-[40px] w-[40px]": size === "sm",
@@ -63,26 +50,11 @@ const Avatar = forwardRef(({ src, className, alt, actions, status, size = "lg", 
     className,
   );
 
-  const badgeClasses = clsx("absolute bottom-[0px] right-[0px]");
-
-  const actionsTriggerClasses = clsx("absolute", {
-    "bottom-[-5px] right-[-5px]": size === "lg",
-  });
-
   const badgeContentWrapperClasses = clsx("absolute transform translate-x-1/2 translate-y-1/2", {
-    "bottom-[15px] right-[15px]": true,
+    "bottom-[15px] right-[15px]": size === "md",
+    "bottom-[5px] right-[5px]": size === "sm",
+    "bottom-[16px] right-[30px]": size === "xl",
   });
-
-  const actionsEl = (
-    <Dropdown
-      items={actions!}
-      trigger={
-        <div className={actionsTriggerClasses}>
-          <IconButton Icon={HiMiniEllipsisVertical} color="light" type="button" />
-        </div>
-      }
-    />
-  );
 
   const skeletonSize = () => {
     const map: Record<AvatarSize, number> = {
@@ -90,6 +62,7 @@ const Avatar = forwardRef(({ src, className, alt, actions, status, size = "lg", 
       sm: 40,
       md: 50,
       lg: 110,
+      xl: 120,
     };
 
     return map[size];
@@ -113,15 +86,11 @@ const Avatar = forwardRef(({ src, className, alt, actions, status, size = "lg", 
 
       {!hasError && (
         <>
-          <img className={clsx("object-cover object-center rounded-full")} alt={alt} src={src} {...restProps} />
+          <img className={clsx("object-cover object-center rounded-full")} alt={alt} src={src || undefined} />
         </>
       )}
 
       {badgeContent && <div className={badgeContentWrapperClasses}>{badgeContent}</div>}
-
-      {/*{actions && actionsEl}*/}
-
-      {/*{withBadge && <Badge className={badgeClasses} badgeColor={badgeColor} />}*/}
     </div>
   );
 });

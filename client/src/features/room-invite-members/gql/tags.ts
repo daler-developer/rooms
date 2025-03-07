@@ -1,9 +1,9 @@
 import { gql } from "@/__generated__";
 
 export const SEARCH_USERS = gql(`
-  query SearchUsers($input: SearchUsersInput!) {
-    searchUsers(input: $input) {
-      users {
+  query SearchUsers($filter: SearchUsersFilterInput!) {
+    searchUsers(filter: $filter) {
+      data {
         id
         email
         profilePictureUrl

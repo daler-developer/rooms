@@ -1,7 +1,7 @@
 import { create, StateCreator } from "zustand";
-import { createContext, createElement, ReactNode, useContext, useRef } from "react";
+import { createContext, createElement, ReactNode, useContext, useRef, ComponentType } from "react";
 
-const createZustandStoreFactory = <TState>(createStoreOptions: StateCreator<TState>) => {
+const createZustandStoreFactory = <TState,>(createStoreOptions: StateCreator<TState>) => {
   const createStore = () => {
     return create<TState>(createStoreOptions);
   };
@@ -25,6 +25,16 @@ const createZustandStoreFactory = <TState>(createStoreOptions: StateCreator<TSta
     return createElement(Context.Provider, { children, value: storeRef.current });
   };
 
+  const withStore = <TProps extends object>(WrappedComponent: ComponentType<TProps>) => {
+    return (props: TProps) => {
+      return (
+        <Provider>
+          <WrappedComponent {...props} />
+        </Provider>
+      );
+    };
+  };
+
   const useStore = () => {
     return useContext(Context)();
   };
@@ -32,6 +42,7 @@ const createZustandStoreFactory = <TState>(createStoreOptions: StateCreator<TSta
   return {
     Provider,
     useStore,
+    withStore,
   };
 };
 

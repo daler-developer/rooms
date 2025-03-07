@@ -150,7 +150,7 @@ type RejectedMyInvitationSubscriptionResult {
 }
 
 type SearchUsersResult {
-    users: [User!]!
+    data: [User!]!
     hasMore: Boolean!
 }
 
@@ -187,7 +187,7 @@ input ScheduleMessage {
     scheduleAt: String!
 }
 
-input SearchUsersInput {
+input SearchUsersFilterInput {
     q: String!
     offset: Int!
     limit: Int!
@@ -246,7 +246,7 @@ type StartSessionResult {
 type Query {
     me: User!
     users: [User!]!
-    searchUsers(input: SearchUsersInput!): SearchUsersResult!
+    searchUsers(filter: SearchUsersFilterInput!): SearchUsersResult!
     room(id: Int!): Room!
     message(id: Int!): Message!
     checkEmailAvailability(email: String!): Boolean!

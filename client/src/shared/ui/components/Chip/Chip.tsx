@@ -3,7 +3,6 @@ import { HiXMark } from "react-icons/hi2";
 import cls from "@/shared/lib/classnames";
 
 import Avatar from "../Avatar/Avatar.tsx";
-import button from "@/shared/ui/components/Button/Button.tsx";
 
 export type ChipColor = "blue" | "red" | "green" | "amber" | "purple";
 
@@ -37,7 +36,7 @@ const Chip = (props: Props) => {
     <div className={rootClasses}>
       {props.withAvatar && <Avatar size="xs" src={props.avatar} />}
       <div>
-        <p className="block text-sm leading-none text-white">{props.text}</p>
+        <p className="block text-sm leading-none text-white whitespace-nowrap">{props.text}</p>
       </div>
       {props.onDelete && (
         <button type="button" onClick={() => props.onDelete!()}>

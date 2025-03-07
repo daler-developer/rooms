@@ -7,7 +7,7 @@ type Props = {
   className?: string;
 };
 
-const Errors = ({ error, className }: Props) => {
+const ApolloErrorDisplay = ({ error, className }: Props) => {
   if (!error || error.graphQLErrors.length === 0) {
     return null;
   }
@@ -23,4 +23,4 @@ const Errors = ({ error, className }: Props) => {
   );
 };
 
-export default Errors;
+export default ApolloErrorDisplay;

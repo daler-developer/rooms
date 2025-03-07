@@ -14,8 +14,8 @@ type CreateRoomStore = {
   setShowCurrentStep: (to: boolean) => void;
 };
 
-const { Provider: CreateRoomStoreProvider, useStore: useCreateRoomStore } = createZustandStoreFactory<CreateRoomStore>((set) => ({
-  step: Step.EnterRoomName,
+const { useStore: useCreateRoomStore, withStore: withCreateRoomStore } = createZustandStoreFactory<CreateRoomStore>((set) => ({
+  step: Step.UploadThumbnail,
   setStep(to) {
     set({
       step: to,
@@ -30,4 +30,4 @@ const { Provider: CreateRoomStoreProvider, useStore: useCreateRoomStore } = crea
   },
 }));
 
-export { CreateRoomStoreProvider, useCreateRoomStore };
+export { useCreateRoomStore, withCreateRoomStore };

@@ -3,10 +3,10 @@ import * as yup from "yup";
 import { Button, Input } from "@/shared/ui";
 import { profilePictureRepository } from "@/global/superbase/repository";
 import { REGISTER } from "../gql/tags.ts";
-import { Errors, useCustomMutation } from "@/shared/lib/graphql";
+import { ApolloErrorDisplay, useCustomMutation } from "@/shared/lib/graphql";
 import RegisterFormEmailInput from "./RegisterFormEmailInput.tsx";
 import RegisterFormProfilePictureUpload from "./RegisterFormProfilePictureUpload.tsx";
-import { SupabaseErrorMessage, useSupabaseOperation } from "@/global/superbase";
+import { SupabaseErrorDisplay, useSupabaseOperation } from "@/global/superbase";
 import { RegisterFromValues } from "../types";
 
 const validationSchema = yup.object({
@@ -100,8 +100,8 @@ const RegisterForm = () => {
               Register
             </Button>
           </div>
-          <Errors className="mt-1" error={mutations.register.error} />
-          <SupabaseErrorMessage error={supabaseAddOneProfilePicture.error} />
+          <ApolloErrorDisplay className="mt-1" error={mutations.register.error} />
+          <SupabaseErrorDisplay error={supabaseAddOneProfilePicture.error} />
         </div>
       </form>
     </FormProvider>

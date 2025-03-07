@@ -78,7 +78,13 @@ class UserService {
   }
 
   async fetchUsers({ offset, limit, excludeIds, q }: { offset: number; limit: number; excludeIds: number[]; q: string }) {
-    return this.userRepository.getMany({ offset, limit, excludeIds, q });
+    const users = await this.userRepository.getMany({ offset, limit, excludeIds, q });
+    const moreUsers = await this.userRepository.getMany({ offset: offset + limit, limit: 1, excludeIds, q });
+
+    return {
+      data: users,
+      hasMore: moreUsers.length > 0,
+    };
   }
 
   async fetchUsersCount({ offset, excludeIds, q }: { offset: number; excludeIds: number[]; q: string }) {

@@ -2,7 +2,7 @@ import * as yup from "yup";
 import { Button, Input } from "@/shared/ui";
 import { useForm } from "@/shared/lib/form";
 import { LOGIN } from "../gql";
-import { Errors, useCustomMutation } from "@/shared/lib/graphql";
+import { ApolloErrorDisplay, useCustomMutation } from "@/shared/lib/graphql";
 
 type Props = {
   onSuccess?: () => void;
@@ -59,7 +59,7 @@ const LoginForm = ({ onSuccess }: Props) => {
         </Button>
       </div>
 
-      <Errors className="mt-1" error={mutations.login.error} />
+      <ApolloErrorDisplay className="mt-1" error={mutations.login.error} />
     </form>
   );
 };

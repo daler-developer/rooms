@@ -6,11 +6,13 @@ import { Portal } from "@/shared/ui";
 import { useIsFirstRender } from "@/shared/hooks";
 import clsx from "clsx";
 
+export type ModalActions = ReactElement[];
+
 type Props = {
   isOpen: boolean;
   onClose?: () => void;
   children: ReactNode;
-  actions?: ReactElement[];
+  actions?: ModalActions;
   title?: string;
   withCloseButton?: boolean;
   closeOnOverlayClick?: boolean;
@@ -97,7 +99,7 @@ const Modal = ({ isOpen, onClose, actions, children, title, size = "md", withClo
     <Portal to={document.body}>
       <div
         className={clsx(
-          "overflow-y-auto overflow-x-hidden bg-black bg-opacity-70 fixed top-0 right-0 left-0 bottom-0 flex justify-center items-center z-[1000]",
+          "overflow-y-auto overflow-x-hidden bg-black bg-opacity-70 fixed top-0 right-0 left-0 bottom-0 flex justify-center items-center z-[1001]",
           {
             invisible: !isOpen,
           },

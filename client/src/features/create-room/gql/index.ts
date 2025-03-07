@@ -1,12 +1,15 @@
 import { gql } from "@/__generated__";
 
 const SEARCH_USERS = gql(`
-  query SearchUsers($input: SearchUsersInput!) {
-    searchUsers(input: $input) {
-      users {
+  query CreateRoomSearchUsers($filter: SearchUsersFilterInput!) {
+    searchUsers(filter: $filter) {
+      data {
         id
         email
+        firstName
+        lastName
         profilePictureUrl
+        isOnline
       }
       hasMore
     }
@@ -33,12 +36,13 @@ const CREATE_ROOM = gql(`
   }
 `);
 
-const SUBSCRIBE_TO_USER_ONLINE_STATUS_CHANGE = gql(`
-  subscription SubscribeToUserOnlineStatusChange($input: UserOnlineStatusChangeSubscriptionInput!) {
-    userOnlineStatusChange(input: $input) {
+const USERS_ONLINE_STATUS_CHANGE = gql(`
+  subscription CreateRoomUsersOnlineStatusChange($userIds: [Int!]!) {
+    usersOnlineStatusChange(userIds: $userIds) {
+      id
       isOnline
     }
   }
 `);
 
-export { SEARCH_USERS, CREATE_ROOM, SUBSCRIBE_TO_USER_ONLINE_STATUS_CHANGE };
+export { SEARCH_USERS, CREATE_ROOM, USERS_ONLINE_STATUS_CHANGE };

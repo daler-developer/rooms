@@ -1,7 +1,7 @@
 import Calendar from "./components/Calendar/Calendar";
 import Dropdown from "./components/Dropdown/Dropdown.tsx";
 import Upload from "./components/Upload";
-import Modal from "./components/Modal/Modal.tsx";
+import Modal, { type ModalActions } from "./components/Modal/Modal.tsx";
 import Empty from "./components/Empty/Empty.tsx";
 import HStack from "./components/HStack/HStack.tsx";
 import VStack from "./components/VStack/VStack.tsx";
@@ -40,6 +40,7 @@ export {
   Dropdown,
   IconButton,
   Modal,
+  type ModalActions,
   Empty,
   HStack,
   VStack,

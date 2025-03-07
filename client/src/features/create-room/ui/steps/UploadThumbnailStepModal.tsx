@@ -1,13 +1,17 @@
-import { Avatar, Button, FileUpload, Input, Modal } from "@/shared/ui";
-import { useMemo, useRef, useState } from "react";
-import { useCreateRoomStore, Step } from "@/features/create-room/store.ts";
+import { Avatar, Button, FileUpload, IconButton, type ModalActions } from "@/shared/ui";
+import { useMemo, useRef } from "react";
+import { HiOutlineTrash } from "react-icons/hi2";
+import { Step } from "@/features/create-room/store.ts";
 import { CropFileModal, CropFileModalHandle } from "@/modules/crop-file";
-import { useFormContext } from "@/shared/lib/form";
 import BaseStepModal from "@/features/create-room/ui/steps/BaseStepModal.tsx";
-import { useCreateRoomContext } from "@/features/create-room/context.tsx";
+import { useCreateRoomStore } from "../../store.ts";
+import { useCrop } from "@/shared/crop";
+import { useCreateRoomForm } from "../../hooks.ts";
 
 const UploadThumbnailStepModal = () => {
-  const { form, store } = useCreateRoomContext();
+  const store = useCreateRoomStore();
+
+  const form = useCreateRoomForm();
 
   const thumbnail = form.getValue("thumbnail");
 
@@ -19,40 +23,39 @@ const UploadThumbnailStepModal = () => {
     }
   }, [thumbnail]);
 
+  const crop = useCrop();
+
   const cropFileModal = useRef<CropFileModalHandle>(null!);
 
   const handleFilesUpload = async (files: File[]) => {
     try {
-      const croopedImage = await cropFileModal.current.open(files[0]!);
-
-      form.setValue("thumbnail", croopedImage);
-    } catch {}
+      store.setShowCurrentStep(false);
+      const croppedImage = await crop.open(files[0]);
+      form.setValue("thumbnail", croppedImage);
+    } finally {
+      store.setShowCurrentStep(true);
+    }
   };
 
   const handleRemove = () => {
     form.setValue("thumbnail", null);
   };
 
-  const handleReplace = async () => {
-    try {
-    } catch {}
-  };
+  const actions: ModalActions = [
+    <Button color="light" type="button" onClick={() => store.setStep(Step.EnterRoomName)}>
+      Prev
+    </Button>,
+    <Button color="default" type="button" onClick={() => store.setStep(Step.InviteUsers)}>
+      {thumbnail ? "Next" : "Skip"}
+    </Button>,
+  ];
 
   return (
     <>
       <BaseStepModal
         title="Upload thumbnail"
         isOpen={store.showCurrentStep && store.step === Step.UploadThumbnail}
-        prevStep={
-          <Button color="light" type="button" onClick={() => store.setStep(Step.EnterRoomName)}>
-            Prev
-          </Button>
-        }
-        nextStep={
-          <Button color="default" type="button" onClick={() => store.setStep(Step.InviteUsers)}>
-            Skip
-          </Button>
-        }
+        actions={actions}
         onClose={() => {
           form.reset();
           store.setShowCurrentStep(false);
@@ -60,19 +63,12 @@ const UploadThumbnailStepModal = () => {
         }}
       >
         <div>
-          {!thumbnail && <FileUpload onUpload={handleFilesUpload} />}
-          {thumbnail && (
+          {thumbnail ? (
             <div className="flex flex-col items-center gap-2">
-              <Avatar size="xl" src={thumbnailURL} />
-              <div className="flex items-center gap-1">
-                <Button type="button" color="red" size="sm" onClick={handleRemove}>
-                  Remove
-                </Button>
-                <Button type="button" color="light" size="sm" onClick={handleReplace}>
-                  Replace
-                </Button>
-              </div>
+              <Avatar size="xl" src={thumbnailURL} badgeContent={<IconButton type="button" Icon={HiOutlineTrash} color="red" onClick={handleRemove} />} />
             </div>
+          ) : (
+            <FileUpload multiple={false} accept="image/*" onUpload={handleFilesUpload} />
           )}
         </div>
       </BaseStepModal>

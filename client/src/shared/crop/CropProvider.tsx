@@ -32,7 +32,7 @@ export const CropProvider = ({ children }: Props) => {
         input.multiple = false;
 
         input.addEventListener("change", async (e) => {
-          const image: File = Array.from(e.target!.files as FileList)[0] as File;
+          const image: File = Array.from((e.target as HTMLInputElement).files as FileList)[0] as File;
 
           if (image) {
             const croppedImage = await cropImageModalComp.current.open(image);

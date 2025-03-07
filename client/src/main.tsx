@@ -62,7 +62,7 @@ const client = new ApolloClient({
             keyArgs: false,
             merge(existing, incoming) {
               return {
-                users: [...(existing?.users || []), ...incoming.users],
+                data: [...(existing?.data || []), ...incoming.data],
                 hasMore: incoming.hasMore,
               };
             },

@@ -1,4 +1,4 @@
 import { useSupabaseOperation } from "./hooks";
-import SupabaseErrorMessage from "./SupabaseErrorMessage";
+import SupabaseErrorDisplay from "./SupabaseErrorDisplay.tsx";
 
-export { useSupabaseOperation, SupabaseErrorMessage };
+export { useSupabaseOperation, SupabaseErrorDisplay };

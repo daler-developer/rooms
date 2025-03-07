@@ -1,19 +1,15 @@
-import { User } from "@/__generated__/graphql.ts";
-import { Avatar, Button } from "@/shared/ui";
+import { CreateRoomSearchUsersQuery } from "@/__generated__/graphql.ts";
+import { Button } from "@/shared/ui";
 import { useFormContext } from "@/shared/lib/form";
-import { FormFields } from "./CreateRoomForm.tsx";
-import { SUBSCRIBE_TO_USER_ONLINE_STATUS_CHANGE } from "../gql";
-import { useSubscription } from "@apollo/client";
+import { FormValues } from "../types";
 import { UserCard } from "@/entities/user";
 
 type Props = {
-  user: Pick<User, "id" | "profilePictureUrl" | "email">;
+  user: Flatten<CreateRoomSearchUsersQuery["searchUsers"]["data"]>;
 };
 
 const UserSearchResultCard = ({ user }: Props) => {
-  const form = useFormContext<FormFields>();
-
-  useSubscription(SUBSCRIBE_TO_USER_ONLINE_STATUS_CHANGE);
+  const form = useFormContext<FormValues>();
 
   const handleInvite = () => {
     form.appendArrayItem("invitedUsers", user);

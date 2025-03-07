@@ -1,13 +1,13 @@
-import { Button, Input } from "@/shared/ui";
+import { Button, Input, type ModalActions } from "@/shared/ui";
 
 import { Step } from "@/features/create-room/store.ts";
-import { useCreateRoomContext } from "@/features/create-room/context.tsx";
+import { useCreateRoomStore } from "../../store.ts";
 import BaseStepModal from "@/features/create-room/ui/steps/BaseStepModal.tsx";
 import { useCreateRoomForm } from "../../hooks.ts";
 import { KeyboardEventHandler } from "react";
 
 const EnterRoomNameStepModal = () => {
-  const { store } = useCreateRoomContext();
+  const store = useCreateRoomStore();
 
   const form = useCreateRoomForm();
 
@@ -30,15 +30,17 @@ const EnterRoomNameStepModal = () => {
     }
   };
 
+  const actions: ModalActions = [
+    <Button color="default" type="button" onClick={handleNext}>
+      Next
+    </Button>,
+  ];
+
   return (
     <BaseStepModal
       title="Enter room name"
       isOpen={store.showCurrentStep && store.step === Step.EnterRoomName}
-      nextStep={
-        <Button color="default" type="button" onClick={handleNext}>
-          Next
-        </Button>
-      }
+      actions={actions}
       onClose={() => {
         form.reset();
         store.setShowCurrentStep(false);
