@@ -1,16 +1,21 @@
-import { NetworkStatus, useApolloClient, useSubscription, useQuery } from "@apollo/client";
-import { GET_ME, SUBSCRIBE_TO_ME_INVITED_TO_ROOM } from "../gql/tags.ts";
+import { NetworkStatus } from "@apollo/client";
 import { FaRegEnvelope } from "react-icons/fa";
-import { IconButton } from "@/shared/ui";
+import { IconButton, Skeleton } from "@/shared/ui";
+import useGetMeQuery from "../gql/useGetMeQuery.ts";
+import useNewInvitationSubscribe from "../gql/useNewInvitationSubscribe.ts";
 
 type Props = {
   onClick: () => void;
 };
 
 const InvitationsButton = ({ onClick }: Props) => {
-  const { data: meResult } = useQuery(GET_ME);
+  const queries = {
+    me: useGetMeQuery(),
+  };
 
-  if (meResult) {
+  useNewInvitationSubscribe();
+
+  if (queries.me.networkStatus === NetworkStatus.ready) {
     return (
       <IconButton
         color="light"
@@ -19,12 +24,12 @@ const InvitationsButton = ({ onClick }: Props) => {
         onClick={() => onClick()}
         withBadge
         badgeColor="blue"
-        badgeContent={meResult.me.invitationsCount}
+        badgeContent={queries.me.data!.me.invitationsCount}
       />
     );
   }
 
-  return null;
+  return <Skeleton type="circular" size={20} />;
 };
 
 export default InvitationsButton;

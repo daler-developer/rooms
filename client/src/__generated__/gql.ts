@@ -19,17 +19,11 @@ const documents = {
     "\n  query GetMeIdOnly {\n    me {\n      id\n    }\n  }\n": types.GetMeIdOnlyDocument,
     "\n  query GetMeTemp {\n    me {\n      id\n      email\n    }\n  }\n": types.GetMeTempDocument,
     "\n  mutation BlockUser($input: BlockUserInput!) {\n    blockUser(input: $input) {\n      id\n      email\n      isBlocked\n    }\n  }\n": types.BlockUserDocument,
-    "\n  query CreateRoomSearchUsers($filter: SearchUsersFilterInput!) {\n    searchUsers(filter: $filter) {\n      data {\n        id\n        email\n        firstName\n        lastName\n        profilePictureUrl\n        isOnline\n      }\n      hasMore\n    }\n  }\n": types.CreateRoomSearchUsersDocument,
-    "\n  mutation CreateRoom($input: CreateRoomInput!) {\n    createRoom(input: $input) {\n      id\n      name\n      thumbnailUrl\n      participantsCount\n      unreadMessagesCount\n      lastMessage {\n        id\n        text\n        sender {\n          id\n          email\n        }\n      }\n    }\n  }\n": types.CreateRoomDocument,
-    "\n  subscription CreateRoomUsersOnlineStatusChange($userIds: [Int!]!) {\n    usersOnlineStatusChange(userIds: $userIds) {\n      id\n      isOnline\n    }\n  }\n": types.CreateRoomUsersOnlineStatusChangeDocument,
-    "\n  query EditMyProfilePictureGetMe {\n    me {\n      id\n      profilePictureUrl\n    }\n  }\n": types.EditMyProfilePictureGetMeDocument,
-    "\n  mutation RemoveMyAvatar {\n    removeMyAvatar {\n      id\n      profilePictureUrl\n    }\n  }\n": types.RemoveMyAvatarDocument,
-    "\n  mutation UploadProfilePictureInput($input: UploadProfilePictureInput!) {\n    uploadProfilePicture(input: $input) {\n      id\n      profilePictureUrl\n    }\n  }\n": types.UploadProfilePictureInputDocument,
     "\n  mutation LeaveRoom($input: LeaveRoomInput!) {\n    leaveRoom(input: $input)\n  }\n": types.LeaveRoomDocument,
     "\n  query SearchUsers($filter: SearchUsersFilterInput!) {\n    searchUsers(filter: $filter) {\n      data {\n        id\n        email\n        profilePictureUrl\n      }\n      hasMore\n    }\n  }\n": types.SearchUsersDocument,
     "\n  query RoomGetPendingInvitations($roomId: Int!) {\n    room(id: $roomId) {\n      id\n      pendingInvitations {\n        userId\n        roomId\n      }\n    }\n  }\n": types.RoomGetPendingInvitationsDocument,
     "\n  mutation InviteUsersToRoom($roomId: Int!, $invitedUsersIds: [Int!]!) {\n    inviteUsersToRoom(roomId: $roomId, invitedUsersIds: $invitedUsersIds)\n  }\n": types.InviteUsersToRoomDocument,
-    "\n  subscription MeIsInvitedToRoom {\n    meIsInvitedToRoom {\n      room {\n        id\n        name\n      }\n    }\n  }\n": types.MeIsInvitedToRoomDocument,
+    "\n  subscription MeIsInvitedToRoom {\n    newInvitation {\n      userId\n      roomId\n    }\n  }\n": types.MeIsInvitedToRoomDocument,
     "\n          query PrevMeInvitationsCount {\n            me {\n              id\n              invitationsCount\n            }\n          }\n        ": types.PrevMeInvitationsCountDocument,
     "\n          query UpdateMeInvitationsCount {\n            me {\n              id\n              invitationsCount\n            }\n          }\n        ": types.UpdateMeInvitationsCountDocument,
     "\n  subscription NewMessageSubscription($skipFromCurrentSession: Boolean!) {\n    newMessage(skipFromCurrentSession: $skipFromCurrentSession) {\n      message {\n        id\n        text\n        roomId\n        senderId\n      }\n    }\n  }\n": types.NewMessageSubscriptionDocument,
@@ -40,18 +34,21 @@ const documents = {
     "\n  mutation Register($input: RegisterInput!) {\n    register(input: $input) {\n      user {\n        id\n        email\n        firstName\n        lastName\n      }\n      token\n    }\n  }\n": types.RegisterDocument,
     "\n  query CheckEmailAvailability($email: String!) {\n    checkEmailAvailability(email: $email)\n  }\n": types.CheckEmailAvailabilityDocument,
     "\n  query InvitationsButtonGetMe {\n    me {\n      id\n      invitationsCount\n    }\n  }\n": types.InvitationsButtonGetMeDocument,
-    "\n  subscription InvitationsButtonMeInvitedToRoomSub {\n    meIsInvitedToRoom {\n      invitation {\n        userId\n        roomId\n      }\n    }\n  }\n": types.InvitationsButtonMeInvitedToRoomSubDocument,
+    "\n  subscription InvitationsButtonNewInvitation {\n    newInvitation {\n      userId\n      roomId\n    }\n  }\n": types.InvitationsButtonNewInvitationDocument,
     "\n  query InvitationsList {\n    me {\n      id\n      invitations {\n        userId\n        roomId\n        room {\n          id\n          name\n          thumbnailUrl\n        }\n        inviter {\n          id\n          firstName\n          lastName\n        }\n        createdAt\n      }\n    }\n  }\n": types.InvitationsListDocument,
-    "\n  mutation AcceptInvitation($input: AcceptInvitationInput!) {\n    acceptInvitation(input: $input)\n  }\n": types.AcceptInvitationDocument,
-    "\n  mutation RejectInvitation($input: RejectInvitationInput!) {\n    rejectInvitation(input: $input)\n  }\n": types.RejectInvitationDocument,
-    "\n  subscription MeIsInvitedToRoom2 {\n    meIsInvitedToRoom {\n      invitation {\n        userId\n        roomId\n        room {\n          id\n          name\n          thumbnailUrl\n        }\n        inviter {\n          id\n          firstName\n          lastName\n        }\n        createdAt\n      }\n    }\n  }\n": types.MeIsInvitedToRoom2Document,
-    "\n  query EditProfileGetMe {\n    me {\n      id\n      firstName\n      lastName\n      profilePictureUrl\n      passwordLength\n    }\n  }\n": types.EditProfileGetMeDocument,
-    "\n  mutation EditProfileEditFirstName($firstName: String!) {\n    userUpdateFirstName(newFirstName: $firstName) {\n      id\n      firstName\n    }\n  }\n": types.EditProfileEditFirstNameDocument,
-    "\n  mutation EditProfileEditLastName($lastName: String!) {\n    userUpdateLastName(newLastName: $lastName) {\n      id\n      lastName\n    }\n  }\n": types.EditProfileEditLastNameDocument,
-    "\n  mutation EditProfileRemoveMyAvatar {\n    removeMyAvatar {\n      id\n      profilePictureUrl\n    }\n  }\n": types.EditProfileRemoveMyAvatarDocument,
-    "\n  mutation EditProfileUploadProfilePicture($input: UploadProfilePictureInput!) {\n    uploadProfilePicture(input: $input) {\n      id\n      profilePictureUrl\n    }\n  }\n": types.EditProfileUploadProfilePictureDocument,
-    "\n  mutation AuthResetPassword($input: EditMyPasswordInput!) {\n    editMyPassword(input: $input) {\n      id\n      passwordLength\n    }\n  }\n": types.AuthResetPasswordDocument,
+    "\n  mutation InvitationsListAcceptInvitation($input: AcceptInvitationInput!) {\n    acceptInvitation(input: $input) {\n      userId\n      roomId\n    }\n  }\n": types.InvitationsListAcceptInvitationDocument,
+    "\n  mutation InvitationsListRejectInvitation($input: RejectInvitationInput!) {\n    rejectInvitation(input: $input) {\n      userId\n      roomId\n    }\n  }\n": types.InvitationsListRejectInvitationDocument,
+    "\n  subscription InvitationsNewInvitationSub {\n    newInvitation {\n      userId\n      roomId\n      room {\n        id\n        name\n        thumbnailUrl\n      }\n      inviter {\n        id\n        firstName\n        lastName\n      }\n      createdAt\n    }\n  }\n": types.InvitationsNewInvitationSubDocument,
+    "\n  query ProfileEditGetMe {\n    me {\n      id\n      firstName\n      lastName\n      profilePictureUrl\n      passwordLength\n    }\n  }\n": types.ProfileEditGetMeDocument,
+    "\n  mutation ProfileEditFirstName($input: EditFirstNameInput!) {\n    editFirstName(input: $input) {\n      id\n      firstName\n    }\n  }\n": types.ProfileEditFirstNameDocument,
+    "\n  mutation ProfileEditLastName($input: EditLastNameInput!) {\n    editLastName(input: $input) {\n      id\n      lastName\n    }\n  }\n": types.ProfileEditLastNameDocument,
+    "\n  mutation ProfileEditProfilePicture($input: EditProfilePictureInput!) {\n    editProfilePicture(input: $input) {\n      id\n      profilePictureUrl\n    }\n  }\n": types.ProfileEditProfilePictureDocument,
+    "\n  mutation ProfileEditResetPassword($input: ResetPasswordInput!) {\n    resetPassword(input: $input) {\n      id\n      passwordLength\n    }\n  }\n": types.ProfileEditResetPasswordDocument,
     "\n  query ProfileCardGetMe {\n    me {\n      id\n      firstName\n      lastName\n      profilePictureUrl\n    }\n  }\n": types.ProfileCardGetMeDocument,
+    "\n  query CreateRoomSearchUsers($filter: SearchUsersFilterInput!) {\n    searchUsers(filter: $filter) {\n      data {\n        id\n        email\n        firstName\n        lastName\n        profilePictureUrl\n        isOnline\n      }\n      hasMore\n    }\n  }\n": types.CreateRoomSearchUsersDocument,
+    "\n  mutation CreateRoom($input: CreateRoomInput!) {\n    createRoom(input: $input) {\n      id\n      name\n      thumbnailUrl\n      participantsCount\n      unreadMessagesCount\n      lastMessage {\n        id\n        text\n        sender {\n          id\n          email\n        }\n      }\n    }\n  }\n": types.CreateRoomDocument,
+    "\n  subscription CreateRoomUsersOnlineStatusChange($userIds: [Int!]!) {\n    usersOnlineStatusChange(userIds: $userIds) {\n      id\n      isOnline\n    }\n  }\n": types.CreateRoomUsersOnlineStatusChangeDocument,
+    "\n  subscription HomeNewInvitation {\n    newInvitation {\n      userId\n      roomId\n    }\n  }\n": types.HomeNewInvitationDocument,
     "\n  query GetMyRooms {\n    me {\n      id\n      rooms {\n        id\n        name\n        thumbnailUrl\n        participantsCount\n        unreadMessagesCount\n        lastMessage {\n          id\n          text\n          sender {\n            id\n            firstName\n            lastName\n          }\n        }\n      }\n    }\n  }\n": types.GetMyRoomsDocument,
     "\n  subscription RoomParticipantLeft($roomId: Int!) {\n    roomParticipantLeft(roomId: $roomId) {\n      id\n      email\n    }\n  }\n": types.RoomParticipantLeftDocument,
     "\n  subscription RoomParticipantJoined($roomId: Int!) {\n    roomParticipantJoined(roomId: $roomId) {\n      id\n      email\n      profilePictureUrl\n    }\n  }\n": types.RoomParticipantJoinedDocument,
@@ -120,30 +117,6 @@ export function gql(source: "\n  mutation BlockUser($input: BlockUserInput!) {\n
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function gql(source: "\n  query CreateRoomSearchUsers($filter: SearchUsersFilterInput!) {\n    searchUsers(filter: $filter) {\n      data {\n        id\n        email\n        firstName\n        lastName\n        profilePictureUrl\n        isOnline\n      }\n      hasMore\n    }\n  }\n"): (typeof documents)["\n  query CreateRoomSearchUsers($filter: SearchUsersFilterInput!) {\n    searchUsers(filter: $filter) {\n      data {\n        id\n        email\n        firstName\n        lastName\n        profilePictureUrl\n        isOnline\n      }\n      hasMore\n    }\n  }\n"];
-/**
- * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
- */
-export function gql(source: "\n  mutation CreateRoom($input: CreateRoomInput!) {\n    createRoom(input: $input) {\n      id\n      name\n      thumbnailUrl\n      participantsCount\n      unreadMessagesCount\n      lastMessage {\n        id\n        text\n        sender {\n          id\n          email\n        }\n      }\n    }\n  }\n"): (typeof documents)["\n  mutation CreateRoom($input: CreateRoomInput!) {\n    createRoom(input: $input) {\n      id\n      name\n      thumbnailUrl\n      participantsCount\n      unreadMessagesCount\n      lastMessage {\n        id\n        text\n        sender {\n          id\n          email\n        }\n      }\n    }\n  }\n"];
-/**
- * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
- */
-export function gql(source: "\n  subscription CreateRoomUsersOnlineStatusChange($userIds: [Int!]!) {\n    usersOnlineStatusChange(userIds: $userIds) {\n      id\n      isOnline\n    }\n  }\n"): (typeof documents)["\n  subscription CreateRoomUsersOnlineStatusChange($userIds: [Int!]!) {\n    usersOnlineStatusChange(userIds: $userIds) {\n      id\n      isOnline\n    }\n  }\n"];
-/**
- * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
- */
-export function gql(source: "\n  query EditMyProfilePictureGetMe {\n    me {\n      id\n      profilePictureUrl\n    }\n  }\n"): (typeof documents)["\n  query EditMyProfilePictureGetMe {\n    me {\n      id\n      profilePictureUrl\n    }\n  }\n"];
-/**
- * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
- */
-export function gql(source: "\n  mutation RemoveMyAvatar {\n    removeMyAvatar {\n      id\n      profilePictureUrl\n    }\n  }\n"): (typeof documents)["\n  mutation RemoveMyAvatar {\n    removeMyAvatar {\n      id\n      profilePictureUrl\n    }\n  }\n"];
-/**
- * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
- */
-export function gql(source: "\n  mutation UploadProfilePictureInput($input: UploadProfilePictureInput!) {\n    uploadProfilePicture(input: $input) {\n      id\n      profilePictureUrl\n    }\n  }\n"): (typeof documents)["\n  mutation UploadProfilePictureInput($input: UploadProfilePictureInput!) {\n    uploadProfilePicture(input: $input) {\n      id\n      profilePictureUrl\n    }\n  }\n"];
-/**
- * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
- */
 export function gql(source: "\n  mutation LeaveRoom($input: LeaveRoomInput!) {\n    leaveRoom(input: $input)\n  }\n"): (typeof documents)["\n  mutation LeaveRoom($input: LeaveRoomInput!) {\n    leaveRoom(input: $input)\n  }\n"];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
@@ -160,7 +133,7 @@ export function gql(source: "\n  mutation InviteUsersToRoom($roomId: Int!, $invi
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function gql(source: "\n  subscription MeIsInvitedToRoom {\n    meIsInvitedToRoom {\n      room {\n        id\n        name\n      }\n    }\n  }\n"): (typeof documents)["\n  subscription MeIsInvitedToRoom {\n    meIsInvitedToRoom {\n      room {\n        id\n        name\n      }\n    }\n  }\n"];
+export function gql(source: "\n  subscription MeIsInvitedToRoom {\n    newInvitation {\n      userId\n      roomId\n    }\n  }\n"): (typeof documents)["\n  subscription MeIsInvitedToRoom {\n    newInvitation {\n      userId\n      roomId\n    }\n  }\n"];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
@@ -204,7 +177,7 @@ export function gql(source: "\n  query InvitationsButtonGetMe {\n    me {\n     
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function gql(source: "\n  subscription InvitationsButtonMeInvitedToRoomSub {\n    meIsInvitedToRoom {\n      invitation {\n        userId\n        roomId\n      }\n    }\n  }\n"): (typeof documents)["\n  subscription InvitationsButtonMeInvitedToRoomSub {\n    meIsInvitedToRoom {\n      invitation {\n        userId\n        roomId\n      }\n    }\n  }\n"];
+export function gql(source: "\n  subscription InvitationsButtonNewInvitation {\n    newInvitation {\n      userId\n      roomId\n    }\n  }\n"): (typeof documents)["\n  subscription InvitationsButtonNewInvitation {\n    newInvitation {\n      userId\n      roomId\n    }\n  }\n"];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
@@ -212,43 +185,55 @@ export function gql(source: "\n  query InvitationsList {\n    me {\n      id\n  
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function gql(source: "\n  mutation AcceptInvitation($input: AcceptInvitationInput!) {\n    acceptInvitation(input: $input)\n  }\n"): (typeof documents)["\n  mutation AcceptInvitation($input: AcceptInvitationInput!) {\n    acceptInvitation(input: $input)\n  }\n"];
+export function gql(source: "\n  mutation InvitationsListAcceptInvitation($input: AcceptInvitationInput!) {\n    acceptInvitation(input: $input) {\n      userId\n      roomId\n    }\n  }\n"): (typeof documents)["\n  mutation InvitationsListAcceptInvitation($input: AcceptInvitationInput!) {\n    acceptInvitation(input: $input) {\n      userId\n      roomId\n    }\n  }\n"];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function gql(source: "\n  mutation RejectInvitation($input: RejectInvitationInput!) {\n    rejectInvitation(input: $input)\n  }\n"): (typeof documents)["\n  mutation RejectInvitation($input: RejectInvitationInput!) {\n    rejectInvitation(input: $input)\n  }\n"];
+export function gql(source: "\n  mutation InvitationsListRejectInvitation($input: RejectInvitationInput!) {\n    rejectInvitation(input: $input) {\n      userId\n      roomId\n    }\n  }\n"): (typeof documents)["\n  mutation InvitationsListRejectInvitation($input: RejectInvitationInput!) {\n    rejectInvitation(input: $input) {\n      userId\n      roomId\n    }\n  }\n"];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function gql(source: "\n  subscription MeIsInvitedToRoom2 {\n    meIsInvitedToRoom {\n      invitation {\n        userId\n        roomId\n        room {\n          id\n          name\n          thumbnailUrl\n        }\n        inviter {\n          id\n          firstName\n          lastName\n        }\n        createdAt\n      }\n    }\n  }\n"): (typeof documents)["\n  subscription MeIsInvitedToRoom2 {\n    meIsInvitedToRoom {\n      invitation {\n        userId\n        roomId\n        room {\n          id\n          name\n          thumbnailUrl\n        }\n        inviter {\n          id\n          firstName\n          lastName\n        }\n        createdAt\n      }\n    }\n  }\n"];
+export function gql(source: "\n  subscription InvitationsNewInvitationSub {\n    newInvitation {\n      userId\n      roomId\n      room {\n        id\n        name\n        thumbnailUrl\n      }\n      inviter {\n        id\n        firstName\n        lastName\n      }\n      createdAt\n    }\n  }\n"): (typeof documents)["\n  subscription InvitationsNewInvitationSub {\n    newInvitation {\n      userId\n      roomId\n      room {\n        id\n        name\n        thumbnailUrl\n      }\n      inviter {\n        id\n        firstName\n        lastName\n      }\n      createdAt\n    }\n  }\n"];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function gql(source: "\n  query EditProfileGetMe {\n    me {\n      id\n      firstName\n      lastName\n      profilePictureUrl\n      passwordLength\n    }\n  }\n"): (typeof documents)["\n  query EditProfileGetMe {\n    me {\n      id\n      firstName\n      lastName\n      profilePictureUrl\n      passwordLength\n    }\n  }\n"];
+export function gql(source: "\n  query ProfileEditGetMe {\n    me {\n      id\n      firstName\n      lastName\n      profilePictureUrl\n      passwordLength\n    }\n  }\n"): (typeof documents)["\n  query ProfileEditGetMe {\n    me {\n      id\n      firstName\n      lastName\n      profilePictureUrl\n      passwordLength\n    }\n  }\n"];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function gql(source: "\n  mutation EditProfileEditFirstName($firstName: String!) {\n    userUpdateFirstName(newFirstName: $firstName) {\n      id\n      firstName\n    }\n  }\n"): (typeof documents)["\n  mutation EditProfileEditFirstName($firstName: String!) {\n    userUpdateFirstName(newFirstName: $firstName) {\n      id\n      firstName\n    }\n  }\n"];
+export function gql(source: "\n  mutation ProfileEditFirstName($input: EditFirstNameInput!) {\n    editFirstName(input: $input) {\n      id\n      firstName\n    }\n  }\n"): (typeof documents)["\n  mutation ProfileEditFirstName($input: EditFirstNameInput!) {\n    editFirstName(input: $input) {\n      id\n      firstName\n    }\n  }\n"];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function gql(source: "\n  mutation EditProfileEditLastName($lastName: String!) {\n    userUpdateLastName(newLastName: $lastName) {\n      id\n      lastName\n    }\n  }\n"): (typeof documents)["\n  mutation EditProfileEditLastName($lastName: String!) {\n    userUpdateLastName(newLastName: $lastName) {\n      id\n      lastName\n    }\n  }\n"];
+export function gql(source: "\n  mutation ProfileEditLastName($input: EditLastNameInput!) {\n    editLastName(input: $input) {\n      id\n      lastName\n    }\n  }\n"): (typeof documents)["\n  mutation ProfileEditLastName($input: EditLastNameInput!) {\n    editLastName(input: $input) {\n      id\n      lastName\n    }\n  }\n"];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function gql(source: "\n  mutation EditProfileRemoveMyAvatar {\n    removeMyAvatar {\n      id\n      profilePictureUrl\n    }\n  }\n"): (typeof documents)["\n  mutation EditProfileRemoveMyAvatar {\n    removeMyAvatar {\n      id\n      profilePictureUrl\n    }\n  }\n"];
+export function gql(source: "\n  mutation ProfileEditProfilePicture($input: EditProfilePictureInput!) {\n    editProfilePicture(input: $input) {\n      id\n      profilePictureUrl\n    }\n  }\n"): (typeof documents)["\n  mutation ProfileEditProfilePicture($input: EditProfilePictureInput!) {\n    editProfilePicture(input: $input) {\n      id\n      profilePictureUrl\n    }\n  }\n"];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function gql(source: "\n  mutation EditProfileUploadProfilePicture($input: UploadProfilePictureInput!) {\n    uploadProfilePicture(input: $input) {\n      id\n      profilePictureUrl\n    }\n  }\n"): (typeof documents)["\n  mutation EditProfileUploadProfilePicture($input: UploadProfilePictureInput!) {\n    uploadProfilePicture(input: $input) {\n      id\n      profilePictureUrl\n    }\n  }\n"];
-/**
- * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
- */
-export function gql(source: "\n  mutation AuthResetPassword($input: EditMyPasswordInput!) {\n    editMyPassword(input: $input) {\n      id\n      passwordLength\n    }\n  }\n"): (typeof documents)["\n  mutation AuthResetPassword($input: EditMyPasswordInput!) {\n    editMyPassword(input: $input) {\n      id\n      passwordLength\n    }\n  }\n"];
+export function gql(source: "\n  mutation ProfileEditResetPassword($input: ResetPasswordInput!) {\n    resetPassword(input: $input) {\n      id\n      passwordLength\n    }\n  }\n"): (typeof documents)["\n  mutation ProfileEditResetPassword($input: ResetPasswordInput!) {\n    resetPassword(input: $input) {\n      id\n      passwordLength\n    }\n  }\n"];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function gql(source: "\n  query ProfileCardGetMe {\n    me {\n      id\n      firstName\n      lastName\n      profilePictureUrl\n    }\n  }\n"): (typeof documents)["\n  query ProfileCardGetMe {\n    me {\n      id\n      firstName\n      lastName\n      profilePictureUrl\n    }\n  }\n"];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function gql(source: "\n  query CreateRoomSearchUsers($filter: SearchUsersFilterInput!) {\n    searchUsers(filter: $filter) {\n      data {\n        id\n        email\n        firstName\n        lastName\n        profilePictureUrl\n        isOnline\n      }\n      hasMore\n    }\n  }\n"): (typeof documents)["\n  query CreateRoomSearchUsers($filter: SearchUsersFilterInput!) {\n    searchUsers(filter: $filter) {\n      data {\n        id\n        email\n        firstName\n        lastName\n        profilePictureUrl\n        isOnline\n      }\n      hasMore\n    }\n  }\n"];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function gql(source: "\n  mutation CreateRoom($input: CreateRoomInput!) {\n    createRoom(input: $input) {\n      id\n      name\n      thumbnailUrl\n      participantsCount\n      unreadMessagesCount\n      lastMessage {\n        id\n        text\n        sender {\n          id\n          email\n        }\n      }\n    }\n  }\n"): (typeof documents)["\n  mutation CreateRoom($input: CreateRoomInput!) {\n    createRoom(input: $input) {\n      id\n      name\n      thumbnailUrl\n      participantsCount\n      unreadMessagesCount\n      lastMessage {\n        id\n        text\n        sender {\n          id\n          email\n        }\n      }\n    }\n  }\n"];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function gql(source: "\n  subscription CreateRoomUsersOnlineStatusChange($userIds: [Int!]!) {\n    usersOnlineStatusChange(userIds: $userIds) {\n      id\n      isOnline\n    }\n  }\n"): (typeof documents)["\n  subscription CreateRoomUsersOnlineStatusChange($userIds: [Int!]!) {\n    usersOnlineStatusChange(userIds: $userIds) {\n      id\n      isOnline\n    }\n  }\n"];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function gql(source: "\n  subscription HomeNewInvitation {\n    newInvitation {\n      userId\n      roomId\n    }\n  }\n"): (typeof documents)["\n  subscription HomeNewInvitation {\n    newInvitation {\n      userId\n      roomId\n    }\n  }\n"];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

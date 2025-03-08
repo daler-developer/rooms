@@ -15,7 +15,7 @@ type CreateRoomStore = {
 };
 
 const { useStore: useCreateRoomStore, withStore: withCreateRoomStore } = createZustandStoreFactory<CreateRoomStore>((set) => ({
-  step: Step.UploadThumbnail,
+  step: Step.EnterRoomName,
   setStep(to) {
     set({
       step: to,

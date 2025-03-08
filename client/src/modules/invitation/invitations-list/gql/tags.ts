@@ -1,6 +1,6 @@
 import { gql } from "@/__generated__";
 
-export const GET_MY_INVITATIONS = gql(`
+export const GET_INVITATIONS_LIST = gql(`
   query InvitationsList {
     me {
       id
@@ -24,36 +24,39 @@ export const GET_MY_INVITATIONS = gql(`
 `);
 
 export const ACCEPT_INVITATION = gql(`
-  mutation AcceptInvitation($input: AcceptInvitationInput!) {
-    acceptInvitation(input: $input)
+  mutation InvitationsListAcceptInvitation($input: AcceptInvitationInput!) {
+    acceptInvitation(input: $input) {
+      userId
+      roomId
+    }
   }
 `);
 
 export const REJECT_INVITATION = gql(`
-  mutation RejectInvitation($input: RejectInvitationInput!) {
-    rejectInvitation(input: $input)
+  mutation InvitationsListRejectInvitation($input: RejectInvitationInput!) {
+    rejectInvitation(input: $input) {
+      userId
+      roomId
+    }
   }
 `);
 
-// TODO: fix
 export const SUBSCRIBE_TO_ME_INVITED_TO_ROOM = gql(`
-  subscription MeIsInvitedToRoom2 {
-    meIsInvitedToRoom {
-      invitation {
-        userId
-        roomId
-        room {
-          id
-          name
-          thumbnailUrl
-        }
-        inviter {
-          id
-          firstName
-          lastName
-        }
-        createdAt
+  subscription InvitationsNewInvitationSub {
+    newInvitation {
+      userId
+      roomId
+      room {
+        id
+        name
+        thumbnailUrl
       }
+      inviter {
+        id
+        firstName
+        lastName
+      }
+      createdAt
     }
   }
 `);

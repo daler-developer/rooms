@@ -9,13 +9,11 @@ export const GET_ME = gql(`
   }
 `);
 
-export const SUBSCRIBE_TO_ME_INVITED_TO_ROOM = gql(`
-  subscription InvitationsButtonMeInvitedToRoomSub {
-    meIsInvitedToRoom {
-      invitation {
-        userId
-        roomId
-      }
+export const NEW_INVITATION_SUB = gql(`
+  subscription InvitationsButtonNewInvitation {
+    newInvitation {
+      userId
+      roomId
     }
   }
 `);

@@ -1,5 +1,5 @@
 import BaseTab from "./BaseTab";
-import { IconButton } from "@/shared/ui";
+import { IconButton, Scroll } from "@/shared/ui";
 import { HiChevronLeft } from "react-icons/hi2";
 import useHomePageStore from "@/pages/home/store.ts";
 import { InvitationsList } from "@/modules/invitation/invitations-list";
@@ -28,9 +28,9 @@ const InvitationsTab = () => {
         </div>
       }
     >
-      <div className="p-2">
+      <Scroll height="full" className="p-2">
         <InvitationsList />
-      </div>
+      </Scroll>
     </BaseTab>
   );
 };

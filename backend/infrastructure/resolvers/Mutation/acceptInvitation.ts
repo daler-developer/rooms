@@ -12,10 +12,11 @@ const validationSchema = yup.object({
 
 type Args = InferType<typeof validationSchema>;
 
-const resolver = async (_, args: Args, { invitationService, userId }: CustomContext) => {
-  await invitationService.acceptInvitation(userId, args.input.roomId);
+const sleep = () => new Promise((res) => setTimeout(() => res(1), 2000));
 
-  return true;
+const resolver = async (_, args: Args, { invitationService, userId }: CustomContext) => {
+  await sleep();
+  return await invitationService.acceptInvitation(userId, args.input.roomId);
 };
 
 export default composeResolvers(authRequired, checkBlockedStatus, withValidation(validationSchema))(resolver);

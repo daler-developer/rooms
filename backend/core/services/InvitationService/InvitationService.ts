@@ -5,6 +5,7 @@ import { UserRepository } from "../../repositories/UserRepository/UserRepository
 import { UserToRoomParticipationRepository } from "../../repositories/UserToRoomParticipationRepository/UserToRoomParticipationRepository";
 import pubsub from "../../../infrastructure/pubsub";
 import { RoomRepository } from "../../repositories/RoomRepository/RoomRepository";
+import { ScheduledMessagesCountRepository } from "../../repositories/ScheduledMessagesCountRepository/ScheduledMessagesCountRepository";
 
 @injectable()
 class InvitationService {
@@ -13,6 +14,7 @@ class InvitationService {
     @inject(TYPES.UserRepository) private userRepository: UserRepository,
     @inject(TYPES.UserToRoomParticipationRepository) private userToRoomParticipationRepository: UserToRoomParticipationRepository,
     @inject(TYPES.RoomRepository) private roomRepository: RoomRepository,
+    @inject(TYPES.ScheduledMessagesCountRepository) private scheduledMessagesCountRepository: ScheduledMessagesCountRepository,
   ) {}
 
   async fetchPendingInvitationsToRoom(roomId: number) {
@@ -55,6 +57,12 @@ class InvitationService {
       pendingInvitationsCount: room.pendingInvitationsCount - 1,
     });
 
+    await this.scheduledMessagesCountRepository.addOne({
+      userId,
+      roomId,
+      count: 0,
+    });
+
     const updatedRoom = await this.roomRepository.getOneById(roomId);
 
     pubsub.publish("REPLIED_TO_MY_INVITATION", {
@@ -72,6 +80,8 @@ class InvitationService {
     pubsub.publish("ROOM_PENDING_INVITATIONS_COUNT_CHANGE", {
       roomPendingInvitationsCountChange: updatedRoom,
     });
+
+    return invitation;
   }
 
   async rejectInvitation(userId: number, roomId: number) {
@@ -101,6 +111,8 @@ class InvitationService {
     pubsub.publish("ROOM_PENDING_INVITATIONS_COUNT_CHANGE", {
       roomPendingInvitationsCountChange: updatedRoom,
     });
+
+    return invitation;
   }
 }
 

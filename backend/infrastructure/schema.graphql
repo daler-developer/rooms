@@ -24,20 +24,20 @@ input EditMyEmailInput {
     newEmail: String!
 }
 
-input EditMyPasswordInput {
+input ResetPasswordInput {
     oldPassword: String!
     newPassword: String!
     newPasswordRepeat: String!
 }
 
-input UploadProfilePictureInput {
-    profilePictureUrl: String!
+input EditProfilePictureInput {
+    profilePictureUrl: String
 }
 
 input CreateRoomInput {
     name: String!
     usersInvitedIds: [Int!]!
-    thumbnailUrl: String!
+    thumbnailUrl: String
 }
 
 input GetUserInvitationsInput {
@@ -126,9 +126,8 @@ type MeIsBlockedStatusResult {
     isBlocked: Boolean!
 }
 
-type MeIsInvitedToRoomResult {
+type NewInvitationSub {
     invitation: Invitation!
-    room: Room!
 }
 
 type ReplyToInvitation {
@@ -243,6 +242,14 @@ type StartSessionResult {
     sessionToken: String!
 }
 
+input EditFirstNameInput {
+    newFirstName: String!
+}
+
+input EditLastNameInput {
+    newLastName: String!
+}
+
 type Query {
     me: User!
     users: [User!]!
@@ -258,13 +265,14 @@ type Mutation {
     login(input: LoginInput!): LoginResult!
     blockUser(input: BlockUserInput!): User!
     unblockUser(input: UnblockUserInput!): User!
-    editMyEmail(input: EditMyEmailInput!): User!
-    editMyPassword(input: EditMyPasswordInput!): User!
-    uploadProfilePicture(input: UploadProfilePictureInput!): User!
-    removeMyAvatar: User!
+    editEmail(input: EditMyEmailInput!): User!
+    editFirstName(input: EditFirstNameInput!): User!
+    editLastName(input: EditLastNameInput!): User!
+    resetPassword(input: ResetPasswordInput!): User!
+    editProfilePicture(input: EditProfilePictureInput!): User!
     createRoom(input: CreateRoomInput!): Room!
-    acceptInvitation(input: AcceptInvitationInput!): Boolean!
-    rejectInvitation(input: RejectInvitationInput!): Boolean!
+    acceptInvitation(input: AcceptInvitationInput!): Invitation!
+    rejectInvitation(input: RejectInvitationInput!): Invitation!
     leaveRoom(input: LeaveRoomInput!): Boolean!
     sendMessage(input: SendMessageInput!): Message!
     scheduleMessage(input: ScheduleMessage!): Message!
@@ -274,15 +282,13 @@ type Mutation {
     notifyMeOnlineStatusChange(status: String!): User!
     excludeUserFromRoom(roomId: Int!, userId: Int!): Room!
     deleteMessages(roomId: Int!, messageIds: [Int!]!): Boolean!
-    userUpdateFirstName(newFirstName: String!): User!
-    userUpdateLastName(newLastName: String!): User!
     sendScheduledMessagesNow(messageIds: [Int!]!): Boolean!
     test(input: TestInput!): TestResult!
 }
 
 type Subscription {
     meIsBlockedStatus: MeIsBlockedStatusResult!
-    meIsInvitedToRoom: MeIsInvitedToRoomResult!
+    newInvitation: Invitation!
     meIsExcludedFromRoom: Room!
     repliedToMyInvitation: ReplyToInvitation!
     userOnlineStatusChange(input: UserOnlineStatusChangeSubscriptionInput!): UserOnlineStatusChangeSubscriptionResult!

@@ -14,16 +14,17 @@ const validationSchema = yup.object({
 
 type Args = InferType<typeof validationSchema>;
 
+const sleep = () => new Promise((res) => setTimeout(res, 1000));
+
 const resolver = async (_, { input }: Args, { userService, userId }: CustomContext) => {
+  await sleep();
   const me = await userService.fetchUserById(userId);
 
   if (me.password !== input.oldPassword) {
     throw new IncorrectPasswordGraphQLError();
   }
 
-  const updatedUser = await userService.editUserPassword(userId, input.newPassword);
-
-  return updatedUser;
+  return await userService.resetPassword({ userId, newPassword: input.newPassword });
 };
 
-export default composeResolvers(authRequired, checkBlockedStatus, withValidation(validationSchema))(resolver);
+export default composeResolvers(authRequired, withValidation(validationSchema))(resolver);

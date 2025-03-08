@@ -1,75 +1,20 @@
 import { Avatar, Button } from "@/shared/ui";
 import { InvitationsListQuery } from "@/__generated__/graphql.ts";
-import { useMutation } from "@apollo/client";
-import { ACCEPT_INVITATION, GET_MY_INVITATIONS, REJECT_INVITATION } from "../gql/tags.ts";
-import emitter from "../../../../global/event-emitter/emitter.ts";
+import useAcceptInvitationMutation from "../gql/useAcceptInvitationMutation.ts";
+import useRejectInvitationMutation from "../gql/useRejectInvitationMutation.ts";
 
 type Props = {
-  invitation: ItemType<InvitationsListQuery["me"]["invitations"]>;
+  invitation: Flatten<InvitationsListQuery["me"]["invitations"]>;
 };
 
 const InvitationsListItem = ({ invitation }: Props) => {
-  const [acceptInvitation, { loading: isAcceptingInvitation }] = useMutation(ACCEPT_INVITATION, {
-    update(cache) {
-      const oldData = cache.readQuery({
-        query: GET_MY_INVITATIONS,
-      })!;
+  const mutations = {
+    acceptInvitation: useAcceptInvitationMutation(),
+    rejectInvitation: useRejectInvitationMutation(),
+  };
 
-      cache.modify({
-        id: cache.identify(oldData.me),
-        fields: {
-          invitationsCount(prev: number | undefined) {
-            if (prev) {
-              return prev - 1;
-            }
-
-            return prev;
-          },
-          invitations(prevInvitations, { readField }) {
-            return prevInvitations.filter((_invitation) => {
-              const userId = readField("userId", _invitation);
-              const roomId = readField("roomId", _invitation);
-
-              return !(userId === invitation.userId && roomId === invitation.roomId);
-            });
-          },
-        },
-      });
-    },
-  });
-
-  const [rejectInvitation, { loading: isRejectingInvitation }] = useMutation(REJECT_INVITATION, {
-    update(cache) {
-      const oldData = cache.readQuery({
-        query: GET_MY_INVITATIONS,
-      })!;
-
-      cache.modify({
-        id: cache.identify(oldData.me),
-        fields: {
-          invitationsCount(prev: number | undefined) {
-            if (prev) {
-              return prev - 1;
-            }
-
-            return prev;
-          },
-          invitations(prevInvitations, { readField }) {
-            return prevInvitations.filter((_invitation) => {
-              const userId = readField("userId", _invitation);
-              const roomId = readField("roomId", _invitation);
-
-              return !(userId === invitation.userId && roomId === invitation.roomId);
-            });
-          },
-        },
-      });
-    },
-  });
-
-  const handleAcceptInvitation = () => {
-    emitter.emit("INVITATION_ACCEPTED");
-    acceptInvitation({
+  const handleAcceptInvitation = async () => {
+    await mutations.acceptInvitation.mutate({
       variables: {
         input: {
           roomId: invitation.roomId,
@@ -78,9 +23,8 @@ const InvitationsListItem = ({ invitation }: Props) => {
     });
   };
 
-  const handleRejetInviation = () => {
-    emitter.emit("INVITATION_REJECTED");
-    rejectInvitation({
+  const handleRejetInviation = async () => {
+    await mutations.rejectInvitation.mutate({
       variables: {
         input: {
           roomId: invitation.roomId,
@@ -100,11 +44,11 @@ const InvitationsListItem = ({ invitation }: Props) => {
       </div>
 
       <div className="flex items-center gap-2">
-        <Button type="button" color="default" isLoading={isAcceptingInvitation} onClick={handleAcceptInvitation}>
+        <Button type="button" color="default" isLoading={mutations.acceptInvitation.loading} onClick={handleAcceptInvitation}>
           Accept
         </Button>
 
-        <Button type="button" color="red" isLoading={isRejectingInvitation} onClick={handleRejetInviation}>
+        <Button type="button" color="red" isLoading={mutations.rejectInvitation.loading} onClick={handleRejetInviation}>
           Reject
         </Button>
       </div>

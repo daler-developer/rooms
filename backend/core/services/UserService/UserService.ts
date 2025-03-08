@@ -27,13 +27,13 @@ class UserService {
     });
   }
 
-  async userEditFirstName({ userId, newFirstName }: { userId: number; newFirstName: string }) {
+  async editFirstName({ userId, newFirstName }: { userId: number; newFirstName: string }) {
     return await this.userRepository.updateOneById(userId, {
       firstName: newFirstName,
     });
   }
 
-  async userEditLastName({ userId, newLastName }: { userId: number; newLastName: string }) {
+  async editLastName({ userId, newLastName }: { userId: number; newLastName: string }) {
     return await this.userRepository.updateOneById(userId, {
       lastName: newLastName,
     });
@@ -65,7 +65,7 @@ class UserService {
     return await this.getUserById(userId);
   }
 
-  async editUserPassword(userId: number, newPassword: string) {
+  async resetPassword({ userId, newPassword }: { userId: number; newPassword: string }) {
     await this.userRepository.updatePassword(userId, newPassword);
 
     return await this.getUserById(userId);
@@ -159,24 +159,8 @@ class UserService {
     }
   }
 
-  async updateUserProfilePicture(userId: number, newProfilePictureUrl: string) {
+  async editProfilePicture({ userId, newProfilePictureUrl }: { userId: number; newProfilePictureUrl: string | null }) {
     await this.userRepository.updateOneById(userId, { profilePictureUrl: newProfilePictureUrl });
-
-    return await this.getUserById(userId);
-  }
-
-  async userUpdateFirstName(userId: number, newFirstName: string) {
-    await this.userRepository.updateOneById(userId, {
-      firstName: newFirstName,
-    });
-
-    return await this.getUserById(userId);
-  }
-
-  async userUpdateLastName(userId: number, newLastName: string) {
-    await this.userRepository.updateOneById(userId, {
-      lastName: newLastName,
-    });
 
     return await this.getUserById(userId);
   }

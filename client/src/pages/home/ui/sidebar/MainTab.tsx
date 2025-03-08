@@ -1,6 +1,5 @@
 import { ProfileCard } from "@/modules/profile/profile-card";
 import { MyRooms } from "@/widgets/my-rooms";
-import { CreateRoomButton } from "@/features/create-room";
 import BaseTab from "./BaseTab";
 import { Dropdown, IconButton } from "@/shared/ui";
 import { HiMiniEllipsisVertical } from "react-icons/hi2";

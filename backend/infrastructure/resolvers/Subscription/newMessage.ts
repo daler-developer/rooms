@@ -8,6 +8,7 @@ export default {
   subscribe: withFilter(
     () => pubsub.asyncIterator(["NEW_MESSAGE"]),
     async (payload, variables, ctx: CustomContext) => {
+      console.log("new message");
       const participants = await ctx.userService.fetchRoomParticipants(payload.newMessage.message.roomId);
 
       const isParticipant = Boolean(participants.find((p) => p.id === ctx.userId));

@@ -1,5 +1,8 @@
-import { NetworkStatus, useMutation, useQuery } from "@apollo/client";
-import { GET_ME, REMOVE_AVATAR, UPLOAD_PROFILE_PICTURE, EDIT_FIRST_NAME, EDIT_LAST_NAME } from "./gql/tags.ts";
+import { NetworkStatus } from "@apollo/client";
+import useEditFirstNameMutation from "./gql/useEditFirstNameMutation.ts";
+import useEditLastNameMutation from "./gql/useEditLastNameMutation.ts";
+import useEditProfilePictureMutation from "./gql/useEditProfilePictureMutation.ts";
+import useGetMeQuery from "./gql/useGetMeQuery.ts";
 import EditMyProfilePicture from "./edit-profile-picture/EditMyProfilePicture.tsx";
 import { Button } from "@/shared/ui";
 import { useForm, FormProvider } from "@/shared/lib/form";
@@ -7,9 +10,10 @@ import * as yup from "yup";
 import { useEffect, useState } from "react";
 import EditFirstName from "./edit-first-name/EditFirstName.tsx";
 import EditLastName from "./edit-last-name/EditLastName.tsx";
-import { supabaseClient } from "@/shared/lib/superbase";
-import { v4 as uuidv4 } from "uuid";
-import EditMyPasswordForm from "./reset-password/ui/EditMyPasswordForm.tsx";
+import ResetPasswordForm from "./reset-password/ResetPasswordForm.tsx";
+import { ApolloErrorDisplay } from "@/shared/lib/graphql";
+import { SupabaseErrorDisplay } from "@/global/superbase";
+import { profilePictureRepository } from "@/global/superbase/repository";
 
 async function getFileFromUrl(url, filename) {
   try {
@@ -43,13 +47,13 @@ const validationSchema = yup.object({});
 
 const EditProfileForm = ({ profilePictureFile }: { profilePictureFile: File | null }) => {
   const queries = {
-    me: useQuery(GET_ME),
+    me: useGetMeQuery(),
   };
-
-  const [uploadProfilePictureMutate] = useMutation(UPLOAD_PROFILE_PICTURE);
-  const [removeMyAvatar] = useMutation(REMOVE_AVATAR);
-  const [editFirstName] = useMutation(EDIT_FIRST_NAME);
-  const [editLastName] = useMutation(EDIT_LAST_NAME);
+  const mutations = {
+    editProfilePicture: useEditProfilePictureMutation(),
+    editFirstName: useEditFirstNameMutation(),
+    editLastName: useEditLastNameMutation(),
+  };
 
   const form = useForm({
     resetAfterSubmit: false,
@@ -61,40 +65,46 @@ const EditProfileForm = ({ profilePictureFile }: { profilePictureFile: File | nu
     validationSchema,
     async onSubmit(values) {
       if (form.isEdited("firstName")) {
-        await editFirstName({
+        await mutations.editFirstName.mutate({
           variables: {
-            firstName: values.firstName,
+            input: {
+              newFirstName: values.firstName,
+            },
           },
         });
       }
 
       if (form.isEdited("lastName")) {
-        await editLastName({
+        await mutations.editLastName.mutate({
           variables: {
-            lastName: values.lastName,
+            input: {
+              newLastName: values.lastName,
+            },
           },
         });
       }
 
       if (form.isEdited("profilePicture")) {
         if (values.profilePicture) {
-          const fileName = uuidv4();
+          const profilePictureUrl = await profilePictureRepository.addOne({
+            file: values.profilePicture,
+          });
 
-          const { data } = await supabaseClient.storage.from("profile_images").upload(fileName, values.profilePicture);
-
-          const { publicUrl } = supabaseClient.storage.from("profile_images").getPublicUrl(fileName).data;
-
-          if (data) {
-            await uploadProfilePictureMutate({
-              variables: {
-                input: {
-                  profilePictureUrl: publicUrl,
-                },
+          await mutations.editProfilePicture.mutate({
+            variables: {
+              input: {
+                profilePictureUrl,
               },
-            });
-          }
+            },
+          });
         } else {
-          await removeMyAvatar();
+          await mutations.editProfilePicture.mutate({
+            variables: {
+              input: {
+                profilePictureUrl: null,
+              },
+            },
+          });
         }
       }
 
@@ -115,8 +125,13 @@ const EditProfileForm = ({ profilePictureFile }: { profilePictureFile: File | nu
           <EditLastName />
         </div>
         <div className="mt-6">
-          <EditMyPasswordForm />
+          <ResetPasswordForm />
         </div>
+
+        <ApolloErrorDisplay className="mt-2" error={mutations.editProfilePicture.error} />
+        <ApolloErrorDisplay className="mt-2" error={mutations.editFirstName.error} />
+        <ApolloErrorDisplay className="mt-2" error={mutations.editLastName.error} />
+        <SupabaseErrorDisplay className="mt-2" />
 
         {form.isEdited() && (
           <div className="absolute bottom-0 left-0 right-0 grid grid-cols-2 gap-1">
@@ -143,7 +158,7 @@ const EditProfileFormWrapper = () => {
   const [profilePictureFile, setProfilePictureFile] = useState<File | null>(null);
 
   const queries = {
-    me: useQuery(GET_ME),
+    me: useGetMeQuery(),
   };
 
   useEffect(() => {

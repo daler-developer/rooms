@@ -81,9 +81,9 @@ const MyRooms = () => {
             />
           </div>
 
-          <div className="flex-grow shrink-0 overflow-scroll">
+          <div className="flex-grow shrink-0 overflow-hidden">
             {filteredRooms.length > 0 ? (
-              <Scroll height="full" showScrollToBottomButton={false}>
+              <Scroll height={"full"} showScrollToBottomButton={false}>
                 <div className="mt-2 flex flex-col">
                   {filteredRooms.map((room) => (
                     <RoomCard key={room.id} room={room} />

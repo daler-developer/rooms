@@ -1,12 +1,11 @@
 import { useId, useState } from "react";
 import * as yup from "yup";
-import { IconButton, Modal, Button, Input } from "@/shared/ui";
-import { useMutation, useQuery } from "@apollo/client";
+import { IconButton, Modal, Button, Input, type ModalActions, useToast } from "@/shared/ui";
 import { HiOutlinePencil } from "react-icons/hi2";
-import { RESET_PASSWORD } from "../gql";
-import { GET_ME } from "../../gql/tags.ts";
+import useGetMeQuery from "../gql/useGetMeQuery.ts";
+import useResetPasswordMutation from "../gql/useResetPasswordMutation.ts";
 import { useForm } from "@/shared/lib/form";
-import { formatGraphqlErrors } from "@/shared/lib/graphql";
+import { ApolloErrorDisplay } from "@/shared/lib/graphql";
 
 const validationSchema = yup.object({
   oldPassword: yup.string().required().min(3).max(20),
@@ -20,12 +19,17 @@ type Values = {
   newPasswordRepeat: string;
 };
 
-const EditMyPasswordForm = () => {
+const ResetPasswordForm = () => {
   const [showModal, setShowModal] = useState(false);
 
-  const getMeQuery = useQuery(GET_ME);
+  const toast = useToast();
 
-  const [editMyPassword, { loading: isEditingMyPassword }] = useMutation(RESET_PASSWORD);
+  const queries = {
+    me: useGetMeQuery(),
+  };
+  const mutations = {
+    resetPassword: useResetPasswordMutation(),
+  };
 
   const form = useForm<Values>({
     initialValues: {
@@ -35,12 +39,10 @@ const EditMyPasswordForm = () => {
     },
     validationSchema,
     async onSubmit(values) {
-      await editMyPassword({
+      await mutations.resetPassword.mutate({
         variables: { input: { ...values } },
-        onError(error) {
-          const errors = formatGraphqlErrors(error.graphQLErrors);
-        },
         onCompleted() {
+          toast.success("Password reset successfully");
           setShowModal(false);
         },
       });
@@ -49,24 +51,16 @@ const EditMyPasswordForm = () => {
 
   const formId = useId();
 
-  if (getMeQuery.loading) {
-    return null;
-  }
-
-  if (getMeQuery.error) {
-    return "error";
-  }
-
   const handleCancel = () => {
     setShowModal(false);
     form.reset();
   };
 
-  const modalActions = [
-    <Button type="button" color="light" onClick={handleCancel}>
+  const modalActions: ModalActions = [
+    <Button type="button" color="light" disabled={mutations.resetPassword.loading} onClick={handleCancel}>
       Cancel
     </Button>,
-    <Button type="submit" form={formId} isLoading={isEditingMyPassword}>
+    <Button type="submit" form={formId} isLoading={mutations.resetPassword.loading}>
       Edit
     </Button>,
   ];
@@ -75,7 +69,7 @@ const EditMyPasswordForm = () => {
     <>
       <div className="mt-6 flex items-end gap-2">
         <div className="flex-grow">
-          <Input label="Password" value={new Array(getMeQuery.data!.me.passwordLength).fill("*").join("")} disabled />
+          <Input label="Password" value={new Array(queries.me.data!.me.passwordLength).fill("*").join("")} disabled />
         </div>
         <IconButton type="button" color="light" Icon={HiOutlinePencil} onClick={() => setShowModal(true)} />
       </div>
@@ -98,9 +92,11 @@ const EditMyPasswordForm = () => {
             </div>
           ))}
         </form>
+
+        <ApolloErrorDisplay error={mutations.resetPassword.error} />
       </Modal>
     </>
   );
 };
 
-export default EditMyPasswordForm;
+export default ResetPasswordForm;

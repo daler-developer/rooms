@@ -1,44 +1,26 @@
-import { useQuery, useSubscription } from "@apollo/client";
+import { NetworkStatus } from "@apollo/client";
 import { InvitationsListQuery } from "@/__generated__/graphql.ts";
-import { GET_MY_INVITATIONS, SUBSCRIBE_TO_ME_INVITED_TO_ROOM } from "../gql/tags.ts";
 import InvitationsListItem from "./InvitationsListItem.tsx";
+import useNewInvitationSub from "../gql/useNewInvitationSub.ts";
+import useGetInvitationsListQuery from "../gql/useGetInvitationsListQuery.ts";
 import { Empty } from "@/shared/ui";
 
 const InvitationsList = () => {
-  const myInvitationsQuery = useQuery(GET_MY_INVITATIONS);
+  const queries = {
+    invitationsList: useGetInvitationsListQuery(),
+  };
 
-  useSubscription(SUBSCRIBE_TO_ME_INVITED_TO_ROOM, {
-    onData({ client, data }) {
-      const oldData = client.cache.readQuery({
-        query: GET_MY_INVITATIONS,
-      })!;
+  useNewInvitationSub();
 
-      client.cache.writeQuery({
-        query: GET_MY_INVITATIONS,
-        data: {
-          me: {
-            id: oldData.me.id,
-            __typename: oldData.me.__typename,
-            invitations: [...oldData.me.invitations, data.data!.meIsInvitedToRoom.invitation],
-          },
-        },
-      });
-    },
-  });
-
-  if (myInvitationsQuery.loading) {
+  if (queries.invitationsList.networkStatus === NetworkStatus.loading) {
     return "loading";
   }
 
-  if (myInvitationsQuery.error) {
+  if (queries.invitationsList.networkStatus === NetworkStatus.error) {
     return "error";
   }
 
-  const getKey = (invitation: ItemType<InvitationsListQuery["me"]["invitations"]>) => {
-    return `${invitation.roomId}-${invitation.userId}`;
-  };
-
-  if (myInvitationsQuery.data!.me.invitations.length === 0) {
+  if (queries.invitationsList.networkStatus === NetworkStatus.ready && queries.invitationsList.data!.me.invitations.length === 0) {
     return (
       <div>
         <Empty title="No invitations" />
@@ -46,13 +28,19 @@ const InvitationsList = () => {
     );
   }
 
-  return (
-    <div className="flex flex-col gap-y-2">
-      {myInvitationsQuery.data!.me.invitations.map((invitation) => (
-        <InvitationsListItem key={getKey(invitation)} invitation={invitation} />
-      ))}
-    </div>
-  );
+  if (queries.invitationsList.networkStatus === NetworkStatus.ready && queries.invitationsList.data!.me.invitations.length > 0) {
+    const getKey = (invitation: ItemType<InvitationsListQuery["me"]["invitations"]>) => {
+      return `${invitation.roomId}-${invitation.userId}`;
+    };
+
+    return (
+      <div className="flex flex-col gap-y-2">
+        {queries.invitationsList.data!.me.invitations.map((invitation) => (
+          <InvitationsListItem key={getKey(invitation)} invitation={invitation} />
+        ))}
+      </div>
+    );
+  }
 };
 
 export default InvitationsList;

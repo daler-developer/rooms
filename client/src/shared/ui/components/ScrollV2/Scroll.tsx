@@ -42,7 +42,7 @@ const Scroll = forwardRef<ScrollHandle, Props>(
       onScrollToLeft,
       onReachTopThreshold,
       topThreshold = 100,
-      showScrollToBottomButton = true,
+      showScrollToBottomButton = false,
 
       onReachBottomThreshold,
       bottomThreshold = 100,
@@ -210,8 +210,12 @@ const Scroll = forwardRef<ScrollHandle, Props>(
             position: "relative",
           },
           scrollableEl: {
-            height: "100%",
-            overflow: "scroll",
+            position: "absolute",
+            top: "0px",
+            left: "0px",
+            bottom: "0px",
+            right: "0px",
+            overflow: "auto",
           },
         };
       }
@@ -241,6 +245,7 @@ const Scroll = forwardRef<ScrollHandle, Props>(
             left: "0px",
             bottom: "0px",
             right: "0px",
+            overflow: "auto",
           },
         };
       }

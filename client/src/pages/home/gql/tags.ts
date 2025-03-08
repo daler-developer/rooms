@@ -1,7 +1,7 @@
 import { gql } from "@/__generated__";
 
-export const SUBSCRIBE_TO_ME_INVITED_TO_ROOM = gql(`
-  subscription MeIsInvitedToRoom {
+export const NEW_INVITATION_SUB = gql(`
+  subscription HomeNewInvitation {
     newInvitation {
       userId
       roomId

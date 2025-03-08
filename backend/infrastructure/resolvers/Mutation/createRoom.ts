@@ -18,7 +18,7 @@ type Args = InferType<typeof validationSchema>;
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 const resolver = async (_, { input }: Args, { roomService, userId }: CustomContext) => {
-  await sleep(3000);
+  await sleep(1000);
 
   const room = await roomService.createRoom({
     name: input.name,

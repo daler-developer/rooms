@@ -4,13 +4,15 @@ import { CustomContext } from "../../types";
 import { composeResolvers, authRequired, withValidation, handleErrors } from "../../lib/graphql/resolver-wrappers";
 
 const validationSchema = yup.object({
-  newLastName: yup.string().min(3).max(20).required(),
+  input: yup.object({
+    newFirstName: yup.string().min(3).max(20).required(),
+  }),
 });
 
 type Args = InferType<typeof validationSchema>;
 
 const resolver = async (_, args: Args, { userId, userService }: CustomContext) => {
-  return await userService.userEditFirstName({ userId, newFirstName: args.newLastName });
+  return await userService.editFirstName({ userId, newFirstName: args.input.newFirstName });
 };
 
 export default composeResolvers(handleErrors, authRequired, withValidation(validationSchema))(resolver);

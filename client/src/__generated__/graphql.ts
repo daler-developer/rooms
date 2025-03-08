@@ -27,18 +27,24 @@ export type BlockUserInput = {
 
 export type CreateRoomInput = {
   name: Scalars['String']['input'];
-  thumbnailUrl: Scalars['String']['input'];
+  thumbnailUrl?: InputMaybe<Scalars['String']['input']>;
   usersInvitedIds: Array<Scalars['Int']['input']>;
+};
+
+export type EditFirstNameInput = {
+  newFirstName: Scalars['String']['input'];
+};
+
+export type EditLastNameInput = {
+  newLastName: Scalars['String']['input'];
 };
 
 export type EditMyEmailInput = {
   newEmail: Scalars['String']['input'];
 };
 
-export type EditMyPasswordInput = {
-  newPassword: Scalars['String']['input'];
-  newPasswordRepeat: Scalars['String']['input'];
-  oldPassword: Scalars['String']['input'];
+export type EditProfilePictureInput = {
+  profilePictureUrl?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type GetUserInvitationsInput = {
@@ -78,12 +84,6 @@ export type MeIsBlockedStatusResult = {
   userId: Scalars['Int']['output'];
 };
 
-export type MeIsInvitedToRoomResult = {
-  __typename?: 'MeIsInvitedToRoomResult';
-  invitation: Invitation;
-  room: Room;
-};
-
 export type Message = {
   __typename?: 'Message';
   id: Scalars['Int']['output'];
@@ -120,12 +120,14 @@ export type MessagesDeletedEvent = {
 
 export type Mutation = {
   __typename?: 'Mutation';
-  acceptInvitation: Scalars['Boolean']['output'];
+  acceptInvitation: Invitation;
   blockUser: User;
   createRoom: Room;
   deleteMessages: Scalars['Boolean']['output'];
-  editMyEmail: User;
-  editMyPassword: User;
+  editEmail: User;
+  editFirstName: User;
+  editLastName: User;
+  editProfilePicture: User;
   excludeUserFromRoom: Room;
   inviteUsersToRoom: Scalars['Boolean']['output'];
   leaveRoom: Scalars['Boolean']['output'];
@@ -134,17 +136,14 @@ export type Mutation = {
   notifyMeOnlineStatusChange: User;
   notifyMeTypingStatusChange: Scalars['Boolean']['output'];
   register: RegisterResult;
-  rejectInvitation: Scalars['Boolean']['output'];
-  removeMyAvatar: User;
+  rejectInvitation: Invitation;
+  resetPassword: User;
   scheduleMessage: Message;
   sendMessage: Message;
   sendScheduledMessagesNow: Scalars['Boolean']['output'];
   startSession: StartSessionResult;
   test: TestResult;
   unblockUser: User;
-  uploadProfilePicture: User;
-  userUpdateFirstName: User;
-  userUpdateLastName: User;
 };
 
 
@@ -169,13 +168,23 @@ export type MutationDeleteMessagesArgs = {
 };
 
 
-export type MutationEditMyEmailArgs = {
+export type MutationEditEmailArgs = {
   input: EditMyEmailInput;
 };
 
 
-export type MutationEditMyPasswordArgs = {
-  input: EditMyPasswordInput;
+export type MutationEditFirstNameArgs = {
+  input: EditFirstNameInput;
+};
+
+
+export type MutationEditLastNameArgs = {
+  input: EditLastNameInput;
+};
+
+
+export type MutationEditProfilePictureArgs = {
+  input: EditProfilePictureInput;
 };
 
 
@@ -227,6 +236,11 @@ export type MutationRejectInvitationArgs = {
 };
 
 
+export type MutationResetPasswordArgs = {
+  input: ResetPasswordInput;
+};
+
+
 export type MutationScheduleMessageArgs = {
   input: ScheduleMessage;
 };
@@ -251,19 +265,9 @@ export type MutationUnblockUserArgs = {
   input: UnblockUserInput;
 };
 
-
-export type MutationUploadProfilePictureArgs = {
-  input: UploadProfilePictureInput;
-};
-
-
-export type MutationUserUpdateFirstNameArgs = {
-  newFirstName: Scalars['String']['input'];
-};
-
-
-export type MutationUserUpdateLastNameArgs = {
-  newLastName: Scalars['String']['input'];
+export type NewInvitationSub = {
+  __typename?: 'NewInvitationSub';
+  invitation: Invitation;
 };
 
 export type NewMessageEvent = {
@@ -334,6 +338,12 @@ export type ReplyToInvitation = {
   __typename?: 'ReplyToInvitation';
   accepted: Scalars['Boolean']['output'];
   invitation: Invitation;
+};
+
+export type ResetPasswordInput = {
+  newPassword: Scalars['String']['input'];
+  newPasswordRepeat: Scalars['String']['input'];
+  oldPassword: Scalars['String']['input'];
 };
 
 export type Room = {
@@ -423,9 +433,9 @@ export type Subscription = {
   __typename?: 'Subscription';
   meIsBlockedStatus: MeIsBlockedStatusResult;
   meIsExcludedFromRoom: Room;
-  meIsInvitedToRoom: MeIsInvitedToRoomResult;
   messageViewed: MessageViewedEvent;
   messagesDeleted: MessagesDeletedEvent;
+  newInvitation: Invitation;
   newMessage: NewMessageEvent;
   repliedToMyInvitation: ReplyToInvitation;
   roomParticipantJoined: User;
@@ -495,10 +505,6 @@ export type UnblockUserInput = {
   userId: Scalars['Int']['input'];
 };
 
-export type UploadProfilePictureInput = {
-  profilePictureUrl: Scalars['String']['input'];
-};
-
 export type User = {
   __typename?: 'User';
   email: Scalars['String']['output'];
@@ -563,44 +569,6 @@ export type BlockUserMutationVariables = Exact<{
 
 export type BlockUserMutation = { __typename?: 'Mutation', blockUser: { __typename?: 'User', id: number, email: string, isBlocked: boolean } };
 
-export type CreateRoomSearchUsersQueryVariables = Exact<{
-  filter: SearchUsersFilterInput;
-}>;
-
-
-export type CreateRoomSearchUsersQuery = { __typename?: 'Query', searchUsers: { __typename?: 'SearchUsersResult', hasMore: boolean, data: Array<{ __typename?: 'User', id: number, email: string, firstName: string, lastName: string, profilePictureUrl?: string | null, isOnline: boolean }> } };
-
-export type CreateRoomMutationVariables = Exact<{
-  input: CreateRoomInput;
-}>;
-
-
-export type CreateRoomMutation = { __typename?: 'Mutation', createRoom: { __typename?: 'Room', id: number, name: string, thumbnailUrl: string, participantsCount: number, unreadMessagesCount: number, lastMessage?: { __typename?: 'Message', id: number, text?: string | null, sender: { __typename?: 'User', id: number, email: string } } | null } };
-
-export type CreateRoomUsersOnlineStatusChangeSubscriptionVariables = Exact<{
-  userIds: Array<Scalars['Int']['input']> | Scalars['Int']['input'];
-}>;
-
-
-export type CreateRoomUsersOnlineStatusChangeSubscription = { __typename?: 'Subscription', usersOnlineStatusChange: { __typename?: 'User', id: number, isOnline: boolean } };
-
-export type EditMyProfilePictureGetMeQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-export type EditMyProfilePictureGetMeQuery = { __typename?: 'Query', me: { __typename?: 'User', id: number, profilePictureUrl?: string | null } };
-
-export type RemoveMyAvatarMutationVariables = Exact<{ [key: string]: never; }>;
-
-
-export type RemoveMyAvatarMutation = { __typename?: 'Mutation', removeMyAvatar: { __typename?: 'User', id: number, profilePictureUrl?: string | null } };
-
-export type UploadProfilePictureInputMutationVariables = Exact<{
-  input: UploadProfilePictureInput;
-}>;
-
-
-export type UploadProfilePictureInputMutation = { __typename?: 'Mutation', uploadProfilePicture: { __typename?: 'User', id: number, profilePictureUrl?: string | null } };
-
 export type LeaveRoomMutationVariables = Exact<{
   input: LeaveRoomInput;
 }>;
@@ -633,7 +601,7 @@ export type InviteUsersToRoomMutation = { __typename?: 'Mutation', inviteUsersTo
 export type MeIsInvitedToRoomSubscriptionVariables = Exact<{ [key: string]: never; }>;
 
 
-export type MeIsInvitedToRoomSubscription = { __typename?: 'Subscription', meIsInvitedToRoom: { __typename?: 'MeIsInvitedToRoomResult', room: { __typename?: 'Room', id: number, name: string } } };
+export type MeIsInvitedToRoomSubscription = { __typename?: 'Subscription', newInvitation: { __typename?: 'Invitation', userId: number, roomId: number } };
 
 export type PrevMeInvitationsCountQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -695,77 +663,98 @@ export type InvitationsButtonGetMeQueryVariables = Exact<{ [key: string]: never;
 
 export type InvitationsButtonGetMeQuery = { __typename?: 'Query', me: { __typename?: 'User', id: number, invitationsCount: number } };
 
-export type InvitationsButtonMeInvitedToRoomSubSubscriptionVariables = Exact<{ [key: string]: never; }>;
+export type InvitationsButtonNewInvitationSubscriptionVariables = Exact<{ [key: string]: never; }>;
 
 
-export type InvitationsButtonMeInvitedToRoomSubSubscription = { __typename?: 'Subscription', meIsInvitedToRoom: { __typename?: 'MeIsInvitedToRoomResult', invitation: { __typename?: 'Invitation', userId: number, roomId: number } } };
+export type InvitationsButtonNewInvitationSubscription = { __typename?: 'Subscription', newInvitation: { __typename?: 'Invitation', userId: number, roomId: number } };
 
 export type InvitationsListQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type InvitationsListQuery = { __typename?: 'Query', me: { __typename?: 'User', id: number, invitations: Array<{ __typename?: 'Invitation', userId: number, roomId: number, createdAt: string, room: { __typename?: 'Room', id: number, name: string, thumbnailUrl: string }, inviter: { __typename?: 'User', id: number, firstName: string, lastName: string } }> } };
 
-export type AcceptInvitationMutationVariables = Exact<{
+export type InvitationsListAcceptInvitationMutationVariables = Exact<{
   input: AcceptInvitationInput;
 }>;
 
 
-export type AcceptInvitationMutation = { __typename?: 'Mutation', acceptInvitation: boolean };
+export type InvitationsListAcceptInvitationMutation = { __typename?: 'Mutation', acceptInvitation: { __typename?: 'Invitation', userId: number, roomId: number } };
 
-export type RejectInvitationMutationVariables = Exact<{
+export type InvitationsListRejectInvitationMutationVariables = Exact<{
   input: RejectInvitationInput;
 }>;
 
 
-export type RejectInvitationMutation = { __typename?: 'Mutation', rejectInvitation: boolean };
+export type InvitationsListRejectInvitationMutation = { __typename?: 'Mutation', rejectInvitation: { __typename?: 'Invitation', userId: number, roomId: number } };
 
-export type MeIsInvitedToRoom2SubscriptionVariables = Exact<{ [key: string]: never; }>;
-
-
-export type MeIsInvitedToRoom2Subscription = { __typename?: 'Subscription', meIsInvitedToRoom: { __typename?: 'MeIsInvitedToRoomResult', invitation: { __typename?: 'Invitation', userId: number, roomId: number, createdAt: string, room: { __typename?: 'Room', id: number, name: string, thumbnailUrl: string }, inviter: { __typename?: 'User', id: number, firstName: string, lastName: string } } } };
-
-export type EditProfileGetMeQueryVariables = Exact<{ [key: string]: never; }>;
+export type InvitationsNewInvitationSubSubscriptionVariables = Exact<{ [key: string]: never; }>;
 
 
-export type EditProfileGetMeQuery = { __typename?: 'Query', me: { __typename?: 'User', id: number, firstName: string, lastName: string, profilePictureUrl?: string | null, passwordLength: number } };
+export type InvitationsNewInvitationSubSubscription = { __typename?: 'Subscription', newInvitation: { __typename?: 'Invitation', userId: number, roomId: number, createdAt: string, room: { __typename?: 'Room', id: number, name: string, thumbnailUrl: string }, inviter: { __typename?: 'User', id: number, firstName: string, lastName: string } } };
 
-export type EditProfileEditFirstNameMutationVariables = Exact<{
-  firstName: Scalars['String']['input'];
+export type ProfileEditGetMeQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type ProfileEditGetMeQuery = { __typename?: 'Query', me: { __typename?: 'User', id: number, firstName: string, lastName: string, profilePictureUrl?: string | null, passwordLength: number } };
+
+export type ProfileEditFirstNameMutationVariables = Exact<{
+  input: EditFirstNameInput;
 }>;
 
 
-export type EditProfileEditFirstNameMutation = { __typename?: 'Mutation', userUpdateFirstName: { __typename?: 'User', id: number, firstName: string } };
+export type ProfileEditFirstNameMutation = { __typename?: 'Mutation', editFirstName: { __typename?: 'User', id: number, firstName: string } };
 
-export type EditProfileEditLastNameMutationVariables = Exact<{
-  lastName: Scalars['String']['input'];
+export type ProfileEditLastNameMutationVariables = Exact<{
+  input: EditLastNameInput;
 }>;
 
 
-export type EditProfileEditLastNameMutation = { __typename?: 'Mutation', userUpdateLastName: { __typename?: 'User', id: number, lastName: string } };
+export type ProfileEditLastNameMutation = { __typename?: 'Mutation', editLastName: { __typename?: 'User', id: number, lastName: string } };
 
-export type EditProfileRemoveMyAvatarMutationVariables = Exact<{ [key: string]: never; }>;
-
-
-export type EditProfileRemoveMyAvatarMutation = { __typename?: 'Mutation', removeMyAvatar: { __typename?: 'User', id: number, profilePictureUrl?: string | null } };
-
-export type EditProfileUploadProfilePictureMutationVariables = Exact<{
-  input: UploadProfilePictureInput;
+export type ProfileEditProfilePictureMutationVariables = Exact<{
+  input: EditProfilePictureInput;
 }>;
 
 
-export type EditProfileUploadProfilePictureMutation = { __typename?: 'Mutation', uploadProfilePicture: { __typename?: 'User', id: number, profilePictureUrl?: string | null } };
+export type ProfileEditProfilePictureMutation = { __typename?: 'Mutation', editProfilePicture: { __typename?: 'User', id: number, profilePictureUrl?: string | null } };
 
-export type AuthResetPasswordMutationVariables = Exact<{
-  input: EditMyPasswordInput;
+export type ProfileEditResetPasswordMutationVariables = Exact<{
+  input: ResetPasswordInput;
 }>;
 
 
-export type AuthResetPasswordMutation = { __typename?: 'Mutation', editMyPassword: { __typename?: 'User', id: number, passwordLength: number } };
+export type ProfileEditResetPasswordMutation = { __typename?: 'Mutation', resetPassword: { __typename?: 'User', id: number, passwordLength: number } };
 
 export type ProfileCardGetMeQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type ProfileCardGetMeQuery = { __typename?: 'Query', me: { __typename?: 'User', id: number, firstName: string, lastName: string, profilePictureUrl?: string | null } };
+
+export type CreateRoomSearchUsersQueryVariables = Exact<{
+  filter: SearchUsersFilterInput;
+}>;
+
+
+export type CreateRoomSearchUsersQuery = { __typename?: 'Query', searchUsers: { __typename?: 'SearchUsersResult', hasMore: boolean, data: Array<{ __typename?: 'User', id: number, email: string, firstName: string, lastName: string, profilePictureUrl?: string | null, isOnline: boolean }> } };
+
+export type CreateRoomMutationVariables = Exact<{
+  input: CreateRoomInput;
+}>;
+
+
+export type CreateRoomMutation = { __typename?: 'Mutation', createRoom: { __typename?: 'Room', id: number, name: string, thumbnailUrl: string, participantsCount: number, unreadMessagesCount: number, lastMessage?: { __typename?: 'Message', id: number, text?: string | null, sender: { __typename?: 'User', id: number, email: string } } | null } };
+
+export type CreateRoomUsersOnlineStatusChangeSubscriptionVariables = Exact<{
+  userIds: Array<Scalars['Int']['input']> | Scalars['Int']['input'];
+}>;
+
+
+export type CreateRoomUsersOnlineStatusChangeSubscription = { __typename?: 'Subscription', usersOnlineStatusChange: { __typename?: 'User', id: number, isOnline: boolean } };
+
+export type HomeNewInvitationSubscriptionVariables = Exact<{ [key: string]: never; }>;
+
+
+export type HomeNewInvitationSubscription = { __typename?: 'Subscription', newInvitation: { __typename?: 'Invitation', userId: number, roomId: number } };
 
 export type GetMyRoomsQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -947,17 +936,11 @@ export const StartSessionDocument = {"kind":"Document","definitions":[{"kind":"O
 export const GetMeIdOnlyDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetMeIdOnly"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"me"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<GetMeIdOnlyQuery, GetMeIdOnlyQueryVariables>;
 export const GetMeTempDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetMeTemp"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"me"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"email"}}]}}]}}]} as unknown as DocumentNode<GetMeTempQuery, GetMeTempQueryVariables>;
 export const BlockUserDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"BlockUser"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"BlockUserInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"blockUser"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"isBlocked"}}]}}]}}]} as unknown as DocumentNode<BlockUserMutation, BlockUserMutationVariables>;
-export const CreateRoomSearchUsersDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"CreateRoomSearchUsers"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"filter"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"SearchUsersFilterInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"searchUsers"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"filter"},"value":{"kind":"Variable","name":{"kind":"Name","value":"filter"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"data"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"firstName"}},{"kind":"Field","name":{"kind":"Name","value":"lastName"}},{"kind":"Field","name":{"kind":"Name","value":"profilePictureUrl"}},{"kind":"Field","name":{"kind":"Name","value":"isOnline"}}]}},{"kind":"Field","name":{"kind":"Name","value":"hasMore"}}]}}]}}]} as unknown as DocumentNode<CreateRoomSearchUsersQuery, CreateRoomSearchUsersQueryVariables>;
-export const CreateRoomDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreateRoom"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CreateRoomInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createRoom"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"thumbnailUrl"}},{"kind":"Field","name":{"kind":"Name","value":"participantsCount"}},{"kind":"Field","name":{"kind":"Name","value":"unreadMessagesCount"}},{"kind":"Field","name":{"kind":"Name","value":"lastMessage"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"text"}},{"kind":"Field","name":{"kind":"Name","value":"sender"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"email"}}]}}]}}]}}]}}]} as unknown as DocumentNode<CreateRoomMutation, CreateRoomMutationVariables>;
-export const CreateRoomUsersOnlineStatusChangeDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"subscription","name":{"kind":"Name","value":"CreateRoomUsersOnlineStatusChange"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"userIds"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"usersOnlineStatusChange"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"userIds"},"value":{"kind":"Variable","name":{"kind":"Name","value":"userIds"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"isOnline"}}]}}]}}]} as unknown as DocumentNode<CreateRoomUsersOnlineStatusChangeSubscription, CreateRoomUsersOnlineStatusChangeSubscriptionVariables>;
-export const EditMyProfilePictureGetMeDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"EditMyProfilePictureGetMe"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"me"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"profilePictureUrl"}}]}}]}}]} as unknown as DocumentNode<EditMyProfilePictureGetMeQuery, EditMyProfilePictureGetMeQueryVariables>;
-export const RemoveMyAvatarDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"RemoveMyAvatar"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"removeMyAvatar"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"profilePictureUrl"}}]}}]}}]} as unknown as DocumentNode<RemoveMyAvatarMutation, RemoveMyAvatarMutationVariables>;
-export const UploadProfilePictureInputDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UploadProfilePictureInput"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UploadProfilePictureInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"uploadProfilePicture"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"profilePictureUrl"}}]}}]}}]} as unknown as DocumentNode<UploadProfilePictureInputMutation, UploadProfilePictureInputMutationVariables>;
 export const LeaveRoomDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"LeaveRoom"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"LeaveRoomInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"leaveRoom"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}]}]}}]} as unknown as DocumentNode<LeaveRoomMutation, LeaveRoomMutationVariables>;
 export const SearchUsersDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"SearchUsers"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"filter"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"SearchUsersFilterInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"searchUsers"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"filter"},"value":{"kind":"Variable","name":{"kind":"Name","value":"filter"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"data"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"profilePictureUrl"}}]}},{"kind":"Field","name":{"kind":"Name","value":"hasMore"}}]}}]}}]} as unknown as DocumentNode<SearchUsersQuery, SearchUsersQueryVariables>;
 export const RoomGetPendingInvitationsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"RoomGetPendingInvitations"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"roomId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"room"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"roomId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"pendingInvitations"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"userId"}},{"kind":"Field","name":{"kind":"Name","value":"roomId"}}]}}]}}]}}]} as unknown as DocumentNode<RoomGetPendingInvitationsQuery, RoomGetPendingInvitationsQueryVariables>;
 export const InviteUsersToRoomDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"InviteUsersToRoom"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"roomId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"invitedUsersIds"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"inviteUsersToRoom"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"roomId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"roomId"}}},{"kind":"Argument","name":{"kind":"Name","value":"invitedUsersIds"},"value":{"kind":"Variable","name":{"kind":"Name","value":"invitedUsersIds"}}}]}]}}]} as unknown as DocumentNode<InviteUsersToRoomMutation, InviteUsersToRoomMutationVariables>;
-export const MeIsInvitedToRoomDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"subscription","name":{"kind":"Name","value":"MeIsInvitedToRoom"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"meIsInvitedToRoom"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"room"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}}]}}]}}]} as unknown as DocumentNode<MeIsInvitedToRoomSubscription, MeIsInvitedToRoomSubscriptionVariables>;
+export const MeIsInvitedToRoomDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"subscription","name":{"kind":"Name","value":"MeIsInvitedToRoom"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"newInvitation"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"userId"}},{"kind":"Field","name":{"kind":"Name","value":"roomId"}}]}}]}}]} as unknown as DocumentNode<MeIsInvitedToRoomSubscription, MeIsInvitedToRoomSubscriptionVariables>;
 export const PrevMeInvitationsCountDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"PrevMeInvitationsCount"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"me"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"invitationsCount"}}]}}]}}]} as unknown as DocumentNode<PrevMeInvitationsCountQuery, PrevMeInvitationsCountQueryVariables>;
 export const UpdateMeInvitationsCountDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"UpdateMeInvitationsCount"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"me"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"invitationsCount"}}]}}]}}]} as unknown as DocumentNode<UpdateMeInvitationsCountQuery, UpdateMeInvitationsCountQueryVariables>;
 export const NewMessageSubscriptionDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"subscription","name":{"kind":"Name","value":"NewMessageSubscription"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"skipFromCurrentSession"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Boolean"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"newMessage"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"skipFromCurrentSession"},"value":{"kind":"Variable","name":{"kind":"Name","value":"skipFromCurrentSession"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"message"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"text"}},{"kind":"Field","name":{"kind":"Name","value":"roomId"}},{"kind":"Field","name":{"kind":"Name","value":"senderId"}}]}}]}}]}}]} as unknown as DocumentNode<NewMessageSubscriptionSubscription, NewMessageSubscriptionSubscriptionVariables>;
@@ -968,18 +951,21 @@ export const LoginDocument = {"kind":"Document","definitions":[{"kind":"Operatio
 export const RegisterDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"Register"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"RegisterInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"register"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"user"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"firstName"}},{"kind":"Field","name":{"kind":"Name","value":"lastName"}}]}},{"kind":"Field","name":{"kind":"Name","value":"token"}}]}}]}}]} as unknown as DocumentNode<RegisterMutation, RegisterMutationVariables>;
 export const CheckEmailAvailabilityDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"CheckEmailAvailability"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"email"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"checkEmailAvailability"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"email"},"value":{"kind":"Variable","name":{"kind":"Name","value":"email"}}}]}]}}]} as unknown as DocumentNode<CheckEmailAvailabilityQuery, CheckEmailAvailabilityQueryVariables>;
 export const InvitationsButtonGetMeDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"InvitationsButtonGetMe"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"me"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"invitationsCount"}}]}}]}}]} as unknown as DocumentNode<InvitationsButtonGetMeQuery, InvitationsButtonGetMeQueryVariables>;
-export const InvitationsButtonMeInvitedToRoomSubDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"subscription","name":{"kind":"Name","value":"InvitationsButtonMeInvitedToRoomSub"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"meIsInvitedToRoom"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"invitation"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"userId"}},{"kind":"Field","name":{"kind":"Name","value":"roomId"}}]}}]}}]}}]} as unknown as DocumentNode<InvitationsButtonMeInvitedToRoomSubSubscription, InvitationsButtonMeInvitedToRoomSubSubscriptionVariables>;
+export const InvitationsButtonNewInvitationDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"subscription","name":{"kind":"Name","value":"InvitationsButtonNewInvitation"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"newInvitation"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"userId"}},{"kind":"Field","name":{"kind":"Name","value":"roomId"}}]}}]}}]} as unknown as DocumentNode<InvitationsButtonNewInvitationSubscription, InvitationsButtonNewInvitationSubscriptionVariables>;
 export const InvitationsListDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"InvitationsList"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"me"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"invitations"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"userId"}},{"kind":"Field","name":{"kind":"Name","value":"roomId"}},{"kind":"Field","name":{"kind":"Name","value":"room"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"thumbnailUrl"}}]}},{"kind":"Field","name":{"kind":"Name","value":"inviter"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"firstName"}},{"kind":"Field","name":{"kind":"Name","value":"lastName"}}]}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}}]}}]}}]}}]} as unknown as DocumentNode<InvitationsListQuery, InvitationsListQueryVariables>;
-export const AcceptInvitationDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"AcceptInvitation"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"AcceptInvitationInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"acceptInvitation"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}]}]}}]} as unknown as DocumentNode<AcceptInvitationMutation, AcceptInvitationMutationVariables>;
-export const RejectInvitationDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"RejectInvitation"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"RejectInvitationInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"rejectInvitation"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}]}]}}]} as unknown as DocumentNode<RejectInvitationMutation, RejectInvitationMutationVariables>;
-export const MeIsInvitedToRoom2Document = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"subscription","name":{"kind":"Name","value":"MeIsInvitedToRoom2"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"meIsInvitedToRoom"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"invitation"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"userId"}},{"kind":"Field","name":{"kind":"Name","value":"roomId"}},{"kind":"Field","name":{"kind":"Name","value":"room"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"thumbnailUrl"}}]}},{"kind":"Field","name":{"kind":"Name","value":"inviter"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"firstName"}},{"kind":"Field","name":{"kind":"Name","value":"lastName"}}]}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}}]}}]}}]}}]} as unknown as DocumentNode<MeIsInvitedToRoom2Subscription, MeIsInvitedToRoom2SubscriptionVariables>;
-export const EditProfileGetMeDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"EditProfileGetMe"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"me"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"firstName"}},{"kind":"Field","name":{"kind":"Name","value":"lastName"}},{"kind":"Field","name":{"kind":"Name","value":"profilePictureUrl"}},{"kind":"Field","name":{"kind":"Name","value":"passwordLength"}}]}}]}}]} as unknown as DocumentNode<EditProfileGetMeQuery, EditProfileGetMeQueryVariables>;
-export const EditProfileEditFirstNameDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"EditProfileEditFirstName"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"firstName"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"userUpdateFirstName"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"newFirstName"},"value":{"kind":"Variable","name":{"kind":"Name","value":"firstName"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"firstName"}}]}}]}}]} as unknown as DocumentNode<EditProfileEditFirstNameMutation, EditProfileEditFirstNameMutationVariables>;
-export const EditProfileEditLastNameDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"EditProfileEditLastName"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"lastName"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"userUpdateLastName"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"newLastName"},"value":{"kind":"Variable","name":{"kind":"Name","value":"lastName"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"lastName"}}]}}]}}]} as unknown as DocumentNode<EditProfileEditLastNameMutation, EditProfileEditLastNameMutationVariables>;
-export const EditProfileRemoveMyAvatarDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"EditProfileRemoveMyAvatar"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"removeMyAvatar"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"profilePictureUrl"}}]}}]}}]} as unknown as DocumentNode<EditProfileRemoveMyAvatarMutation, EditProfileRemoveMyAvatarMutationVariables>;
-export const EditProfileUploadProfilePictureDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"EditProfileUploadProfilePicture"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UploadProfilePictureInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"uploadProfilePicture"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"profilePictureUrl"}}]}}]}}]} as unknown as DocumentNode<EditProfileUploadProfilePictureMutation, EditProfileUploadProfilePictureMutationVariables>;
-export const AuthResetPasswordDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"AuthResetPassword"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"EditMyPasswordInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"editMyPassword"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"passwordLength"}}]}}]}}]} as unknown as DocumentNode<AuthResetPasswordMutation, AuthResetPasswordMutationVariables>;
+export const InvitationsListAcceptInvitationDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"InvitationsListAcceptInvitation"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"AcceptInvitationInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"acceptInvitation"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"userId"}},{"kind":"Field","name":{"kind":"Name","value":"roomId"}}]}}]}}]} as unknown as DocumentNode<InvitationsListAcceptInvitationMutation, InvitationsListAcceptInvitationMutationVariables>;
+export const InvitationsListRejectInvitationDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"InvitationsListRejectInvitation"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"RejectInvitationInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"rejectInvitation"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"userId"}},{"kind":"Field","name":{"kind":"Name","value":"roomId"}}]}}]}}]} as unknown as DocumentNode<InvitationsListRejectInvitationMutation, InvitationsListRejectInvitationMutationVariables>;
+export const InvitationsNewInvitationSubDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"subscription","name":{"kind":"Name","value":"InvitationsNewInvitationSub"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"newInvitation"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"userId"}},{"kind":"Field","name":{"kind":"Name","value":"roomId"}},{"kind":"Field","name":{"kind":"Name","value":"room"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"thumbnailUrl"}}]}},{"kind":"Field","name":{"kind":"Name","value":"inviter"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"firstName"}},{"kind":"Field","name":{"kind":"Name","value":"lastName"}}]}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}}]}}]}}]} as unknown as DocumentNode<InvitationsNewInvitationSubSubscription, InvitationsNewInvitationSubSubscriptionVariables>;
+export const ProfileEditGetMeDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"ProfileEditGetMe"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"me"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"firstName"}},{"kind":"Field","name":{"kind":"Name","value":"lastName"}},{"kind":"Field","name":{"kind":"Name","value":"profilePictureUrl"}},{"kind":"Field","name":{"kind":"Name","value":"passwordLength"}}]}}]}}]} as unknown as DocumentNode<ProfileEditGetMeQuery, ProfileEditGetMeQueryVariables>;
+export const ProfileEditFirstNameDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"ProfileEditFirstName"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"EditFirstNameInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"editFirstName"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"firstName"}}]}}]}}]} as unknown as DocumentNode<ProfileEditFirstNameMutation, ProfileEditFirstNameMutationVariables>;
+export const ProfileEditLastNameDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"ProfileEditLastName"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"EditLastNameInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"editLastName"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"lastName"}}]}}]}}]} as unknown as DocumentNode<ProfileEditLastNameMutation, ProfileEditLastNameMutationVariables>;
+export const ProfileEditProfilePictureDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"ProfileEditProfilePicture"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"EditProfilePictureInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"editProfilePicture"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"profilePictureUrl"}}]}}]}}]} as unknown as DocumentNode<ProfileEditProfilePictureMutation, ProfileEditProfilePictureMutationVariables>;
+export const ProfileEditResetPasswordDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"ProfileEditResetPassword"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ResetPasswordInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"resetPassword"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"passwordLength"}}]}}]}}]} as unknown as DocumentNode<ProfileEditResetPasswordMutation, ProfileEditResetPasswordMutationVariables>;
 export const ProfileCardGetMeDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"ProfileCardGetMe"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"me"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"firstName"}},{"kind":"Field","name":{"kind":"Name","value":"lastName"}},{"kind":"Field","name":{"kind":"Name","value":"profilePictureUrl"}}]}}]}}]} as unknown as DocumentNode<ProfileCardGetMeQuery, ProfileCardGetMeQueryVariables>;
+export const CreateRoomSearchUsersDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"CreateRoomSearchUsers"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"filter"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"SearchUsersFilterInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"searchUsers"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"filter"},"value":{"kind":"Variable","name":{"kind":"Name","value":"filter"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"data"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"firstName"}},{"kind":"Field","name":{"kind":"Name","value":"lastName"}},{"kind":"Field","name":{"kind":"Name","value":"profilePictureUrl"}},{"kind":"Field","name":{"kind":"Name","value":"isOnline"}}]}},{"kind":"Field","name":{"kind":"Name","value":"hasMore"}}]}}]}}]} as unknown as DocumentNode<CreateRoomSearchUsersQuery, CreateRoomSearchUsersQueryVariables>;
+export const CreateRoomDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreateRoom"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CreateRoomInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createRoom"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"thumbnailUrl"}},{"kind":"Field","name":{"kind":"Name","value":"participantsCount"}},{"kind":"Field","name":{"kind":"Name","value":"unreadMessagesCount"}},{"kind":"Field","name":{"kind":"Name","value":"lastMessage"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"text"}},{"kind":"Field","name":{"kind":"Name","value":"sender"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"email"}}]}}]}}]}}]}}]} as unknown as DocumentNode<CreateRoomMutation, CreateRoomMutationVariables>;
+export const CreateRoomUsersOnlineStatusChangeDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"subscription","name":{"kind":"Name","value":"CreateRoomUsersOnlineStatusChange"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"userIds"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"usersOnlineStatusChange"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"userIds"},"value":{"kind":"Variable","name":{"kind":"Name","value":"userIds"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"isOnline"}}]}}]}}]} as unknown as DocumentNode<CreateRoomUsersOnlineStatusChangeSubscription, CreateRoomUsersOnlineStatusChangeSubscriptionVariables>;
+export const HomeNewInvitationDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"subscription","name":{"kind":"Name","value":"HomeNewInvitation"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"newInvitation"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"userId"}},{"kind":"Field","name":{"kind":"Name","value":"roomId"}}]}}]}}]} as unknown as DocumentNode<HomeNewInvitationSubscription, HomeNewInvitationSubscriptionVariables>;
 export const GetMyRoomsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetMyRooms"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"me"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"rooms"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"thumbnailUrl"}},{"kind":"Field","name":{"kind":"Name","value":"participantsCount"}},{"kind":"Field","name":{"kind":"Name","value":"unreadMessagesCount"}},{"kind":"Field","name":{"kind":"Name","value":"lastMessage"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"text"}},{"kind":"Field","name":{"kind":"Name","value":"sender"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"firstName"}},{"kind":"Field","name":{"kind":"Name","value":"lastName"}}]}}]}}]}}]}}]}}]} as unknown as DocumentNode<GetMyRoomsQuery, GetMyRoomsQueryVariables>;
 export const RoomParticipantLeftDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"subscription","name":{"kind":"Name","value":"RoomParticipantLeft"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"roomId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"roomParticipantLeft"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"roomId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"roomId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"email"}}]}}]}}]} as unknown as DocumentNode<RoomParticipantLeftSubscription, RoomParticipantLeftSubscriptionVariables>;
 export const RoomParticipantJoinedDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"subscription","name":{"kind":"Name","value":"RoomParticipantJoined"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"roomId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"roomParticipantJoined"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"roomId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"roomId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"profilePictureUrl"}}]}}]}}]} as unknown as DocumentNode<RoomParticipantJoinedSubscription, RoomParticipantJoinedSubscriptionVariables>;

@@ -59,7 +59,6 @@ export class RoomService {
 
   async inviteUserToRoom({ roomId, userId, inviterId }: AddOneInvitationDto) {
     const user = await this.userRepository.getById(userId);
-    const room = await this.roomRepository.getOneById(roomId);
 
     const invitation = await this.invitationRepository.addOne({
       userId,
@@ -71,13 +70,7 @@ export class RoomService {
       invitationsCount: user.invitationsCount + 1,
     });
 
-    pubsub.publish("ME_IS_INVITED_TO_ROOM", {
-      meIsInvitedToRoom: {
-        room,
-        invitation,
-        userId: userId,
-      },
-    });
+    pubsub.publish("USER_INVITED_TO_ROOM", invitation);
   }
 
   async inviteUsersToRoom({ roomId, inviterId, invitedUsersIds }: { roomId: number; inviterId: number; invitedUsersIds: number[] }) {

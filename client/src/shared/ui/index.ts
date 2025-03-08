@@ -27,7 +27,7 @@ import Popover from "./components/Popover/Popover.tsx";
 import Chip, { ChipColor } from "./components/Chip/Chip.tsx";
 import Spinner from "./components/Spinner/Spinner.tsx";
 import TimeInput, { type Time } from "./components/TimeInput/TimeInput.tsx";
-import Scroll, { type ScrollHandle } from "./components/Scroll/Scroll.tsx";
+import Scroll, { type ScrollHandle } from "./components/ScrollV2/Scroll.tsx";
 import useScrollControl from "./components/ScrollV2/useScrollControl.ts";
 import Select from "./components/Select/Select.tsx";
 import ContextMenu from "./components/ContextMenu/ContextMenu.tsx";

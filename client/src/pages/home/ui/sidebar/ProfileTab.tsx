@@ -1,5 +1,5 @@
 import BaseTab from "./BaseTab";
-import { EditProfileForm } from "@/modules/profile/edit-profile";
+import { EditProfileForm } from "@/modules/profile/edit";
 import useHomePageStore from "@/pages/home/store.ts";
 import { HiChevronLeft } from "react-icons/hi2";
 import { IconButton } from "@/shared/ui";

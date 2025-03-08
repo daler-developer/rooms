@@ -3,7 +3,7 @@ import AddProfilePictureDTO from "./dto/AddProfilePictureDTO.ts";
 import { v4 as uuidv4 } from "uuid";
 import SupabaseError from "../../SupabaseError.ts";
 
-const BUCKET_NAME = "profile_imagesa";
+const BUCKET_NAME = "profile_images";
 
 class SuperbaseProfilePictureRepository {
   async addOne({ file }: AddProfilePictureDTO) {

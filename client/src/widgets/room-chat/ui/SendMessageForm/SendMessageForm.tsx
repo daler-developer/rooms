@@ -123,29 +123,29 @@ const SendMessageForm = ({ showScheduledMessagesButton = true, onlyScheduledMess
           imageUrls: values.images.map((image) => image.imageUrl!),
         };
 
-        // sendMessage({
-        //   variables: {
-        //     input,
-        //   },
-        //   onCompleted() {
-        //     removeTemporaryMessage(temporaryMessage.temporaryId);
-        //   },
-        //   update(cache, { data: mutationData }) {
-        //     const newMessage = mutationData!.sendMessage;
-        //
-        //     cache.modify({
-        //       id: cache.identify(data!.room),
-        //       fields: {
-        //         messages(oldData, { toReference }) {
-        //           return {
-        //             data: [toReference(newMessage), ...oldData.data],
-        //             hasMore: oldData.hasMore,
-        //           };
-        //         },
-        //       },
-        //     });
-        //   },
-        // });
+        sendMessage({
+          variables: {
+            input,
+          },
+          onCompleted() {
+            removeTemporaryMessage(temporaryMessage.temporaryId);
+          },
+          update(cache, { data: mutationData }) {
+            const newMessage = mutationData!.sendMessage;
+
+            cache.modify({
+              id: cache.identify(data!.room),
+              fields: {
+                messages(oldData, { toReference }) {
+                  return {
+                    data: [toReference(newMessage), ...oldData.data],
+                    hasMore: oldData.hasMore,
+                  };
+                },
+              },
+            });
+          },
+        });
 
         flushSync(() => {
           addTemporaryMessage(temporaryMessage);
