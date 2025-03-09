@@ -1,8 +1,8 @@
 import { useQuery } from "@apollo/client";
-import { GET_MY_ROOMS } from "./tags";
+import { ROOMS_LIST } from "./tags";
 
 const useGetRoomsQuery = () => {
-  return useQuery(GET_MY_ROOMS, { notifyOnNetworkStatusChange: true });
+  return useQuery(ROOMS_LIST, { notifyOnNetworkStatusChange: true });
 };
 
 export default useGetRoomsQuery;

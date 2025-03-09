@@ -1,16 +1,16 @@
+import { useMemo, useState } from "react";
 import { NetworkStatus, useSubscription } from "@apollo/client";
-import { Empty, Input } from "@/shared/ui";
-import RoomCard from "./RoomCard/RoomCard.tsx";
+import { Empty, Input, Scroll } from "@/shared/ui";
+import RoomsListItem from "./rooms-list-item/RoomsListItem.tsx";
 import { ME_IS_EXCLUDED_FROM_ROOM } from "../gql/tags.ts";
 import useGetRoomsQuery from "../gql/useGetRoomsQuery.ts";
-
-import { useMemo, useState } from "react";
-import RoomsListSkeletons from "@/widgets/my-rooms/ui/RoomsListSkeletons.tsx";
-import Scroll from "@/shared/ui/components/ScrollV2/Scroll.tsx";
+import RoomsListSkeletons from "./RoomsListSkeletons.tsx";
 import { CreateRoomButton } from "@/modules/room/create";
 
-const MyRooms = () => {
+const RoomList = () => {
   const [search, setSearch] = useState("");
+
+  const isSearchEmpty = search === "";
 
   useSubscription(ME_IS_EXCLUDED_FROM_ROOM, {
     onData({ data, client }) {
@@ -28,7 +28,7 @@ const MyRooms = () => {
     }
 
     return [
-      ...queries.rooms.data!.me.rooms.filter((room) => room.name.includes(search.trim())),
+      ...queries.rooms.data!.rooms.filter((room) => room.name.includes(search.trim())),
       // ...queries.rooms.data!.me.rooms.filter((room) => room.name.includes(search.trim())),
       // ...queries.rooms.data!.me.rooms.filter((room) => room.name.includes(search.trim())),
       // ...queries.rooms.data!.me.rooms.filter((room) => room.name.includes(search.trim())),
@@ -40,15 +40,15 @@ const MyRooms = () => {
   }, [search, queries.rooms.data, queries.rooms.networkStatus]);
 
   const showSkeletons = useMemo(() => {
-    return queries.rooms.networkStatus === NetworkStatus.loading;
+    return [NetworkStatus.loading].includes(queries.rooms.networkStatus);
   }, [queries.rooms.networkStatus]);
 
   const showRoomsList = useMemo(() => {
-    return queries.rooms.networkStatus === NetworkStatus.ready;
+    return [NetworkStatus.ready].includes(queries.rooms.networkStatus);
   }, [queries.rooms.networkStatus]);
 
   const showEmptyState = useMemo(() => {
-    return queries.rooms.networkStatus === NetworkStatus.ready && queries.rooms.data!.me.rooms.length === 0;
+    return [NetworkStatus.ready].includes(queries.rooms.networkStatus) && queries.rooms.data!.rooms.length === 0;
   }, [queries.rooms.networkStatus, queries.rooms.data]);
 
   const showCreateRoomButton = useMemo(() => {
@@ -56,7 +56,7 @@ const MyRooms = () => {
   }, [queries.rooms.networkStatus]);
 
   const showNoSearchResults = useMemo(() => {
-    return queries.rooms.networkStatus === NetworkStatus.ready && filteredRooms.length === 0;
+    return [NetworkStatus.ready].includes(queries.rooms.networkStatus) && !isSearchEmpty && filteredRooms.length === 0;
   }, [queries.rooms.networkStatus, filteredRooms]);
 
   return (
@@ -86,12 +86,14 @@ const MyRooms = () => {
               <Scroll height={"full"} showScrollToBottomButton={false}>
                 <div className="mt-2 flex flex-col">
                   {filteredRooms.map((room) => (
-                    <RoomCard key={room.id} room={room} />
+                    <RoomsListItem key={room.id} room={room} />
                   ))}
                 </div>
               </Scroll>
             ) : (
-              <Empty title="No Results" />
+              <div className="mt-4">
+                <Empty title="No Results" />
+              </div>
             )}
           </div>
         </div>
@@ -106,4 +108,4 @@ const MyRooms = () => {
   );
 };
 
-export default MyRooms;
+export default RoomList;

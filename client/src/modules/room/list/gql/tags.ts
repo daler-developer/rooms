@@ -1,23 +1,20 @@
 import { gql } from "@/__generated__";
 
-export const GET_MY_ROOMS = gql(`
-  query GetMyRooms {
-    me {
+export const ROOMS_LIST = gql(`
+  query RoomsList {
+    rooms {
       id
-      rooms {
+      name
+      thumbnailUrl
+      participantsCount
+      unreadMessagesCount
+      lastMessage {
         id
-        name
-        thumbnailUrl
-        participantsCount
-        unreadMessagesCount
-        lastMessage {
+        text
+        sender {
           id
-          text
-          sender {
-            id
-            firstName
-            lastName
-          }
+          firstName
+          lastName
         }
       }
     }

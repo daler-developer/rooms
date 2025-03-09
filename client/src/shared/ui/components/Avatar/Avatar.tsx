@@ -53,6 +53,7 @@ const Avatar = forwardRef<HTMLDivElement, Props>(({ src, className, alt, size = 
   const badgeContentWrapperClasses = clsx("absolute transform translate-x-1/2 translate-y-1/2", {
     "bottom-[15px] right-[15px]": size === "md",
     "bottom-[5px] right-[5px]": size === "sm",
+    "bottom-[10px] right-[20px]": size === "lg",
     "bottom-[16px] right-[30px]": size === "xl",
   });
 

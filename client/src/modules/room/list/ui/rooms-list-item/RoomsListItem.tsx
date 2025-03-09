@@ -1,19 +1,19 @@
 import { useSubscription } from "@apollo/client";
 import { ROOM_PARTICIPANT_LEFT_SUBSCRIPTION, ROOM_PARTICIPANT_JOINED_SUBSCRIPTION, NEW_MESSAGE_SUB } from "../../gql/tags.ts";
 import { Link } from "react-router-dom";
-import { GetMyRoomsQuery } from "@/__generated__/graphql.ts";
+import { RoomsListQuery } from "@/__generated__/graphql.ts";
 import { useApolloClient } from "@apollo/client";
-import RoomCardLastMessage from "@/widgets/my-rooms/ui/RoomCard/RoomCardLastMessage.tsx";
+import RoomsListItemLastMessage from "./RoomsListItemLastMessage.tsx";
 import { Avatar, Badge } from "@/shared/ui";
 import { useEffect } from "react";
 import { emitter } from "@/global/event-emitter";
 import { EventCallback } from "@/global/event-emitter/emitter.ts";
 
 type Props = {
-  room: Flatten<GetMyRoomsQuery["me"]["rooms"]>;
+  room: Flatten<RoomsListQuery["rooms"]>;
 };
 
-const RoomCard = ({ room }: Props) => {
+const RoomsListItem = ({ room }: Props) => {
   const apolloClient = useApolloClient();
 
   useEffect(() => {
@@ -104,7 +104,7 @@ const RoomCard = ({ room }: Props) => {
         <div className="text-[16px" style={{ fontWeight: "900" }}>
           {room.name}
         </div>
-        {room.lastMessage ? <RoomCardLastMessage message={room.lastMessage} /> : <div className="font-medium text-[13px] text-gray-500">No messages</div>}
+        {room.lastMessage ? <RoomsListItemLastMessage message={room.lastMessage} /> : <div className="font-medium text-[13px] text-gray-500">No messages</div>}
       </div>
       <div className="pr-2">
         <Badge badgeColor="blue" badgeContent={room.unreadMessagesCount} />
@@ -113,4 +113,4 @@ const RoomCard = ({ room }: Props) => {
   );
 };
 
-export default RoomCard;
+export default RoomsListItem;

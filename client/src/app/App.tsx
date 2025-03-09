@@ -1,14 +1,11 @@
+import { useEffect } from "react";
 import { RouterProvider } from "react-router-dom";
 import router from "@/app/router.tsx";
-import { useSubscribeToMeInvitedToRoom } from "@/features/subscribe/me-invited-to-room";
-import { useSubscribeToRepliedToMyInvitation } from "@/features/subscribe/replied-to-my-invitation";
-import { useCustomMutation } from "@/shared/lib/graphql";
-import { START_SESSION } from "./gql";
-import { useEffect } from "react";
+import useStartSessionMutation from "./gql/useStartSessionMutation.ts";
 
 const App = () => {
   const mutations = {
-    startSession: useCustomMutation(START_SESSION),
+    startSession: useStartSessionMutation(),
   };
 
   useEffect(() => {
@@ -28,8 +25,6 @@ const App = () => {
       startSession();
     }
   }, []);
-  // useSubscribeToMeInvitedToRoom();
-  // useSubscribeToRepliedToMyInvitation();
 
   return (
     <div>

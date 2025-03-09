@@ -1,5 +1,5 @@
 import { flushSync } from "react-dom";
-import { CSSProperties, MutableRefObject, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { CSSProperties, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import useFloatingClickTriggerListener from "./useFloatingClickTriggerListener.ts";
 import useFloatingHoverTriggerListeners from "@/shared/ui/hooks/useFloatingHoverTriggerListeners.ts";
 import { useIsFirstRender } from "@/shared/hooks";
@@ -38,8 +38,8 @@ const useFloating = ({ placement, width, offset = 0, openTrigger = "click", onVi
 
   const isFirstRender = useIsFirstRender();
 
-  const referenceRef: MutableRefObject<HTMLElement> = useRef(null!);
-  const floatingRef: MutableRefObject<HTMLElement> = useRef(null!);
+  const referenceRef = useRef<HTMLElement>(null!);
+  const floatingRef = useRef<HTMLElement>(null!);
 
   useEffect(() => {
     if (isFirstRender) {

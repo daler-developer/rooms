@@ -1,7 +1,8 @@
 import { useMemo } from "react";
 import { useFormContext } from "@/shared/lib/form";
-import { AvatarWithActions } from "@/shared/ui";
+import { Avatar, Dropdown, IconButton } from "@/shared/ui";
 import { useCrop } from "@/shared/crop";
+import { HiMiniEllipsisVertical } from "react-icons/hi2";
 
 const EditMyProfilePicture = () => {
   const form = useFormContext();
@@ -10,7 +11,7 @@ const EditMyProfilePicture = () => {
 
   const crop = useCrop();
 
-  const avatarActions = useMemo(() => {
+  const dropdownItems = useMemo(() => {
     const result = [];
 
     const removeAction = {
@@ -57,7 +58,19 @@ const EditMyProfilePicture = () => {
     return null;
   }, [profilePicture]);
 
-  return <AvatarWithActions src={src} actions={avatarActions} size="lg" disabled={form.isSubmitting} />;
+  const dropdown = (
+    <Dropdown
+      placement="bottom-right"
+      items={dropdownItems}
+      trigger={
+        <div>
+          <IconButton Icon={HiMiniEllipsisVertical} color="light" type="button" />
+        </div>
+      }
+    />
+  );
+
+  return <Avatar src={src} badgeContent={dropdown} />;
 };
 
 export default EditMyProfilePicture;

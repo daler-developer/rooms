@@ -5,7 +5,7 @@ type Props = {
   message: NonNullable<Flatten<GetMyRoomsQuery["me"]["rooms"]>["lastMessage"]>;
 };
 
-const RoomCardLastMessage = ({ message }: Props) => {
+const RoomsListItemLastMessage = ({ message }: Props) => {
   return (
     <div className="flex items-center text-[13px] gap-[4px]">
       <div className="font-medium">
@@ -16,4 +16,4 @@ const RoomCardLastMessage = ({ message }: Props) => {
   );
 };
 
-export default RoomCardLastMessage;
+export default RoomsListItemLastMessage;

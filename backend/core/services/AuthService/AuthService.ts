@@ -1,5 +1,6 @@
 import { inject, injectable } from "inversify";
 import * as jwt from "jsonwebtoken";
+import { v4 as uuidv4 } from "uuid";
 import { TYPES } from "../../../types";
 import { UserRepository } from "../../repositories/UserRepository/UserRepository";
 import { IncorrectPasswordError } from "../../errors/auth";
@@ -54,7 +55,7 @@ class AuthService {
   }
 
   async startSession() {
-    const sessionToken = jwt.sign({ sessionId: String(Math.random()) }, "jwt-secret", { expiresIn: "10 days" });
+    const sessionToken = jwt.sign({ sessionId: uuidv4() }, "jwt-secret", { expiresIn: "10 days" });
 
     return {
       sessionToken,
