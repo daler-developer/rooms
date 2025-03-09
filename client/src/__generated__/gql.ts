@@ -34,8 +34,8 @@ const documents = {
     "\n  mutation Register($input: RegisterInput!) {\n    register(input: $input) {\n      user {\n        id\n        email\n        firstName\n        lastName\n      }\n      token\n    }\n  }\n": types.RegisterDocument,
     "\n  query CheckEmailAvailability($email: String!) {\n    checkEmailAvailability(email: $email)\n  }\n": types.CheckEmailAvailabilityDocument,
     "\n  query InvitationsButtonGetMe {\n    me {\n      id\n      invitationsCount\n    }\n  }\n": types.InvitationsButtonGetMeDocument,
-    "\n  subscription InvitationsButtonNewInvitation {\n    newInvitation {\n      userId\n      roomId\n    }\n  }\n": types.InvitationsButtonNewInvitationDocument,
-    "\n  query InvitationsList {\n    me {\n      id\n      invitations {\n        userId\n        roomId\n        room {\n          id\n          name\n          thumbnailUrl\n        }\n        inviter {\n          id\n          firstName\n          lastName\n        }\n        createdAt\n      }\n    }\n  }\n": types.InvitationsListDocument,
+    "\n  subscription InvitationsCountUpdatedSub {\n    invitationCountUpdated {\n      id\n      invitationsCount\n    }\n  }\n": types.InvitationsCountUpdatedSubDocument,
+    "\n  query InvitationsList {\n    invitations {\n      userId\n      roomId\n      room {\n        id\n        name\n        thumbnailUrl\n      }\n      inviter {\n        id\n        firstName\n        lastName\n      }\n      createdAt\n    }\n  }\n": types.InvitationsListDocument,
     "\n  mutation InvitationsListAcceptInvitation($input: AcceptInvitationInput!) {\n    acceptInvitation(input: $input) {\n      userId\n      roomId\n    }\n  }\n": types.InvitationsListAcceptInvitationDocument,
     "\n  mutation InvitationsListRejectInvitation($input: RejectInvitationInput!) {\n    rejectInvitation(input: $input) {\n      userId\n      roomId\n    }\n  }\n": types.InvitationsListRejectInvitationDocument,
     "\n  subscription InvitationsNewInvitationSub {\n    newInvitation {\n      userId\n      roomId\n      room {\n        id\n        name\n        thumbnailUrl\n      }\n      inviter {\n        id\n        firstName\n        lastName\n      }\n      createdAt\n    }\n  }\n": types.InvitationsNewInvitationSubDocument,
@@ -49,6 +49,8 @@ const documents = {
     "\n  mutation CreateRoom($input: CreateRoomInput!) {\n    createRoom(input: $input) {\n      id\n      name\n      thumbnailUrl\n      participantsCount\n      unreadMessagesCount\n      lastMessage {\n        id\n        text\n        sender {\n          id\n          email\n        }\n      }\n    }\n  }\n": types.CreateRoomDocument,
     "\n  subscription CreateRoomUsersOnlineStatusChange($userIds: [Int!]!) {\n    usersOnlineStatusChange(userIds: $userIds) {\n      id\n      isOnline\n    }\n  }\n": types.CreateRoomUsersOnlineStatusChangeDocument,
     "\n  subscription HomeNewInvitation {\n    newInvitation {\n      userId\n      roomId\n    }\n  }\n": types.HomeNewInvitationDocument,
+    "\n  subscription HomeUserRejectedInvitation {\n    invitationRejected {\n      userId\n      roomId\n      room {\n        id\n        name\n      }\n      invitedUser {\n        id\n        firstName\n        lastName\n      }\n    }\n  }\n": types.HomeUserRejectedInvitationDocument,
+    "\n  subscription HomeUserAcceptedInvitation {\n    invitationAccepted {\n      userId\n      roomId\n      room {\n        id\n        name\n      }\n      invitedUser {\n        id\n        firstName\n        lastName\n      }\n    }\n  }\n": types.HomeUserAcceptedInvitationDocument,
     "\n  query GetMyRooms {\n    me {\n      id\n      rooms {\n        id\n        name\n        thumbnailUrl\n        participantsCount\n        unreadMessagesCount\n        lastMessage {\n          id\n          text\n          sender {\n            id\n            firstName\n            lastName\n          }\n        }\n      }\n    }\n  }\n": types.GetMyRoomsDocument,
     "\n  subscription RoomParticipantLeft($roomId: Int!) {\n    roomParticipantLeft(roomId: $roomId) {\n      id\n      email\n    }\n  }\n": types.RoomParticipantLeftDocument,
     "\n  subscription RoomParticipantJoined($roomId: Int!) {\n    roomParticipantJoined(roomId: $roomId) {\n      id\n      email\n      profilePictureUrl\n    }\n  }\n": types.RoomParticipantJoinedDocument,
@@ -177,11 +179,11 @@ export function gql(source: "\n  query InvitationsButtonGetMe {\n    me {\n     
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function gql(source: "\n  subscription InvitationsButtonNewInvitation {\n    newInvitation {\n      userId\n      roomId\n    }\n  }\n"): (typeof documents)["\n  subscription InvitationsButtonNewInvitation {\n    newInvitation {\n      userId\n      roomId\n    }\n  }\n"];
+export function gql(source: "\n  subscription InvitationsCountUpdatedSub {\n    invitationCountUpdated {\n      id\n      invitationsCount\n    }\n  }\n"): (typeof documents)["\n  subscription InvitationsCountUpdatedSub {\n    invitationCountUpdated {\n      id\n      invitationsCount\n    }\n  }\n"];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function gql(source: "\n  query InvitationsList {\n    me {\n      id\n      invitations {\n        userId\n        roomId\n        room {\n          id\n          name\n          thumbnailUrl\n        }\n        inviter {\n          id\n          firstName\n          lastName\n        }\n        createdAt\n      }\n    }\n  }\n"): (typeof documents)["\n  query InvitationsList {\n    me {\n      id\n      invitations {\n        userId\n        roomId\n        room {\n          id\n          name\n          thumbnailUrl\n        }\n        inviter {\n          id\n          firstName\n          lastName\n        }\n        createdAt\n      }\n    }\n  }\n"];
+export function gql(source: "\n  query InvitationsList {\n    invitations {\n      userId\n      roomId\n      room {\n        id\n        name\n        thumbnailUrl\n      }\n      inviter {\n        id\n        firstName\n        lastName\n      }\n      createdAt\n    }\n  }\n"): (typeof documents)["\n  query InvitationsList {\n    invitations {\n      userId\n      roomId\n      room {\n        id\n        name\n        thumbnailUrl\n      }\n      inviter {\n        id\n        firstName\n        lastName\n      }\n      createdAt\n    }\n  }\n"];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
@@ -234,6 +236,14 @@ export function gql(source: "\n  subscription CreateRoomUsersOnlineStatusChange(
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function gql(source: "\n  subscription HomeNewInvitation {\n    newInvitation {\n      userId\n      roomId\n    }\n  }\n"): (typeof documents)["\n  subscription HomeNewInvitation {\n    newInvitation {\n      userId\n      roomId\n    }\n  }\n"];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function gql(source: "\n  subscription HomeUserRejectedInvitation {\n    invitationRejected {\n      userId\n      roomId\n      room {\n        id\n        name\n      }\n      invitedUser {\n        id\n        firstName\n        lastName\n      }\n    }\n  }\n"): (typeof documents)["\n  subscription HomeUserRejectedInvitation {\n    invitationRejected {\n      userId\n      roomId\n      room {\n        id\n        name\n      }\n      invitedUser {\n        id\n        firstName\n        lastName\n      }\n    }\n  }\n"];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function gql(source: "\n  subscription HomeUserAcceptedInvitation {\n    invitationAccepted {\n      userId\n      roomId\n      room {\n        id\n        name\n      }\n      invitedUser {\n        id\n        firstName\n        lastName\n      }\n    }\n  }\n"): (typeof documents)["\n  subscription HomeUserAcceptedInvitation {\n    invitationAccepted {\n      userId\n      roomId\n      room {\n        id\n        name\n      }\n      invitedUser {\n        id\n        firstName\n        lastName\n      }\n    }\n  }\n"];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

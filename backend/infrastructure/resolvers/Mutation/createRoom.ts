@@ -9,7 +9,7 @@ const validationSchema = yup.object({
   input: yup.object({
     name: yup.string().required().min(3),
     usersInvitedIds: yup.array().required(),
-    thumbnailUrl: yup.string().required(),
+    thumbnailUrl: yup.string().nullable(),
   }),
 });
 

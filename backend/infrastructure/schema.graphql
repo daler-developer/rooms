@@ -65,7 +65,6 @@ type User {
     isAdmin: Boolean!
     profilePictureUrl: String
     isBlocked: Boolean!
-    invitations: [Invitation!]!
     rooms: [Room!]!
     invitationsCount: Int!
     isOnline: Boolean!
@@ -255,7 +254,8 @@ type Query {
     users: [User!]!
     searchUsers(filter: SearchUsersFilterInput!): SearchUsersResult!
     room(id: Int!): Room!
-    message(id: Int!): Message!
+    message(id: Int!): Message
+    invitations: [Invitation!]!
     checkEmailAvailability(email: String!): Boolean!
 }
 
@@ -289,6 +289,9 @@ type Mutation {
 type Subscription {
     meIsBlockedStatus: MeIsBlockedStatusResult!
     newInvitation: Invitation!
+    invitationRejected: Invitation!
+    invitationAccepted: Invitation!
+    invitationCountUpdated: User!
     meIsExcludedFromRoom: Room!
     repliedToMyInvitation: ReplyToInvitation!
     userOnlineStatusChange(input: UserOnlineStatusChangeSubscriptionInput!): UserOnlineStatusChangeSubscriptionResult!

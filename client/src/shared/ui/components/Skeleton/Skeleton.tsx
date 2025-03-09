@@ -31,7 +31,7 @@ const Skeleton = (props: Props) => {
   if (props.type === "block") {
     return (
       <div
-        className={clsx("bg-gray-400 animate-pulse rounded-md")}
+        className={clsx("bg-gray-400 animate-pulse rounded-sm")}
         style={{
           height: String(props.height || 100) + "px",
           width: String(props.width || 100) + "px",

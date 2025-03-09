@@ -3,6 +3,8 @@ import { RoomChat } from "@/widgets/room-chat";
 import Sidebar from "./sidebar/Sidebar.tsx";
 import { HiOutlineChat } from "react-icons/hi";
 import useNewInvitationSub from "../gql/useNewInvitationSub.ts";
+import useUserRejectedInvitationSub from "../gql/useUserRejectedInvitationSub.ts";
+import useUserAcceptedInvitationSub from "../gql/useUserAcceptedInvitationSub.ts";
 
 const HomePage = () => {
   const [searchParams] = useSearchParams();
@@ -10,6 +12,8 @@ const HomePage = () => {
   const roomId = Number(searchParams.get("roomId")) || null;
 
   useNewInvitationSub();
+  useUserRejectedInvitationSub();
+  useUserAcceptedInvitationSub();
 
   return (
     <div>

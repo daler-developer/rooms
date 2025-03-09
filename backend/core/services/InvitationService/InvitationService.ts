@@ -65,12 +65,7 @@ class InvitationService {
 
     const updatedRoom = await this.roomRepository.getOneById(roomId);
 
-    pubsub.publish("REPLIED_TO_MY_INVITATION", {
-      repliedToMyInvitation: {
-        invitation,
-        accepted: true,
-      },
-    });
+    pubsub.publish("USER_ACCEPTED_INVITATION", invitation);
 
     pubsub.publish("ROOM_PARTICIPANT_JOINED", {
       roomParticipantJoined: user,
@@ -101,12 +96,7 @@ class InvitationService {
 
     const updatedRoom = await this.roomRepository.getOneById(roomId);
 
-    pubsub.publish("REPLIED_TO_MY_INVITATION", {
-      repliedToMyInvitation: {
-        invitation,
-        accepted: false,
-      },
-    });
+    pubsub.publish("USER_REJECTED_INVITATION", invitation);
 
     pubsub.publish("ROOM_PENDING_INVITATIONS_COUNT_CHANGE", {
       roomPendingInvitationsCountChange: updatedRoom,

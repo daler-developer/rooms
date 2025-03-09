@@ -2,23 +2,20 @@ import { gql } from "@/__generated__";
 
 export const GET_INVITATIONS_LIST = gql(`
   query InvitationsList {
-    me {
-      id
-      invitations {
-        userId
-        roomId
-        room {
-          id
-          name
-          thumbnailUrl
-        }
-        inviter {
-          id
-          firstName
-          lastName
-        }
-        createdAt
+    invitations {
+      userId
+      roomId
+      room {
+        id
+        name
+        thumbnailUrl
       }
+      inviter {
+        id
+        firstName
+        lastName
+      }
+      createdAt
     }
   }
 `);

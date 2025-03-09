@@ -4,7 +4,7 @@ import useAcceptInvitationMutation from "../gql/useAcceptInvitationMutation.ts";
 import useRejectInvitationMutation from "../gql/useRejectInvitationMutation.ts";
 
 type Props = {
-  invitation: Flatten<InvitationsListQuery["me"]["invitations"]>;
+  invitation: Flatten<InvitationsListQuery["invitations"]>;
 };
 
 const InvitationsListItem = ({ invitation }: Props) => {
@@ -23,7 +23,7 @@ const InvitationsListItem = ({ invitation }: Props) => {
     });
   };
 
-  const handleRejetInviation = async () => {
+  const handleRejectInvitation = async () => {
     await mutations.rejectInvitation.mutate({
       variables: {
         input: {
@@ -48,7 +48,7 @@ const InvitationsListItem = ({ invitation }: Props) => {
           Accept
         </Button>
 
-        <Button type="button" color="red" isLoading={mutations.rejectInvitation.loading} onClick={handleRejetInviation}>
+        <Button type="button" color="red" isLoading={mutations.rejectInvitation.loading} onClick={handleRejectInvitation}>
           Reject
         </Button>
       </div>

@@ -40,7 +40,7 @@ const ToastProvider = ({ children }: Props) => {
           setToasts((prev) => {
             return prev.filter((toast) => toast.id !== newToast.id);
           });
-        }, 3000);
+        }, 6000);
       },
     };
   }, {}) as ToastContextValue;
