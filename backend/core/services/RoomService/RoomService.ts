@@ -50,7 +50,7 @@ export class RoomService {
     return room;
   }
 
-  async fetchUserRooms({ userId, currentUserId }: { userId: number; currentUserId: number }) {
+  async fetchUserRooms({ userId }: { userId: number }) {
     const participations = await this.userToRoomParticipationRepository.getManyByUserId(userId);
     const roomIds = participations.map((p) => p.roomId);
 

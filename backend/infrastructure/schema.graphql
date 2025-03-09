@@ -65,7 +65,6 @@ type User {
     isAdmin: Boolean!
     profilePictureUrl: String
     isBlocked: Boolean!
-    rooms: [Room!]!
     invitationsCount: Int!
     isOnline: Boolean!
 }
@@ -252,6 +251,7 @@ input EditLastNameInput {
 type Query {
     me: User!
     users: [User!]!
+    rooms: [Room!]!
     searchUsers(filter: SearchUsersFilterInput!): SearchUsersResult!
     room(id: Int!): Room!
     message(id: Int!): Message
