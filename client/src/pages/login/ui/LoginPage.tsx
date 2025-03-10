@@ -1,10 +1,9 @@
-import { useNavigate } from "react-router-dom";
 import { LoginForm } from "@/modules/auth";
 
 const LoginPage = () => {
   const handleSuccess = () => {
-    // window.location.reload();
-    // window.location.href = "/home";
+    window.location.reload();
+    window.location.href = "/home";
   };
 
   return (

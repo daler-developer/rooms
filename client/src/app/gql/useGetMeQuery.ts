@@ -1,8 +1,8 @@
-import { useQuery } from "@apollo/client";
 import { GET_ME } from "./tags";
+import { useCustomLazyQuery } from "@/shared/lib/graphql";
 
 const useGetMeQuery = () => {
-  return useQuery(GET_ME, {
+  return useCustomLazyQuery(GET_ME, {
     notifyOnNetworkStatusChange: true,
   });
 };
