@@ -1,17 +1,17 @@
-import { GetMyRoomsQuery } from "@/__generated__/graphql.ts";
-import { useMemo } from "react";
+import { RoomsListQuery } from "@/__generated__/graphql.ts";
 
 type Props = {
-  message: NonNullable<Flatten<GetMyRoomsQuery["me"]["rooms"]>["lastMessage"]>;
+  message: NonNullable<Flatten<RoomsListQuery["rooms"]>["lastMessage"]>;
 };
 
 const RoomsListItemLastMessage = ({ message }: Props) => {
   return (
-    <div className="flex items-center text-[13px] gap-[4px]">
-      <div className="font-medium">
+    <div className="text-[13px] whitespace-nowrap overflow-hidden overflow-ellipsis gap-[4px]">
+      <span className="font-medium">
         {message.sender.firstName} {message.sender.lastName}:
-      </div>
-      <div className="text-gray-600">{message.text}</div>
+      </span>
+      <span> </span>
+      <span className="text-gray-600">{message.text}</span>
     </div>
   );
 };

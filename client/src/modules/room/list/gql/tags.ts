@@ -50,7 +50,7 @@ export const ME_IS_EXCLUDED_FROM_ROOM = gql(`
 `);
 
 export const NEW_MESSAGE_SUB = gql(`
-  subscription MyRoomsNewMessageSub($skipFromCurrentSession: Boolean!) {
+  subscription RoomsListNewMessageSub($skipFromCurrentSession: Boolean!) {
     newMessage(skipFromCurrentSession: $skipFromCurrentSession) {
       message {
         id
@@ -69,7 +69,8 @@ export const NEW_MESSAGE_SUB = gql(`
           text
           sender {
             id
-            email
+            firstName
+            lastName
           }
         }
       }

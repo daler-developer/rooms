@@ -1,8 +1,9 @@
-import { Modal, Tabs } from "@/shared/ui";
+import { Modal, Scroll, Tabs } from "@/shared/ui";
 import { GET_ROOM_PARTICIPANTS_QUERY, USERS_ONLINE_STATUS_CHANGE } from "../../gql/tags.ts";
 import { NetworkStatus, useSubscription } from "@apollo/client";
 import { useRoomChatStore } from "@/widgets/room-chat/context";
 import { forwardRef, useImperativeHandle, useMemo, useState } from "react";
+import { UserCardSkeletons } from "@/entities/user";
 import RoomParticipant from "@/widgets/room-chat/ui/RoomInfo/RoomParticipant.tsx";
 import { useCustomLazyQuery } from "@/shared/lib/graphql";
 
@@ -76,7 +77,11 @@ const RoomInfoModal = forwardRef<RoomInfoModalHandler>((_, ref) => {
         />
 
         <div className="mt-4">
-          {showSkeletons && <div></div>}
+          {showSkeletons && (
+            <Scroll height={300}>
+              <UserCardSkeletons />
+            </Scroll>
+          )}
 
           {showParticipantsList && (
             <div>

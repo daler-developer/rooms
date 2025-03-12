@@ -44,10 +44,9 @@ const App = () => {
     return <FullscreenLoader />;
   }
 
-  if (queries.me.error || mutations.startSession.error) {
+  if (mutations.startSession.error) {
     return (
       <div>
-        temp
         <ApolloErrorDisplay error={queries.me.error} />
         <ApolloErrorDisplay error={mutations.startSession.error} />
       </div>

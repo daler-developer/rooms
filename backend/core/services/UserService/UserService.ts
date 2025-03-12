@@ -122,7 +122,8 @@ class UserService {
   }
 
   async fetchRoomParticipants(roomId: number) {
-    const userIds = (await this.userToRoomParticipationRepository.getManyByRoomId(roomId)).map((p) => p.userId);
+    const participations = await this.userToRoomParticipationRepository.getManyByRoomId(roomId);
+    const userIds = participations.map((p) => p.userId);
 
     return await this.userRepository.getManyByIds(userIds);
   }

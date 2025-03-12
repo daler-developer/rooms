@@ -19,7 +19,7 @@ type Props = {
   badgeColor?: ComponentProps<typeof Badge>["badgeColor"];
 };
 
-const IconButton = forwardRef(
+const IconButton = forwardRef<HTMLButtonElement, Props>(
   (
     {
       type,
@@ -33,11 +33,11 @@ const IconButton = forwardRef(
       onContextMenu,
       badgeContent,
       badgeColor = "blue",
-    }: Props,
+    },
     ref,
   ) => {
     const buttonClasses = clsx("relative focus:ring-4 focus:outline-none font-medium p-2.5 rounded-full inline-flex items-center justify-center", {
-      "text-white bg-blue-700 hover:bg-blue-800 focus:ring-blue-300": color === "default",
+      "text-white bg-blue-600 hover:bg-blue-800 focus:ring-blue-300": color === "default",
       "bg-red-700 hover:bg-red-800 focus:ring-red-300 text-white": color === "red",
       "bg-white border border-gray-300 text-gray-900": color === "light",
       "w-[35px] h-[35px]": size === "sm",
@@ -46,10 +46,10 @@ const IconButton = forwardRef(
       "opacity-[0.7]": disabled,
     });
 
-    const iconClasses = clsx("", {
-      "text-sm": size === "sm",
-      "text-md": size === "md",
-      "text-lg": size === "lg",
+    const iconClasses = clsx({
+      "text-md": size === "sm",
+      "text-lg": size === "md",
+      "text-xl": size === "lg",
     });
 
     const loaderOverlayClasses = clsx("absolute top-0 left-0 bottom-0 right-0 bg-white flex items-center justify-center rounded-full");

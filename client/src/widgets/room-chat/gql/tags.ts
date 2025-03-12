@@ -54,7 +54,8 @@ export const GET_ROOM_PARTICIPANTS_QUERY = gql(`
         id
         participants {
           id
-          email
+          firstName
+          lastName
           profilePictureUrl
           isOnline
         }
@@ -89,6 +90,7 @@ export const GET_ROOM = gql(`
     room(id: $roomId) {
       id
       name
+      creatorId
       thumbnailUrl
       pendingInvitationsCount
       participantsOnlineCount
@@ -194,7 +196,7 @@ export const NOTIFY_ME_IS_TYPING = gql(`
 `);
 
 export const EXCLUDE_USER_FROM_ROOM = gql(`
-    mutation ExcludeUserFromRoom($roomId: Int!, $userId: Int!) {
+    mutation RoomChatExcludeFrom($roomId: Int!, $userId: Int!) {
       excludeUserFromRoom(roomId: $roomId, userId: $userId) {
         id
         name

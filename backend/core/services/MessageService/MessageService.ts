@@ -80,7 +80,7 @@ export class MessageService {
           room,
         },
       });
-    }, 1000);
+    }, 0);
 
     await this.roomRepository.updateOneById(room.id, {
       messagesCount: room.messagesCount + 1,

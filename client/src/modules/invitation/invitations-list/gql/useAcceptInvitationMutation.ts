@@ -1,6 +1,6 @@
 import { ACCEPT_INVITATION } from "./tags";
 import { useCustomMutation } from "@/shared/lib/graphql";
-import { User } from "@/__generated__/graphql";
+import { Query, User } from "@/__generated__/graphql";
 import { useAuth } from "@/modules/auth";
 
 const useAcceptInvitationMutation = () => {
@@ -21,6 +21,11 @@ const useAcceptInvitationMutation = () => {
           invitationsCount(prevInvitationsCount) {
             return prevInvitationsCount - 1;
           },
+        },
+      });
+      cache.modify<Query>({
+        id: "ROOT_QUERY",
+        fields: {
           invitations(prevInvitations, { readField }) {
             return prevInvitations.filter((_invitation) => {
               const userId = readField("userId", _invitation);

@@ -13,21 +13,17 @@ import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/
  * Therefore it is highly recommended to use the babel or swc plugin for production.
  */
 const documents = {
-    "\n  subscription MeBlockedStatus {\n    meIsBlockedStatus {\n      isBlocked\n    }\n  }\n": types.MeBlockedStatusDocument,
     "\n  query AppGetMe {\n    me {\n      id\n    }\n  }\n": types.AppGetMeDocument,
     "\n  mutation StartSession {\n    startSession {\n      sessionToken\n    }\n  }\n": types.StartSessionDocument,
     "\n  query GetMeIdOnly {\n    me {\n      id\n    }\n  }\n": types.GetMeIdOnlyDocument,
     "\n  query GetMeTemp {\n    me {\n      id\n      email\n    }\n  }\n": types.GetMeTempDocument,
     "\n  mutation BlockUser($input: BlockUserInput!) {\n    blockUser(input: $input) {\n      id\n      email\n      isBlocked\n    }\n  }\n": types.BlockUserDocument,
+    "\n  subscription MeBlockedStatus {\n    meIsBlockedStatus {\n      isBlocked\n    }\n  }\n": types.MeBlockedStatusDocument,
     "\n  mutation LeaveRoom($input: LeaveRoomInput!) {\n    leaveRoom(input: $input)\n  }\n": types.LeaveRoomDocument,
     "\n  query SearchUsers($filter: SearchUsersFilterInput!) {\n    searchUsers(filter: $filter) {\n      data {\n        id\n        email\n        profilePictureUrl\n      }\n      hasMore\n    }\n  }\n": types.SearchUsersDocument,
     "\n  query RoomGetPendingInvitations($roomId: Int!) {\n    room(id: $roomId) {\n      id\n      pendingInvitations {\n        userId\n        roomId\n      }\n    }\n  }\n": types.RoomGetPendingInvitationsDocument,
     "\n  mutation InviteUsersToRoom($roomId: Int!, $invitedUsersIds: [Int!]!) {\n    inviteUsersToRoom(roomId: $roomId, invitedUsersIds: $invitedUsersIds)\n  }\n": types.InviteUsersToRoomDocument,
-    "\n  subscription MeIsInvitedToRoom {\n    newInvitation {\n      userId\n      roomId\n    }\n  }\n": types.MeIsInvitedToRoomDocument,
-    "\n          query PrevMeInvitationsCount {\n            me {\n              id\n              invitationsCount\n            }\n          }\n        ": types.PrevMeInvitationsCountDocument,
-    "\n          query UpdateMeInvitationsCount {\n            me {\n              id\n              invitationsCount\n            }\n          }\n        ": types.UpdateMeInvitationsCountDocument,
     "\n  subscription NewMessageSubscription($skipFromCurrentSession: Boolean!) {\n    newMessage(skipFromCurrentSession: $skipFromCurrentSession) {\n      message {\n        id\n        text\n        roomId\n        senderId\n      }\n    }\n  }\n": types.NewMessageSubscriptionDocument,
-    "\n  subscription RepliedToMyInvitation {\n    repliedToMyInvitation {\n      accepted\n      invitation {\n        userId\n        roomId\n        invitedUser {\n          id\n          email\n        }\n        room {\n          id\n          name\n        }\n      }\n    }\n  }\n": types.RepliedToMyInvitationDocument,
     "\n  mutation UnblockUser($input: UnblockUserInput!) {\n    unblockUser(input: $input) {\n      id\n      isBlocked\n    }\n  }\n": types.UnblockUserDocument,
     "\n  query GetMe {\n    me {\n      id\n      email\n      password\n      profilePictureUrl\n      invitationsCount\n    }\n  }\n": types.GetMeDocument,
     "\n  mutation Login($input: LoginInput!) {\n    login(input: $input) {\n      user {\n        id\n      }\n      token\n    }\n  }\n": types.LoginDocument,
@@ -52,22 +48,22 @@ const documents = {
     "\n  subscription RoomParticipantLeft($roomId: Int!) {\n    roomParticipantLeft(roomId: $roomId) {\n      id\n      email\n    }\n  }\n": types.RoomParticipantLeftDocument,
     "\n  subscription RoomParticipantJoined($roomId: Int!) {\n    roomParticipantJoined(roomId: $roomId) {\n      id\n      email\n      profilePictureUrl\n    }\n  }\n": types.RoomParticipantJoinedDocument,
     "\n    subscription MyRooms_MeIsExcludedFromRoomSub {\n      meIsExcludedFromRoom {\n        id\n        name\n      }\n    }\n": types.MyRooms_MeIsExcludedFromRoomSubDocument,
-    "\n  subscription MyRoomsNewMessageSub($skipFromCurrentSession: Boolean!) {\n    newMessage(skipFromCurrentSession: $skipFromCurrentSession) {\n      message {\n        id\n        text\n        roomId\n        sender {\n          id\n          email\n        }\n      }\n      room {\n        id\n        unreadMessagesCount\n        lastMessage {\n          id\n          text\n          sender {\n            id\n            email\n          }\n        }\n      }\n    }\n  }\n": types.MyRoomsNewMessageSubDocument,
+    "\n  subscription RoomsListNewMessageSub($skipFromCurrentSession: Boolean!) {\n    newMessage(skipFromCurrentSession: $skipFromCurrentSession) {\n      message {\n        id\n        text\n        roomId\n        sender {\n          id\n          email\n        }\n      }\n      room {\n        id\n        unreadMessagesCount\n        lastMessage {\n          id\n          text\n          sender {\n            id\n            firstName\n            lastName\n          }\n        }\n      }\n    }\n  }\n": types.RoomsListNewMessageSubDocument,
     "\n  subscription HomeNewInvitation {\n    newInvitation {\n      userId\n      roomId\n    }\n  }\n": types.HomeNewInvitationDocument,
     "\n  subscription HomeUserRejectedInvitation {\n    invitationRejected {\n      userId\n      roomId\n      room {\n        id\n        name\n      }\n      invitedUser {\n        id\n        firstName\n        lastName\n      }\n    }\n  }\n": types.HomeUserRejectedInvitationDocument,
     "\n  subscription HomeUserAcceptedInvitation {\n    invitationAccepted {\n      userId\n      roomId\n      room {\n        id\n        name\n      }\n      invitedUser {\n        id\n        firstName\n        lastName\n      }\n    }\n  }\n": types.HomeUserAcceptedInvitationDocument,
     "\n  mutation SendMessage($input: SendMessageInput!) {\n    sendMessage(input: $input) {\n      id\n      text\n      senderId\n      roomId\n      isViewedByMe\n      sentAt\n      sender {\n        id\n        email\n        profilePictureUrl\n        isOnline\n      }\n      images {\n        id\n        url\n      }\n      viewsCount\n    }\n  }\n": types.SendMessageDocument,
     "\n  mutation ScheduleMessage($input: ScheduleMessage!) {\n    scheduleMessage(input: $input) {\n      id\n      text\n      senderId\n      roomId\n      scheduledAt\n      sender {\n        id\n        email\n        profilePictureUrl\n        isOnline\n      }\n    }\n  }\n": types.ScheduleMessageDocument,
     "\n  mutation DeleteMessages($roomId: Int!, $messageIds: [Int!]!) {\n    deleteMessages(roomId: $roomId, messageIds: $messageIds)\n  }\n": types.DeleteMessagesDocument,
-    "\n    query GetRoomParticipants($id: Int!) {\n      room(id: $id) {\n        id\n        participants {\n          id\n          email\n          profilePictureUrl\n          isOnline\n        }\n      }\n    }\n": types.GetRoomParticipantsDocument,
+    "\n    query GetRoomParticipants($id: Int!) {\n      room(id: $id) {\n        id\n        participants {\n          id\n          firstName\n          lastName\n          profilePictureUrl\n          isOnline\n        }\n      }\n    }\n": types.GetRoomParticipantsDocument,
     "\n  mutation MarkMessageAsViewedByMe($messageId: Int!) {\n    markMessageAsViewedByMe(messageId: $messageId) {\n      id\n      viewsCount\n      isViewedByMe\n    }\n  }\n": types.MarkMessageAsViewedByMeDocument,
     "\n  query RoomChatMe {\n    me {\n      id\n      email\n      firstName\n      lastName\n      profilePictureUrl\n    }\n  }\n": types.RoomChatMeDocument,
-    "\n  query GetRoom($roomId: Int!, $scheduledMessagesOffset: Int!) {\n    room(id: $roomId) {\n      id\n      name\n      thumbnailUrl\n      pendingInvitationsCount\n      participantsOnlineCount\n      myScheduledMessagesCount\n      scheduledMessages(offset: $scheduledMessagesOffset) {\n        data {\n          id\n          text\n          senderId\n          roomId\n          scheduledAt\n          sender {\n            id\n            email\n            profilePictureUrl\n            isOnline\n          }\n        }\n        hasMore\n      }\n      participantsTyping {\n        id\n        firstName\n        lastName\n      }\n    }\n  }\n": types.GetRoomDocument,
+    "\n  query GetRoom($roomId: Int!, $scheduledMessagesOffset: Int!) {\n    room(id: $roomId) {\n      id\n      name\n      creatorId\n      thumbnailUrl\n      pendingInvitationsCount\n      participantsOnlineCount\n      myScheduledMessagesCount\n      scheduledMessages(offset: $scheduledMessagesOffset) {\n        data {\n          id\n          text\n          senderId\n          roomId\n          scheduledAt\n          sender {\n            id\n            email\n            profilePictureUrl\n            isOnline\n          }\n        }\n        hasMore\n      }\n      participantsTyping {\n        id\n        firstName\n        lastName\n      }\n    }\n  }\n": types.GetRoomDocument,
     "\n  query RoomChatGetMessages($roomId: Int!, $offset: Int!) {\n    room(id: $roomId) {\n      id\n      messages(offset: $offset) {\n        data {\n          id\n          text\n          senderId\n          roomId\n          isViewedByMe\n          sentAt\n          sender {\n            id\n            firstName\n            lastName\n            email\n            profilePictureUrl\n            isOnline\n          }\n          images {\n            id\n            url\n          }\n          viewsCount\n        }\n        hasMore\n      }\n    }\n  }\n": types.RoomChatGetMessagesDocument,
     "\n  query RoomChatGetScheduledMessages($roomId: Int!, $offset: Int!) {\n    room(id: $roomId) {\n      id\n      scheduledMessages(offset: $offset) {\n        data {\n          id\n          text\n          senderId\n          roomId\n          scheduledAt\n          sender {\n            id\n            email\n            profilePictureUrl\n            isOnline\n          }\n        }\n        hasMore\n      }\n    }\n  }\n": types.RoomChatGetScheduledMessagesDocument,
     "\n    query GetMessageViewers($messageId: Int!) {\n      message(id: $messageId) {\n        id\n        viewers {\n          id\n          email\n          profilePictureUrl\n        }\n      }\n    }\n": types.GetMessageViewersDocument,
     "\n    mutation NotifyMeIsTyping($roomId: Int!, $isTyping: Boolean!) {\n      notifyMeTypingStatusChange(roomId: $roomId, isTyping: $isTyping)\n    }\n": types.NotifyMeIsTypingDocument,
-    "\n    mutation ExcludeUserFromRoom($roomId: Int!, $userId: Int!) {\n      excludeUserFromRoom(roomId: $roomId, userId: $userId) {\n        id\n        name\n      }\n    }\n": types.ExcludeUserFromRoomDocument,
+    "\n    mutation RoomChatExcludeFrom($roomId: Int!, $userId: Int!) {\n      excludeUserFromRoom(roomId: $roomId, userId: $userId) {\n        id\n        name\n      }\n    }\n": types.RoomChatExcludeFromDocument,
     "\n  mutation RoomChatSendScheduledMessagesNow($messageIds: [Int!]!) {\n    sendScheduledMessagesNow(messageIds: $messageIds)\n  }\n": types.RoomChatSendScheduledMessagesNowDocument,
     "\n    subscription UserTypingStatusChange($roomId: Int!) {\n      userTypingStatusChange(roomId: $roomId) {\n        isTyping\n        user {\n          id\n          firstName\n          lastName\n        }\n      }\n    }\n": types.UserTypingStatusChangeDocument,
     "\n    subscription MeIsExcludedFromRoomSub {\n      meIsExcludedFromRoom {\n        id\n        name\n      }\n    }\n": types.MeIsExcludedFromRoomSubDocument,
@@ -95,10 +91,6 @@ export function gql(source: string): unknown;
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function gql(source: "\n  subscription MeBlockedStatus {\n    meIsBlockedStatus {\n      isBlocked\n    }\n  }\n"): (typeof documents)["\n  subscription MeBlockedStatus {\n    meIsBlockedStatus {\n      isBlocked\n    }\n  }\n"];
-/**
- * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
- */
 export function gql(source: "\n  query AppGetMe {\n    me {\n      id\n    }\n  }\n"): (typeof documents)["\n  query AppGetMe {\n    me {\n      id\n    }\n  }\n"];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
@@ -119,6 +111,10 @@ export function gql(source: "\n  mutation BlockUser($input: BlockUserInput!) {\n
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
+export function gql(source: "\n  subscription MeBlockedStatus {\n    meIsBlockedStatus {\n      isBlocked\n    }\n  }\n"): (typeof documents)["\n  subscription MeBlockedStatus {\n    meIsBlockedStatus {\n      isBlocked\n    }\n  }\n"];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
 export function gql(source: "\n  mutation LeaveRoom($input: LeaveRoomInput!) {\n    leaveRoom(input: $input)\n  }\n"): (typeof documents)["\n  mutation LeaveRoom($input: LeaveRoomInput!) {\n    leaveRoom(input: $input)\n  }\n"];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
@@ -135,23 +131,7 @@ export function gql(source: "\n  mutation InviteUsersToRoom($roomId: Int!, $invi
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function gql(source: "\n  subscription MeIsInvitedToRoom {\n    newInvitation {\n      userId\n      roomId\n    }\n  }\n"): (typeof documents)["\n  subscription MeIsInvitedToRoom {\n    newInvitation {\n      userId\n      roomId\n    }\n  }\n"];
-/**
- * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
- */
-export function gql(source: "\n          query PrevMeInvitationsCount {\n            me {\n              id\n              invitationsCount\n            }\n          }\n        "): (typeof documents)["\n          query PrevMeInvitationsCount {\n            me {\n              id\n              invitationsCount\n            }\n          }\n        "];
-/**
- * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
- */
-export function gql(source: "\n          query UpdateMeInvitationsCount {\n            me {\n              id\n              invitationsCount\n            }\n          }\n        "): (typeof documents)["\n          query UpdateMeInvitationsCount {\n            me {\n              id\n              invitationsCount\n            }\n          }\n        "];
-/**
- * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
- */
 export function gql(source: "\n  subscription NewMessageSubscription($skipFromCurrentSession: Boolean!) {\n    newMessage(skipFromCurrentSession: $skipFromCurrentSession) {\n      message {\n        id\n        text\n        roomId\n        senderId\n      }\n    }\n  }\n"): (typeof documents)["\n  subscription NewMessageSubscription($skipFromCurrentSession: Boolean!) {\n    newMessage(skipFromCurrentSession: $skipFromCurrentSession) {\n      message {\n        id\n        text\n        roomId\n        senderId\n      }\n    }\n  }\n"];
-/**
- * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
- */
-export function gql(source: "\n  subscription RepliedToMyInvitation {\n    repliedToMyInvitation {\n      accepted\n      invitation {\n        userId\n        roomId\n        invitedUser {\n          id\n          email\n        }\n        room {\n          id\n          name\n        }\n      }\n    }\n  }\n"): (typeof documents)["\n  subscription RepliedToMyInvitation {\n    repliedToMyInvitation {\n      accepted\n      invitation {\n        userId\n        roomId\n        invitedUser {\n          id\n          email\n        }\n        room {\n          id\n          name\n        }\n      }\n    }\n  }\n"];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
@@ -251,7 +231,7 @@ export function gql(source: "\n    subscription MyRooms_MeIsExcludedFromRoomSub 
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function gql(source: "\n  subscription MyRoomsNewMessageSub($skipFromCurrentSession: Boolean!) {\n    newMessage(skipFromCurrentSession: $skipFromCurrentSession) {\n      message {\n        id\n        text\n        roomId\n        sender {\n          id\n          email\n        }\n      }\n      room {\n        id\n        unreadMessagesCount\n        lastMessage {\n          id\n          text\n          sender {\n            id\n            email\n          }\n        }\n      }\n    }\n  }\n"): (typeof documents)["\n  subscription MyRoomsNewMessageSub($skipFromCurrentSession: Boolean!) {\n    newMessage(skipFromCurrentSession: $skipFromCurrentSession) {\n      message {\n        id\n        text\n        roomId\n        sender {\n          id\n          email\n        }\n      }\n      room {\n        id\n        unreadMessagesCount\n        lastMessage {\n          id\n          text\n          sender {\n            id\n            email\n          }\n        }\n      }\n    }\n  }\n"];
+export function gql(source: "\n  subscription RoomsListNewMessageSub($skipFromCurrentSession: Boolean!) {\n    newMessage(skipFromCurrentSession: $skipFromCurrentSession) {\n      message {\n        id\n        text\n        roomId\n        sender {\n          id\n          email\n        }\n      }\n      room {\n        id\n        unreadMessagesCount\n        lastMessage {\n          id\n          text\n          sender {\n            id\n            firstName\n            lastName\n          }\n        }\n      }\n    }\n  }\n"): (typeof documents)["\n  subscription RoomsListNewMessageSub($skipFromCurrentSession: Boolean!) {\n    newMessage(skipFromCurrentSession: $skipFromCurrentSession) {\n      message {\n        id\n        text\n        roomId\n        sender {\n          id\n          email\n        }\n      }\n      room {\n        id\n        unreadMessagesCount\n        lastMessage {\n          id\n          text\n          sender {\n            id\n            firstName\n            lastName\n          }\n        }\n      }\n    }\n  }\n"];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
@@ -279,7 +259,7 @@ export function gql(source: "\n  mutation DeleteMessages($roomId: Int!, $message
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function gql(source: "\n    query GetRoomParticipants($id: Int!) {\n      room(id: $id) {\n        id\n        participants {\n          id\n          email\n          profilePictureUrl\n          isOnline\n        }\n      }\n    }\n"): (typeof documents)["\n    query GetRoomParticipants($id: Int!) {\n      room(id: $id) {\n        id\n        participants {\n          id\n          email\n          profilePictureUrl\n          isOnline\n        }\n      }\n    }\n"];
+export function gql(source: "\n    query GetRoomParticipants($id: Int!) {\n      room(id: $id) {\n        id\n        participants {\n          id\n          firstName\n          lastName\n          profilePictureUrl\n          isOnline\n        }\n      }\n    }\n"): (typeof documents)["\n    query GetRoomParticipants($id: Int!) {\n      room(id: $id) {\n        id\n        participants {\n          id\n          firstName\n          lastName\n          profilePictureUrl\n          isOnline\n        }\n      }\n    }\n"];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
@@ -291,7 +271,7 @@ export function gql(source: "\n  query RoomChatMe {\n    me {\n      id\n      e
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function gql(source: "\n  query GetRoom($roomId: Int!, $scheduledMessagesOffset: Int!) {\n    room(id: $roomId) {\n      id\n      name\n      thumbnailUrl\n      pendingInvitationsCount\n      participantsOnlineCount\n      myScheduledMessagesCount\n      scheduledMessages(offset: $scheduledMessagesOffset) {\n        data {\n          id\n          text\n          senderId\n          roomId\n          scheduledAt\n          sender {\n            id\n            email\n            profilePictureUrl\n            isOnline\n          }\n        }\n        hasMore\n      }\n      participantsTyping {\n        id\n        firstName\n        lastName\n      }\n    }\n  }\n"): (typeof documents)["\n  query GetRoom($roomId: Int!, $scheduledMessagesOffset: Int!) {\n    room(id: $roomId) {\n      id\n      name\n      thumbnailUrl\n      pendingInvitationsCount\n      participantsOnlineCount\n      myScheduledMessagesCount\n      scheduledMessages(offset: $scheduledMessagesOffset) {\n        data {\n          id\n          text\n          senderId\n          roomId\n          scheduledAt\n          sender {\n            id\n            email\n            profilePictureUrl\n            isOnline\n          }\n        }\n        hasMore\n      }\n      participantsTyping {\n        id\n        firstName\n        lastName\n      }\n    }\n  }\n"];
+export function gql(source: "\n  query GetRoom($roomId: Int!, $scheduledMessagesOffset: Int!) {\n    room(id: $roomId) {\n      id\n      name\n      creatorId\n      thumbnailUrl\n      pendingInvitationsCount\n      participantsOnlineCount\n      myScheduledMessagesCount\n      scheduledMessages(offset: $scheduledMessagesOffset) {\n        data {\n          id\n          text\n          senderId\n          roomId\n          scheduledAt\n          sender {\n            id\n            email\n            profilePictureUrl\n            isOnline\n          }\n        }\n        hasMore\n      }\n      participantsTyping {\n        id\n        firstName\n        lastName\n      }\n    }\n  }\n"): (typeof documents)["\n  query GetRoom($roomId: Int!, $scheduledMessagesOffset: Int!) {\n    room(id: $roomId) {\n      id\n      name\n      creatorId\n      thumbnailUrl\n      pendingInvitationsCount\n      participantsOnlineCount\n      myScheduledMessagesCount\n      scheduledMessages(offset: $scheduledMessagesOffset) {\n        data {\n          id\n          text\n          senderId\n          roomId\n          scheduledAt\n          sender {\n            id\n            email\n            profilePictureUrl\n            isOnline\n          }\n        }\n        hasMore\n      }\n      participantsTyping {\n        id\n        firstName\n        lastName\n      }\n    }\n  }\n"];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
@@ -311,7 +291,7 @@ export function gql(source: "\n    mutation NotifyMeIsTyping($roomId: Int!, $isT
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function gql(source: "\n    mutation ExcludeUserFromRoom($roomId: Int!, $userId: Int!) {\n      excludeUserFromRoom(roomId: $roomId, userId: $userId) {\n        id\n        name\n      }\n    }\n"): (typeof documents)["\n    mutation ExcludeUserFromRoom($roomId: Int!, $userId: Int!) {\n      excludeUserFromRoom(roomId: $roomId, userId: $userId) {\n        id\n        name\n      }\n    }\n"];
+export function gql(source: "\n    mutation RoomChatExcludeFrom($roomId: Int!, $userId: Int!) {\n      excludeUserFromRoom(roomId: $roomId, userId: $userId) {\n        id\n        name\n      }\n    }\n"): (typeof documents)["\n    mutation RoomChatExcludeFrom($roomId: Int!, $userId: Int!) {\n      excludeUserFromRoom(roomId: $roomId, userId: $userId) {\n        id\n        name\n      }\n    }\n"];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

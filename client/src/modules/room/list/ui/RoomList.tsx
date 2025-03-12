@@ -12,12 +12,6 @@ const RoomList = () => {
 
   const isSearchEmpty = search === "";
 
-  useSubscription(ME_IS_EXCLUDED_FROM_ROOM, {
-    onData({ data, client }) {
-      client.cache.evict({ id: client.cache.identify({ id: data.data!.meIsExcludedFromRoom.id, __typename: "Room" }) });
-    },
-  });
-
   const queries = {
     rooms: useGetRoomsQuery(),
   };
@@ -29,9 +23,9 @@ const RoomList = () => {
 
     return [
       ...queries.rooms.data!.rooms.filter((room) => room.name.includes(search.trim())),
-      // ...queries.rooms.data!.me.rooms.filter((room) => room.name.includes(search.trim())),
-      // ...queries.rooms.data!.me.rooms.filter((room) => room.name.includes(search.trim())),
-      // ...queries.rooms.data!.me.rooms.filter((room) => room.name.includes(search.trim())),
+      // ...queries.rooms.data!.rooms.filter((room) => room.name.includes(search.trim())),
+      // ...queries.rooms.data!.rooms.filter((room) => room.name.includes(search.trim())),
+      // ...queries.rooms.data!.rooms.filter((room) => room.name.includes(search.trim())),
       // ...queries.rooms.data!.me.rooms.filter((room) => room.name.includes(search.trim())),
       // ...queries.rooms.data!.me.rooms.filter((room) => room.name.includes(search.trim())),
       // ...queries.rooms.data!.me.rooms.filter((room) => room.name.includes(search.trim())),
@@ -83,13 +77,11 @@ const RoomList = () => {
 
           <div className="flex-grow shrink-0 overflow-hidden">
             {filteredRooms.length > 0 ? (
-              <Scroll height={"full"} showScrollToBottomButton={false}>
-                <div className="mt-2 flex flex-col">
-                  {filteredRooms.map((room) => (
-                    <RoomsListItem key={room.id} room={room} />
-                  ))}
-                </div>
-              </Scroll>
+              <div className="mt-2 flex flex-col px-1">
+                {filteredRooms.map((room) => (
+                  <RoomsListItem key={room.id} room={room} />
+                ))}
+              </div>
             ) : (
               <div className="mt-4">
                 <Empty title="No Results" />
