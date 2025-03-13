@@ -1,5 +1,5 @@
 import { Scroll, Input, Popover, Spinner } from "@/shared/ui";
-import { useMemo, useState } from "react";
+import { ReactNode, useMemo, useState } from "react";
 import { useDebouncedFn } from "@/shared/hooks";
 import { NetworkStatus } from "@apollo/client";
 import UsersSelectorSelectedUser from "./UsersSelectorSelectedUser.tsx";
@@ -14,13 +14,14 @@ export type User = Flatten<UsersSelectorSearchUsersQuery["searchUsers"]["data"]>
 
 type Props = {
   users: User[];
-  excludeMe?: boolean;
   onSelect: (user: User) => void;
   onDeselect: (user: User) => void;
-  userIsSelectable?: (userId: number) => boolean;
+  userIsSelectable?: (user: User) => boolean;
+  excludeIds?: number[];
+  badgeContent?: (user: User) => ReactNode;
 };
 
-const UsersSelector = ({ users, onSelect, onDeselect, excludeMe = false, userIsSelectable }: Props) => {
+const UsersSelector = ({ users, onSelect, onDeselect, excludeIds = [], userIsSelectable = (_) => true, badgeContent = (_) => null }: Props) => {
   const [searchInput, setSearchInput] = useState("");
 
   const queries = {
@@ -29,7 +30,7 @@ const UsersSelector = ({ users, onSelect, onDeselect, excludeMe = false, userIsS
         q: "",
         offset: 0,
         limit: LIMIT,
-        excludeMe,
+        excludeIds,
       },
     }),
   };
@@ -44,7 +45,7 @@ const UsersSelector = ({ users, onSelect, onDeselect, excludeMe = false, userIsS
         q,
         offset: 0,
         limit: LIMIT,
-        excludeMe: true,
+        excludeIds,
       },
     });
   }, 300);
@@ -142,9 +143,10 @@ const UsersSelector = ({ users, onSelect, onDeselect, excludeMe = false, userIsS
                         key={user.id}
                         user={user}
                         isSelected={!!users.find((_user) => _user.id === user.id)}
-                        isSelectable={userIsSelectable ? userIsSelectable(user.id) : true}
+                        isSelectable={userIsSelectable(user)}
                         onSelect={() => onSelect(user)}
                         onDeselect={() => onDeselect(user)}
+                        badgeContent={badgeContent(user)}
                       />
                     ))}
                   </ul>

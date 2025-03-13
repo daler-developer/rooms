@@ -1,6 +1,7 @@
 import { Button } from "@/shared/ui";
 import { User } from "./UsersSelector";
 import { UserCard } from "@/entities/user";
+import { ReactNode } from "react";
 
 type Props = {
   user: User;
@@ -8,9 +9,10 @@ type Props = {
   onSelect: () => void;
   onDeselect: () => void;
   isSelectable: boolean;
+  badgeContent?: ReactNode;
 };
 
-const UsersSelectorSearchResultCard = ({ user, onSelect, onDeselect, isSelected, isSelectable }: Props) => {
+const UsersSelectorSearchResultCard = ({ user, onSelect, onDeselect, isSelected, isSelectable, badgeContent }: Props) => {
   return (
     <UserCard
       as="li"
@@ -19,7 +21,8 @@ const UsersSelectorSearchResultCard = ({ user, onSelect, onDeselect, isSelected,
       userProfilePictureUrl={user.profilePictureUrl}
       userIsOnline={user.isOnline}
       right={
-        <div>
+        <div className="flex items-center gap-2">
+          {badgeContent && <div>{badgeContent}</div>}
           {isSelectable && (
             <>
               {isSelected ? (

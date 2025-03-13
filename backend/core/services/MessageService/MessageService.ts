@@ -25,6 +25,13 @@ export class MessageService {
     @inject(TYPES.UserToRoomParticipationRepository) private userToRoomParticipationRepository: UserToRoomParticipationRepository,
   ) {}
 
+  async fetchParticipants(roomId: number) {
+    const participations = await this.userToRoomParticipationRepository.getManyByRoomId(roomId);
+    const ids = participations.map((p) => p.userId);
+    const users = await this.userRepository.getManyByIds(ids);
+    return users;
+  }
+
   async fetchMessagesByRoomId(roomId: number, { offset }: { offset: number }) {
     const data = await this.messageRepository.getManyByRoomId(roomId, { offset, isSent: true });
 

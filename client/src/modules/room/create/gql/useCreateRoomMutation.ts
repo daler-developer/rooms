@@ -1,22 +1,24 @@
-import { useAuth } from "@/modules/auth";
-import { User } from "@/__generated__/graphql";
+import { type Query } from "@/__generated__/graphql";
 import { CREATE_ROOM } from ".";
 import { useCustomMutation } from "@/shared/lib/graphql";
 
 const useCreateRoomMutation = () => {
-  const { userId } = useAuth();
-
   return useCustomMutation(CREATE_ROOM, {
     update(cache, { data }) {
-      cache.modify<User>({
-        id: cache.identify({ __typename: "User", id: userId }),
+      if (!data) {
+        return;
+      }
+      const newRoom = data.createRoom;
+      cache.modify<Query>({
+        id: "ROOM_QUERY",
         fields: {
-          rooms(prevInvitations) {
-            if (!prevInvitations) {
-              return prevInvitations;
+          rooms(prevRooms, { toReference }) {
+            if (!prevRooms) {
+              console.log("return");
+              return prevRooms;
             }
 
-            return [...prevInvitations, data!.createRoom];
+            return [...prevRooms, toReference(newRoom)];
           },
         },
       });

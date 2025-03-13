@@ -29,7 +29,8 @@ const CREATE_ROOM = gql(`
         text
         sender {
           id
-          email
+          firstName
+          lastName
         }
       }
     }

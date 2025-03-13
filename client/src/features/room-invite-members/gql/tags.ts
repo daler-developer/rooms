@@ -1,5 +1,27 @@
 import { gql } from "@/__generated__";
 
+export const GET_PARTICIPANTS = gql(`
+  query RoomInviteMembersGetParticipants($roomId: Int!) {
+    room(id: $roomId) {
+      id
+      participants {
+        id
+      }
+    }
+  }
+`);
+
+export const GET_INVITED_USERS = gql(`
+  query RoomInviteMembersGetInvitedUsers($roomId: Int!) {
+    room(id: $roomId) {
+      id
+      invitedUsers {
+        id
+      }
+    }
+  }
+`);
+
 export const SEARCH_USERS = gql(`
   query SearchUsers($filter: SearchUsersFilterInput!) {
     searchUsers(filter: $filter) {

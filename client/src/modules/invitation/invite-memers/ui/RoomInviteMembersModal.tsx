@@ -1,6 +1,8 @@
 import { Modal } from "@/shared/ui";
 import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from "react";
 import { RoomInviteMembersForm } from "@/features/room-invite-members";
+import {} from "../gql/";
+import useGetInvitedUsersQuery from "@/features/room-invite-members/gql/useGetInvitedUsersQuery.ts";
 
 export type RoomInviteMembersModalHandler = {
   open: (o: { roomId: number }) => Promise<void>;
@@ -10,6 +12,11 @@ const RoomInviteMembersModal = forwardRef<RoomInviteMembersModalHandler, {}>(({}
   const [roomId, setRoomId] = useState<number>(-1);
   const [showModal, setShowModal] = useState(false);
   const [submitButtonWrapperEl, setSubmitButtonWrapperEl] = useState<HTMLElement | null>(null);
+
+  const queries = {
+    participants: useGetParticipantsQuery(),
+    invitedUsers: useGetInvitedUsersQuery(),
+  };
 
   const promiseResolveFn = useRef<() => void | null>(null);
   const promiseRejectFn = useRef<() => void | null>(null);

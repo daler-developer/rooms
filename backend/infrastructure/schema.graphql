@@ -91,6 +91,7 @@ type Room {
     lastMessage: Message
     unreadMessagesCount: Int!
     thumbnailUrl: String!
+    invitedUsers: [User!]!
 }
 
 type MessageImage {
@@ -188,7 +189,7 @@ input SearchUsersFilterInput {
     q: String!
     offset: Int!
     limit: Int!
-    excludeMe: Boolean!
+    excludeIds: [Int!]!
 }
 
 input UserOnlineStatusChangeSubscriptionInput {
