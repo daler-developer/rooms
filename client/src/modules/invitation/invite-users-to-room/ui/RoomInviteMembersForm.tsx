@@ -37,8 +37,8 @@ const RoomInviteMembersForm = ({ roomId, onSuccess, teleportSubmitButtonTo }: Pr
   const { userId } = useAuth();
 
   const queries = {
-    participants: useGetParticipantsQuery(),
-    invitedUsers: useGetInvitedUsersQuery(),
+    participants: useGetParticipantsQuery({ roomId }),
+    invitedUsers: useGetInvitedUsersQuery({ roomId }),
   };
 
   const [usersSelected, setUsersSelected] = useState<User[]>([]);
@@ -62,6 +62,18 @@ const RoomInviteMembersForm = ({ roomId, onSuccess, teleportSubmitButtonTo }: Pr
     onSuccess?.();
   };
 
+  const userIsMe = (user: User) => {
+    return user.id === userId;
+  };
+
+  const userIsInvited = (user: User) => {
+    return Boolean(queries.invitedUsers.data!.room.invitedUsers.find((_user) => _user.id === user.id));
+  };
+
+  const userIsParticipant = (user: User) => {
+    return Boolean(queries.participants.data!.room.participants.find((_user) => _user.id === user.id));
+  };
+
   return (
     <>
       <form className="flex flex-col gap-y-2" onSubmit={handleSubmit}>
@@ -70,17 +82,17 @@ const RoomInviteMembersForm = ({ roomId, onSuccess, teleportSubmitButtonTo }: Pr
           onSelect={(user) => setUsersSelected((prev) => [...prev, user])}
           onDeselect={(user) => setUsersSelected((prev) => prev.filter((_user) => _user.id !== user.id))}
           userIsSelectable={(user) => {
-            const isMe = user.id === userId;
-            return !isMe;
+            return !userIsMe(user) && !userIsInvited(user) && !userIsParticipant(user);
           }}
           badgeContent={(user) => {
-            const isMe = user.id === userId;
-            if (isMe) {
+            if (userIsMe(user)) {
               return <span className="font-medium text-gray-500 text-[15px] italic pr-2">You</span>;
             }
-            const isAlreadyInvited = true;
-            if (isAlreadyInvited) {
+            if (userIsInvited(user)) {
               return <span className="font-medium text-gray-500 text-[15px] italic pr-2">Already invited</span>;
+            }
+            if (userIsParticipant(user)) {
+              return <span className="font-medium text-gray-500 text-[15px] italic pr-2">Participant</span>;
             }
             return null;
           }}

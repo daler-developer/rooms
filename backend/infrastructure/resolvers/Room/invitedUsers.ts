@@ -13,7 +13,7 @@ type Parent = Room;
 const sleep = () => new Promise((resolve) => setTimeout(resolve, 1000));
 
 const resolver = async (parent: Parent, args: Args, { messageService }: CustomContext) => {
-  return await messageService.fetchParticipants(parent.id);
+  return await messageService.fetchInvitedUsers(parent.id);
 };
 
 export default composeResolvers(authRequired, withValidation(validationSchema))(resolver);

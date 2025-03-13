@@ -12,6 +12,7 @@ import { ScheduledMessagesCountRepository } from "../../repositories/ScheduledMe
 import { Message } from "../../entities/Message";
 import redisClient from "../../../infrastructure/db/redisClient";
 import { UserToRoomParticipationRepository } from "../../repositories/UserToRoomParticipationRepository/UserToRoomParticipationRepository";
+import { InvitationRepository } from "../../repositories/InvitationRepository/InvitationRepository";
 
 @injectable()
 export class MessageService {
@@ -23,11 +24,12 @@ export class MessageService {
     @inject(TYPES.UserRepository) private userRepository: UserRepository,
     @inject(TYPES.ScheduledMessagesCountRepository) private scheduledMessagesCountRepository: ScheduledMessagesCountRepository,
     @inject(TYPES.UserToRoomParticipationRepository) private userToRoomParticipationRepository: UserToRoomParticipationRepository,
+    @inject(TYPES.InvitationRepository) private invitationRepository: InvitationRepository,
   ) {}
 
-  async fetchParticipants(roomId: number) {
-    const participations = await this.userToRoomParticipationRepository.getManyByRoomId(roomId);
-    const ids = participations.map((p) => p.userId);
+  async fetchInvitedUsers(roomId: number) {
+    const invitations = await this.invitationRepository.getManyByRoomId(roomId);
+    const ids = invitations.map((i) => i.userId);
     const users = await this.userRepository.getManyByIds(ids);
     return users;
   }

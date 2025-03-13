@@ -1,6 +1,6 @@
 import { Modal } from "@/shared/ui";
-import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from "react";
-import { RoomInviteMembersForm } from "@/features/room-invite-members";
+import { forwardRef, useImperativeHandle, useRef, useState } from "react";
+import RoomInviteMembersForm from "./RoomInviteMembersForm";
 
 export type RoomInviteMembersModalHandler = {
   open: (o: { roomId: number }) => Promise<void>;

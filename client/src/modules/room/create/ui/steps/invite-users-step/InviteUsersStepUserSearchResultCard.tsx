@@ -1,7 +1,7 @@
 import { CreateRoomSearchUsersQuery } from "@/__generated__/graphql.ts";
 import { Button } from "@/shared/ui";
 import { useFormContext } from "@/shared/lib/form";
-import { FormValues } from "../types";
+import { FormValues } from "../../types";
 import { UserCard } from "@/entities/user";
 
 type Props = {
