@@ -1,7 +1,7 @@
-import { CreateRoomSearchUsersQuery } from "@/__generated__/graphql.ts";
+import { type User } from "@/widgets/users-selector";
 
 export type FormValues = {
   name: string;
-  invitedUsers: CreateRoomSearchUsersQuery["searchUsers"]["data"];
+  invitedUsers: User[];
   thumbnail: File | null;
 };

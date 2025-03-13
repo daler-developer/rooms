@@ -1,25 +1,26 @@
 import { Scroll, Input, Popover, Spinner } from "@/shared/ui";
 import { useMemo, useState } from "react";
 import { useDebouncedFn } from "@/shared/hooks";
-import { NetworkStatus, useSubscription } from "@apollo/client";
+import { NetworkStatus } from "@apollo/client";
 import UsersSelectorSelectedUser from "./UsersSelectorSelectedUser.tsx";
 import UsersSelectorSearchResultCard from "./UsersSelectorSearchResultCard.tsx";
 import useSearchUsersQuery from "../gql/useSearchUsersQuery.ts";
-import { USERS_ONLINE_STATUS_CHANGE } from "../gql/tags";
 import { UsersSelectorSearchUsersQuery } from "@/__generated__/graphql.ts";
+import useUsersOnlineStatusChangeSub from "../gql/useUsersOnlineStatusChangeSub.ts";
 
 const LIMIT = 6;
 
+export type User = Flatten<UsersSelectorSearchUsersQuery["searchUsers"]["data"]>;
+
 type Props = {
+  users: User[];
   excludeMe?: boolean;
-  onChange: (userIds: number[]) => void;
+  onSelect: (user: User) => void;
+  onDeselect: (user: User) => void;
   userIsSelectable?: (userId: number) => boolean;
 };
 
-export type User = Flatten<UsersSelectorSearchUsersQuery["searchUsers"]["data"]>;
-
-const UsersSelector = ({ onChange, excludeMe = false, userIsSelectable }: Props) => {
-  const [usersSelected, setUsersSelected] = useState<User[]>([]);
+const UsersSelector = ({ users, onSelect, onDeselect, excludeMe = false, userIsSelectable }: Props) => {
   const [searchInput, setSearchInput] = useState("");
 
   const queries = {
@@ -33,14 +34,9 @@ const UsersSelector = ({ onChange, excludeMe = false, userIsSelectable }: Props)
     }),
   };
 
-  const userIds = usersSelected.map((user) => user.id);
+  const userIds = users.map((user) => user.id);
 
-  useSubscription(USERS_ONLINE_STATUS_CHANGE, {
-    variables: {
-      userIds,
-    },
-    skip: !userIds.length,
-  });
+  useUsersOnlineStatusChangeSub({ userIds });
 
   const refetchDebounced = useDebouncedFn((q: string) => {
     queries.searchUsers.refetch({
@@ -86,30 +82,14 @@ const UsersSelector = ({ onChange, excludeMe = false, userIsSelectable }: Props)
     );
   }, [queries.searchUsers.networkStatus, queries.searchUsers.data]);
 
-  const handleUserDeselect = (user: User) => {
-    setUsersSelected((prev) => {
-      const newValue = prev.filter((_user) => _user.id !== user.id);
-      onChange(newValue.map((v) => v.id));
-      return newValue;
-    });
-  };
-
-  const handleUserSelect = (user: User) => {
-    setUsersSelected((prev) => {
-      const newValue = [...prev, user];
-      onChange(newValue.map((v) => v.id));
-      return newValue;
-    });
-  };
-
   return (
     <div>
-      {usersSelected.length > 0 && (
+      {users.length > 0 && (
         <div className="mb-4">
           <Scroll>
             <div className="flex items-start gap-x-1">
-              {usersSelected.map((user) => (
-                <UsersSelectorSelectedUser key={user.id} user={user} onUnselect={() => handleUserDeselect(user)} />
+              {users.map((user) => (
+                <UsersSelectorSelectedUser key={user.id} user={user} onDeselect={() => onDeselect(user)} />
               ))}
             </div>
           </Scroll>
@@ -161,10 +141,10 @@ const UsersSelector = ({ onChange, excludeMe = false, userIsSelectable }: Props)
                       <UsersSelectorSearchResultCard
                         key={user.id}
                         user={user}
-                        isSelected={!!usersSelected.find((_user) => _user.id === user.id)}
-                        isSelectable={userIsSelectable?.(user.id) || false}
-                        onSelect={() => handleUserSelect(user)}
-                        onDeselect={() => handleUserDeselect(user)}
+                        isSelected={!!users.find((_user) => _user.id === user.id)}
+                        isSelectable={userIsSelectable ? userIsSelectable(user.id) : true}
+                        onSelect={() => onSelect(user)}
+                        onDeselect={() => onDeselect(user)}
                       />
                     ))}
                   </ul>

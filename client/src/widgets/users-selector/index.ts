@@ -1,3 +1,3 @@
-import UsersSelector from "./ui/UsersSelector.tsx";
+import UsersSelector, { type User } from "./ui/UsersSelector.tsx";
 
-export { UsersSelector };
+export { UsersSelector, User };

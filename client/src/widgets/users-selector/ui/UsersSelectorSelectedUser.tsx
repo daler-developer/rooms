@@ -5,10 +5,10 @@ import { User } from "./UsersSelector.tsx";
 
 type Props = {
   user: User;
-  onUnselect: () => void;
+  onDeselect: () => void;
 };
 
-const UsersSelectorSelectedUser = ({ user, onUnselect }: Props) => {
+const UsersSelectorSelectedUser = ({ user, onDeselect }: Props) => {
   const chipColor = useMemo(() => {
     const allColors: ChipColor[] = ["blue", "red", "green", "amber", "purple"];
 
@@ -16,7 +16,7 @@ const UsersSelectorSelectedUser = ({ user, onUnselect }: Props) => {
   }, []);
 
   return (
-    <Chip key={user.id} text={`${user.firstName} ${user.lastName}`} withAvatar={true} avatar={user.profilePictureUrl} onDelete={onUnselect} color={chipColor} />
+    <Chip key={user.id} text={`${user.firstName} ${user.lastName}`} withAvatar={true} avatar={user.profilePictureUrl} onDelete={onDeselect} color={chipColor} />
   );
 };
 
