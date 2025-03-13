@@ -1,3 +1,3 @@
-import RoomList from "./ui/RoomList.tsx";
+import RoomsList from "./ui/RoomsList.tsx";
 
-export { RoomList };
+export { RoomsList };

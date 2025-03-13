@@ -1,31 +1,28 @@
-import { ComponentType, ReactElement, JSX, Fragment } from "react";
+import { ComponentType, ReactElement, JSX, ReactNode } from "react";
 import { User } from "@/__generated__/graphql.ts";
 import { Avatar, Badge } from "@/shared/ui";
 
 type Props = {
-  user: Pick<User, "firstName" | "lastName" | "profilePictureUrl" | "isOnline">;
-  actions?: ReactElement[];
+  userFirstName: User["firstName"];
+  userLastName: User["lastName"];
+  userIsOnline: User["isOnline"];
+  userProfilePictureUrl: User["profilePictureUrl"];
   as?: ComponentType<any> | keyof JSX.IntrinsicElements;
+  right?: ReactNode;
 };
 
-const UserCard = ({ user, actions, as: Component = "div" }: Props) => {
+const UserCard = ({ userFirstName, userLastName, userIsOnline, userProfilePictureUrl, as: Component = "div", right }: Props) => {
   return (
     <Component className="flex items-center justify-between gap-2">
       <div className="flex items-center gap-2">
-        <Avatar src={user.profilePictureUrl || ""} size="sm" badgeContent={<Badge badgeColor={user.isOnline ? "green" : "gray"} />} />
+        <Avatar src={userProfilePictureUrl} size="sm" badgeContent={<Badge badgeColor={userIsOnline ? "green" : "gray"} />} />
         <div className="flex items-center gap-1 font-medium">
-          <span>{user.firstName}</span>
-          <span>{user.lastName}</span>
+          <span>{userFirstName}</span>
+          <span>{userLastName}</span>
         </div>
       </div>
 
-      {actions && (
-        <div className="flex items-center gap-2">
-          {actions.map((action, i) => (
-            <Fragment key={i}>{action}</Fragment>
-          ))}
-        </div>
-      )}
+      {right && <div>{right}</div>}
     </Component>
   );
 };

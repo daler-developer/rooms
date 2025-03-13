@@ -1,5 +1,5 @@
 import { ProfileCard } from "@/modules/profile/profile-card";
-import { RoomList } from "@/modules/room/list";
+import { RoomsList } from "@/modules/room/list";
 import BaseTab from "./BaseTab";
 import { Dropdown, IconButton } from "@/shared/ui";
 import { HiMiniEllipsisVertical } from "react-icons/hi2";
@@ -50,7 +50,7 @@ const MainTab = () => {
       }
     >
       <div className="h-full">
-        <RoomList />
+        <RoomsList />
       </div>
     </BaseTab>
   );

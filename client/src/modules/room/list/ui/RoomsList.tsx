@@ -1,13 +1,13 @@
 import { useMemo, useState } from "react";
-import { NetworkStatus, useSubscription } from "@apollo/client";
+import { NetworkStatus } from "@apollo/client";
 import { Empty, Input, Scroll } from "@/shared/ui";
+import useExcludedFromRoomSub from "../gql/useExcludedFromRoomSub.ts";
 import RoomsListItem from "./rooms-list-item/RoomsListItem.tsx";
-import { ME_IS_EXCLUDED_FROM_ROOM } from "../gql/tags.ts";
 import useGetRoomsQuery from "../gql/useGetRoomsQuery.ts";
 import RoomsListSkeletons from "./RoomsListSkeletons.tsx";
 import { CreateRoomButton } from "@/modules/room/create";
 
-const RoomList = () => {
+const RoomsList = () => {
   const [search, setSearch] = useState("");
 
   const isSearchEmpty = search === "";
@@ -15,6 +15,8 @@ const RoomList = () => {
   const queries = {
     rooms: useGetRoomsQuery(),
   };
+
+  useExcludedFromRoomSub();
 
   const filteredRooms = useMemo(() => {
     if (queries.rooms.networkStatus !== NetworkStatus.ready) {
@@ -26,10 +28,6 @@ const RoomList = () => {
       // ...queries.rooms.data!.rooms.filter((room) => room.name.includes(search.trim())),
       // ...queries.rooms.data!.rooms.filter((room) => room.name.includes(search.trim())),
       // ...queries.rooms.data!.rooms.filter((room) => room.name.includes(search.trim())),
-      // ...queries.rooms.data!.me.rooms.filter((room) => room.name.includes(search.trim())),
-      // ...queries.rooms.data!.me.rooms.filter((room) => room.name.includes(search.trim())),
-      // ...queries.rooms.data!.me.rooms.filter((room) => room.name.includes(search.trim())),
-      // ...queries.rooms.data!.me.rooms.filter((room) => room.name.includes(search.trim())),
     ];
   }, [search, queries.rooms.data, queries.rooms.networkStatus]);
 
@@ -77,11 +75,11 @@ const RoomList = () => {
 
           <div className="flex-grow shrink-0 overflow-hidden">
             {filteredRooms.length > 0 ? (
-              <div className="mt-2 flex flex-col px-1">
+              <Scroll height="full" className="mt-2 flex flex-col px-1">
                 {filteredRooms.map((room) => (
                   <RoomsListItem key={room.id} room={room} />
                 ))}
-              </div>
+              </Scroll>
             ) : (
               <div className="mt-4">
                 <Empty title="No Results" />
@@ -100,4 +98,4 @@ const RoomList = () => {
   );
 };
 
-export default RoomList;
+export default RoomsList;

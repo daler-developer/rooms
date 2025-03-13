@@ -49,7 +49,7 @@ export const DELETE_MESSAGES = gql(`
 `);
 
 export const GET_ROOM_PARTICIPANTS_QUERY = gql(`
-    query GetRoomParticipants($id: Int!) {
+    query RoomChatGetRoomParticipants($id: Int!) {
       room(id: $id) {
         id
         participants {
@@ -278,7 +278,7 @@ export const ROOM_PENDING_INVITATIONS_COUNT_CHANGE = gql(`
 `);
 
 export const USERS_ONLINE_STATUS_CHANGE = gql(`
-  subscription UsersOnlineStatusChange($userIds: [Int!]!) {
+  subscription RoomChatUsersOnlineStatusChange($userIds: [Int!]!) {
     usersOnlineStatusChange(userIds: $userIds) {
       id
       isOnline
