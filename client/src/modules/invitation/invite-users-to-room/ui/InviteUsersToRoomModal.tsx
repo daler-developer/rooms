@@ -1,5 +1,5 @@
 import { Button, Modal, Skeleton, useToast } from "@/shared/ui";
-import { forwardRef, useId, useImperativeHandle, useRef, useState } from "react";
+import { forwardRef, MutableRefObject, useId, useImperativeHandle, useRef, useState } from "react";
 import InviteUsersToRoomForm from "./InviteUsersToRoomForm.tsx";
 import { FormProvider, useForm } from "@/shared/lib/form";
 import * as yup from "yup";
@@ -12,11 +12,15 @@ export type RoomInviteMembersModalHandler = {
   open: (o: { roomId: number }) => Promise<void>;
 };
 
+type PromiseResolve = (value: void | PromiseLike<void>) => void;
+
 const InviteUsersToRoomModal = forwardRef<RoomInviteMembersModalHandler, {}>(({}, ref) => {
   const [roomId, setRoomId] = useState<number>(-1);
   const [showModal, setShowModal] = useState(false);
 
   const toast = useToast();
+
+  const promiseResolveFn: MutableRefObject<PromiseResolve | null> = useRef(null);
 
   const queries = {
     participants: useCustomLazyQuery(GET_PARTICIPANTS, {
@@ -53,12 +57,9 @@ const InviteUsersToRoomModal = forwardRef<RoomInviteMembersModalHandler, {}>(({}
       });
       toast.success("Invitations sent to users");
       setShowModal(false);
-      promiseResolveFn.current();
+      promiseResolveFn.current!();
     },
   });
-
-  const promiseResolveFn = useRef<() => void | null>(null);
-  const promiseRejectFn = useRef<() => void | null>(null);
 
   const formId = useId();
 
@@ -69,9 +70,8 @@ const InviteUsersToRoomModal = forwardRef<RoomInviteMembersModalHandler, {}>(({}
       queries.participants.fetch();
       queries.invitedUsers.fetch();
 
-      return new Promise((res, rej) => {
+      return new Promise((res) => {
         promiseResolveFn.current = res;
-        promiseRejectFn.current = rej;
       });
     },
   }));
@@ -79,7 +79,7 @@ const InviteUsersToRoomModal = forwardRef<RoomInviteMembersModalHandler, {}>(({}
   const handleCancel = () => {
     form.reset();
     setShowModal(false);
-    promiseResolveFn.current();
+    promiseResolveFn.current!();
   };
 
   if (!showModal) {
@@ -110,7 +110,7 @@ const InviteUsersToRoomModal = forwardRef<RoomInviteMembersModalHandler, {}>(({}
         isOpen={showModal}
         onClose={() => {
           setShowModal(false);
-          promiseRejectFn.current!();
+          promiseResolveFn.current!();
         }}
         actions={[
           <Button color="light" type="button" disabled={form.isSubmitting} onClick={handleCancel}>
