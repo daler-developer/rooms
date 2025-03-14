@@ -13,7 +13,7 @@ type Props = {
   onDeselect: () => void;
 };
 
-const UserSearchResultCard = ({ user, roomId, isSelected, onSelect, onDeselect }: Props) => {
+const InviteUsersToRoomSearchResultCard = ({ user, roomId, isSelected, onSelect, onDeselect }: Props) => {
   const { data: pendingInvitations } = useQuery(ROOM_GET_PENDING_INVITATIONS, {
     variables: {
       roomId,
@@ -48,4 +48,4 @@ const UserSearchResultCard = ({ user, roomId, isSelected, onSelect, onDeselect }
   return <UserCard as="li" user={user} actions={getActions()} />;
 };
 
-export default UserSearchResultCard;
+export default InviteUsersToRoomSearchResultCard;

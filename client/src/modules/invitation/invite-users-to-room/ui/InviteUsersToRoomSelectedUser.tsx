@@ -8,7 +8,7 @@ type Props = {
   onDelete: () => void;
 };
 
-const InvitedMember = ({ user, onDelete }: Props) => {
+const InviteUsersToRoomSelectedUser = ({ user, onDelete }: Props) => {
   const chipColor = useMemo(() => {
     const allColors: ChipColor[] = ["blue", "red", "green", "amber", "purple"];
 
@@ -18,4 +18,4 @@ const InvitedMember = ({ user, onDelete }: Props) => {
   return <Chip key={user.id} text={user.email} withAvatar={true} avatar={user.profilePictureUrl} onDelete={onDelete} color={chipColor} />;
 };
 
-export default InvitedMember;
+export default InviteUsersToRoomSelectedUser;

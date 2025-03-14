@@ -1,4 +1,3 @@
-import RoomInviteMembersForm from "./ui/RoomInviteMembersForm.tsx";
-import RoomInviteMembersModal, { type RoomInviteMembersModalHandler } from "./ui/RoomInviteMembersModal.tsx";
+import InviteUsersToRoomModal, { type RoomInviteMembersModalHandler } from "./ui/InviteUsersToRoomModal.tsx";
 
-export { RoomInviteMembersForm, RoomInviteMembersModal, type RoomInviteMembersModalHandler };
+export { InviteUsersToRoomModal, type RoomInviteMembersModalHandler };

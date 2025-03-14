@@ -1,7 +1,7 @@
 import { useQuery, useSubscription } from "@apollo/client";
 import { GET_ME, USER_TYPING_STATUS_CHANGED_SUB } from "@/widgets/room-chat/gql/tags.ts";
 import { useRoomChatStore } from "@/widgets/room-chat/context";
-import { RoomInviteMembersModal, type RoomInviteMembersModalHandler } from "@/modules/invitation/invite-users-to-room";
+import { InviteUsersToRoomModal, type RoomInviteMembersModalHandler } from "@/modules/invitation/invite-users-to-room";
 import { useRef } from "react";
 import { Avatar, IconButton } from "@/shared/ui";
 import Dropdown from "@/shared/ui/components/Dropdown/Dropdown.tsx";
@@ -103,7 +103,7 @@ const ScreenMainHeader = () => {
         }
       />
 
-      <RoomInviteMembersModal ref={roomInviteMembersModalComp} />
+      <InviteUsersToRoomModal ref={roomInviteMembersModalComp} />
       <RoomInfoModal ref={roomInfoModalComp} />
     </>
   );
