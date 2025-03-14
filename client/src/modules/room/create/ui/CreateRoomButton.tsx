@@ -9,7 +9,7 @@ import EnterRoomNameStep from "./steps/enter-room-name-step/EnterRoomNameStep.ts
 import UploadThumbnailStep from "./steps/upload-thumbnail-step/UploadThumbnailStep.tsx";
 import InviteUsersStep from "./steps/invite-users-step/InviteUsersStep.tsx";
 import * as yup from "yup";
-import { useCreateRoomStore } from "../store.ts";
+import { useCreateRoomStore, Step } from "../store.ts";
 import { FormValues } from "../types";
 import { roomThumbnailRepository } from "@/global/superbase/repository";
 import { SupabaseErrorDisplay, useSupabaseOperation } from "@/global/superbase";
@@ -33,7 +33,7 @@ const CreateRoomButton = () => {
   });
 
   const form = useForm<FormValues>({
-    resetAfterSubmit: false,
+    resetAfterSubmit: true,
     initialValues: {
       name: "",
       invitedUsers: [],
@@ -55,6 +55,8 @@ const CreateRoomButton = () => {
           input,
         },
       });
+      store.setStep(Step.EnterRoomName);
+      store.setShowCurrentStep(false);
     },
   });
 

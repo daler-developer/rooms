@@ -1,9 +1,9 @@
 import { UsersSelector, type User } from "@/widgets/users-selector";
 import { useAuth } from "@/modules/auth";
-import useGetParticipantsQuery from "../gql/useGetParticipantsQuery.ts";
-import useGetInvitedUsersQuery from "../gql/useGetInvitedUsersQuery.ts";
+import { GET_PARTICIPANTS, GET_INVITED_USERS } from "../gql/tags.ts";
 import { useFormContext } from "@/shared/lib/form";
 import { FormValues } from "../types";
+import { useQuery } from "@apollo/client";
 
 type Props = {
   roomId: number;
@@ -14,8 +14,14 @@ const InviteUsersToRoomForm = ({ roomId }: Props) => {
   const { userId } = useAuth();
 
   const queries = {
-    participants: useGetParticipantsQuery({ roomId }),
-    invitedUsers: useGetInvitedUsersQuery({ roomId }),
+    participants: useQuery(GET_PARTICIPANTS, {
+      variables: { roomId },
+      fetchPolicy: "cache-only",
+    }),
+    invitedUsers: useQuery(GET_INVITED_USERS, {
+      variables: { roomId },
+      fetchPolicy: "cache-only",
+    }),
   };
 
   const userIsMe = (user: User) => {

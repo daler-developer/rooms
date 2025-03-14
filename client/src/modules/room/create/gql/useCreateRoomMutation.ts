@@ -10,11 +10,10 @@ const useCreateRoomMutation = () => {
       }
       const newRoom = data.createRoom;
       cache.modify<Query>({
-        id: "ROOM_QUERY",
+        id: "ROOT_QUERY",
         fields: {
           rooms(prevRooms, { toReference }) {
             if (!prevRooms) {
-              console.log("return");
               return prevRooms;
             }
 

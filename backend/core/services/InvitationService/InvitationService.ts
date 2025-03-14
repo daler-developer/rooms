@@ -42,7 +42,7 @@ class InvitationService {
   async acceptInvitation(userId: number, roomId: number) {
     const invitation = await this.invitationRepository.getOneByPk(userId, roomId);
     let user = await this.userRepository.getById(userId);
-    const room = await this.roomRepository.getOneById(roomId);
+    let room = await this.roomRepository.getOneById(roomId);
 
     await this.userToRoomParticipationRepository.addOne({ userId, roomId });
 
@@ -52,7 +52,7 @@ class InvitationService {
       invitationsCount: user.invitationsCount - 1,
     });
 
-    await this.roomRepository.updateOneById(roomId, {
+    room = await this.roomRepository.updateOneById(roomId, {
       participantsCount: room.participantsCount + 1,
       pendingInvitationsCount: room.pendingInvitationsCount - 1,
     });
@@ -67,6 +67,7 @@ class InvitationService {
 
     pubsub.publish("USER_ACCEPTED_INVITATION", invitation);
     pubsub.publish("USER_INVITATIONS_COUNT_UPDATED", user);
+    pubsub.publish("ROOM_PENDING_INVITATIONS_COUNT_CHANGE", room);
 
     pubsub.publish("ROOM_PARTICIPANT_JOINED", {
       roomParticipantJoined: user,
@@ -83,7 +84,7 @@ class InvitationService {
   async rejectInvitation(userId: number, roomId: number) {
     const invitation = await this.invitationRepository.getOneByPk(userId, roomId);
     let user = await this.userRepository.getById(userId);
-    const room = await this.roomRepository.getOneById(roomId);
+    let room = await this.roomRepository.getOneById(roomId);
 
     await this.invitationRepository.deleteOne(userId, roomId);
 
@@ -99,6 +100,7 @@ class InvitationService {
 
     pubsub.publish("USER_REJECTED_INVITATION", invitation);
     pubsub.publish("USER_INVITATIONS_COUNT_UPDATED", user);
+    pubsub.publish("ROOM_PENDING_INVITATIONS_COUNT_CHANGE", room);
 
     pubsub.publish("ROOM_PENDING_INVITATIONS_COUNT_CHANGE", {
       roomPendingInvitationsCountChange: updatedRoom,

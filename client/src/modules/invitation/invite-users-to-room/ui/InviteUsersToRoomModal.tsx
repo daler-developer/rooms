@@ -5,8 +5,8 @@ import { FormProvider, useForm } from "@/shared/lib/form";
 import * as yup from "yup";
 import { FormValues } from "../types";
 import useInviteUsersToRoomMutation from "../gql/useInviteUsersToRoomMutation.ts";
-import useGetParticipantsQuery from "@/modules/invitation/invite-users-to-room/gql/useGetParticipantsQuery.ts";
-import useGetInvitedUsersQuery from "@/modules/invitation/invite-users-to-room/gql/useGetInvitedUsersQuery.ts";
+import { useCustomLazyQuery } from "@/shared/lib/graphql";
+import { GET_PARTICIPANTS, GET_INVITED_USERS } from "../gql/tags.ts";
 
 export type RoomInviteMembersModalHandler = {
   open: (o: { roomId: number }) => Promise<void>;
@@ -19,8 +19,18 @@ const InviteUsersToRoomModal = forwardRef<RoomInviteMembersModalHandler, {}>(({}
   const toast = useToast();
 
   const queries = {
-    participants: useGetParticipantsQuery({ roomId }),
-    invitedUsers: useGetInvitedUsersQuery({ roomId }),
+    participants: useCustomLazyQuery(GET_PARTICIPANTS, {
+      variables: {
+        roomId,
+      },
+      fetchPolicy: "cache-and-network",
+    }),
+    invitedUsers: useCustomLazyQuery(GET_INVITED_USERS, {
+      variables: {
+        roomId,
+      },
+      fetchPolicy: "cache-and-network",
+    }),
   };
 
   const mutations = {
@@ -56,6 +66,8 @@ const InviteUsersToRoomModal = forwardRef<RoomInviteMembersModalHandler, {}>(({}
     open({ roomId }) {
       setRoomId(roomId);
       setShowModal(true);
+      queries.participants.fetch();
+      queries.invitedUsers.fetch();
 
       return new Promise((res, rej) => {
         promiseResolveFn.current = res;

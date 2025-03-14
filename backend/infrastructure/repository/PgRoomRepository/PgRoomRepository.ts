@@ -35,7 +35,9 @@ export class PgRoomRepository implements RoomRepository {
     return insertedId;
   }
 
-  async updateOneById(roomId: number, data: Partial<Pick<Room, "participantsCount" | "name" | "pendingInvitationsCount">>): Promise<void> {
-    await db.update(rooms).set(data).where(eq(rooms.id, roomId));
+  async updateOneById(roomId: number, data: Partial<Pick<Room, "participantsCount" | "name" | "pendingInvitationsCount">>): Promise<Room> {
+    const [room] = await db.update(rooms).set(data).where(eq(rooms.id, roomId)).returning();
+
+    return room;
   }
 }

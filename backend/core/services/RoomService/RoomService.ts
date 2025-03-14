@@ -35,9 +35,7 @@ export class RoomService {
       count: 0,
     });
 
-    for (const invitedUserId of dto.invitedUsersIds) {
-      await this.inviteUserToRoom({ roomId, inviterId: dto.creatorId, userId: invitedUserId });
-    }
+    await this.inviteUsersToRoom({ roomId, inviterId: dto.creatorId, invitedUsersIds: dto.invitedUsersIds });
 
     const room = await this.roomRepository.getOneById(roomId);
 
@@ -57,30 +55,15 @@ export class RoomService {
     return this.roomRepository.getManyByIds(roomIds);
   }
 
-  async inviteUserToRoom({ roomId, userId, inviterId }: AddOneInvitationDto) {
-    let user = await this.userRepository.getById(userId);
-
-    const invitation = await this.invitationRepository.addOne({
-      userId,
-      roomId,
-      inviterId,
-    });
-
-    const updatedInvitationsCount = user.invitationsCount + 1;
-
-    user = await this.userRepository.updateOneById(userId, {
-      invitationsCount: updatedInvitationsCount,
-    });
-
-    pubsub.publish("USER_INVITED_TO_ROOM", invitation);
-    pubsub.publish("USER_INVITATIONS_COUNT_UPDATED", user);
-  }
-
   async inviteUsersToRoom({ roomId, inviterId, invitedUsersIds }: { roomId: number; inviterId: number; invitedUsersIds: number[] }) {
-    const room = await this.roomRepository.getOneById(roomId);
+    let room = await this.roomRepository.getOneById(roomId);
+
+    room = await this.roomRepository.updateOneById(roomId, {
+      pendingInvitationsCount: room.pendingInvitationsCount + invitedUsersIds.length,
+    });
 
     for (const invitedUserId of invitedUsersIds) {
-      const invitedUser = await this.userRepository.getById(invitedUserId);
+      let invitedUser = await this.userRepository.getById(invitedUserId);
 
       const invitation = await this.invitationRepository.addOne({
         userId: invitedUserId,
@@ -88,17 +71,13 @@ export class RoomService {
         inviterId,
       });
 
-      await this.userRepository.updateOneById(invitedUser.id, {
+      invitedUser = await this.userRepository.updateOneById(invitedUser.id, {
         invitationsCount: invitedUser.invitationsCount + 1,
       });
 
-      pubsub.publish("ME_IS_INVITED_TO_ROOM", {
-        meIsInvitedToRoom: {
-          room,
-          invitation,
-          userId: invitedUser.id,
-        },
-      });
+      pubsub.publish("USER_INVITED_TO_ROOM", invitation);
+      pubsub.publish("USER_INVITATIONS_COUNT_UPDATED", invitedUser);
+      pubsub.publish("ROOM_PENDING_INVITATIONS_COUNT_CHANGE", room);
     }
 
     await this.roomRepository.updateOneById(roomId, {

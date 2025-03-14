@@ -5,5 +5,5 @@ export interface RoomRepository {
   getOneById(id: number): Promise<Room | null>;
   addOne(dto: CreateRoomDto): Promise<number>;
   getManyByIds(ids: number[]): Promise<Room[]>;
-  updateOneById(roomId: number, data: Partial<Pick<Room, "participantsCount" | "name" | "messagesCount" | "pendingInvitationsCount">>): Promise<void>;
+  updateOneById(roomId: number, data: Partial<Pick<Room, "participantsCount" | "name" | "messagesCount" | "pendingInvitationsCount">>): Promise<Room>;
 }
