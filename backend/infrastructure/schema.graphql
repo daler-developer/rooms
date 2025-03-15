@@ -298,10 +298,12 @@ type Subscription {
     userOnlineStatusChange(input: UserOnlineStatusChangeSubscriptionInput!): UserOnlineStatusChangeSubscriptionResult!
     usersOnlineStatusChange(userIds: [Int!]!): User!
     roomParticipantLeft(roomId: Int!): User!
+    roomParticipantLeave(roomId: Int!): User!
     roomParticipantJoined(roomId: Int!): User!
     newMessage(skipFromCurrentSession: Boolean!): NewMessageEvent!
     userTypingStatusChange(roomId: Int!): UserTypingStatusChangeEvent!
     messageViewed(messageId: Int!): MessageViewedEvent!
     roomPendingInvitationsCountChange(roomId: Int!): Room!
     messagesDeleted(roomId: Int!): MessagesDeletedEvent!
+    roomCreated(skipFromCurrentSession: Boolean!): Room!
 }

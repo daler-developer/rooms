@@ -13,6 +13,7 @@ const rooms = pgTable("rooms", {
   messagesCount: integer("messages_count").default(0),
   pendingInvitationsCount: integer("pending_invitations_count").default(0),
   thumbnailUrl: varchar("thumbnail_url", { length: 256 }).notNull().default("https://picsum.photos/id/234/300/300"),
+  sessionId: varchar("session_id", { length: 255 }).notNull(),
 });
 
 const roomsRelations = relations(rooms, ({ one, many }) => ({

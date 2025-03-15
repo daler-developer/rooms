@@ -3,5 +3,6 @@ export class CreateRoomDto {
     public creatorId: number,
     public name: string,
     public thumbnailUrl: string,
+    public sessionId: string,
   ) {}
 }

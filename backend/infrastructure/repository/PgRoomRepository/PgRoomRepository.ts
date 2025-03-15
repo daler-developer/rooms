@@ -21,18 +21,17 @@ export class PgRoomRepository implements RoomRepository {
   }
 
   async addOne(dto: CreateRoomDto) {
-    const [{ insertedId }] = await db
+    const [room] = await db
       .insert(rooms)
       .values({
         creatorId: dto.creatorId,
         name: dto.name,
         thumbnailUrl: dto.thumbnailUrl,
+        sessionId: dto.sessionId,
       })
-      .returning({
-        insertedId: rooms.id,
-      });
+      .returning();
 
-    return insertedId;
+    return room;
   }
 
   async updateOneById(roomId: number, data: Partial<Pick<Room, "participantsCount" | "name" | "pendingInvitationsCount">>): Promise<Room> {

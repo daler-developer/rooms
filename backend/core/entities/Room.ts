@@ -5,6 +5,8 @@ export class Room {
     public participantsCount: number,
     public messagesCount: number,
     public pendingInvitationsCount: number,
+    public sessionId: string,
+    public creatorId: number,
     public thumbnailUrl?: string,
   ) {}
 }

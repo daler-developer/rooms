@@ -63,8 +63,6 @@ class InvitationService {
       count: 0,
     });
 
-    const updatedRoom = await this.roomRepository.getOneById(roomId);
-
     pubsub.publish("USER_ACCEPTED_INVITATION", invitation);
     pubsub.publish("USER_INVITATIONS_COUNT_UPDATED", user);
     pubsub.publish("ROOM_PENDING_INVITATIONS_COUNT_CHANGE", room);
@@ -72,10 +70,6 @@ class InvitationService {
     pubsub.publish("ROOM_PARTICIPANT_JOINED", {
       roomParticipantJoined: user,
       roomId,
-    });
-
-    pubsub.publish("ROOM_PENDING_INVITATIONS_COUNT_CHANGE", {
-      roomPendingInvitationsCountChange: updatedRoom,
     });
 
     return invitation;
@@ -92,7 +86,7 @@ class InvitationService {
       invitationsCount: user.invitationsCount - 1,
     });
 
-    await this.roomRepository.updateOneById(roomId, {
+    room = await this.roomRepository.updateOneById(roomId, {
       pendingInvitationsCount: room.pendingInvitationsCount - 1,
     });
 

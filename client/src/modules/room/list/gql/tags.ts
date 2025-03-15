@@ -21,9 +21,9 @@ export const ROOMS_LIST = gql(`
   }
 `);
 
-export const ROOM_PARTICIPANT_LEFT_SUBSCRIPTION = gql(`
-  subscription RoomParticipantLeft($roomId: Int!) {
-    roomParticipantLeft(roomId: $roomId) {
+export const ROOM_PARTICIPANT_LEAVE_SUB = gql(`
+  subscription RoomsListParticipantLeave($roomId: Int!) {
+    roomParticipantLeave(roomId: $roomId) {
       id
       email
     }
@@ -72,6 +72,27 @@ export const NEW_MESSAGE_SUB = gql(`
             firstName
             lastName
           }
+        }
+      }
+    }
+  }
+`);
+
+export const ROOM_CREATED_SUB = gql(`
+  subscription RoomsListRoomCreated($skipFromCurrentSession: Boolean!) {
+    roomCreated(skipFromCurrentSession: $skipFromCurrentSession) {
+      id
+      name
+      thumbnailUrl
+      participantsCount
+      unreadMessagesCount
+      lastMessage {
+        id
+        text
+        sender {
+          id
+          firstName
+          lastName
         }
       }
     }

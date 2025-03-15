@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 import { NetworkStatus } from "@apollo/client";
 import { Empty, Input, Scroll } from "@/shared/ui";
 import useExcludedFromRoomSub from "../gql/useExcludedFromRoomSub.ts";
+import useRoomCreatedSub from "../gql/useRoomCreatedSub.ts";
 import RoomsListItem from "./rooms-list-item/RoomsListItem.tsx";
 import useGetRoomsQuery from "../gql/useGetRoomsQuery.ts";
 import RoomsListSkeletons from "./RoomsListSkeletons.tsx";
@@ -17,6 +18,7 @@ const RoomsList = () => {
   };
 
   useExcludedFromRoomSub();
+  useRoomCreatedSub();
 
   const filteredRooms = useMemo(() => {
     if (queries.rooms.networkStatus !== NetworkStatus.ready) {

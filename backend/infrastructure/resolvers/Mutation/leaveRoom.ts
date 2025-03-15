@@ -12,8 +12,11 @@ const validationSchema = yup.object({
 
 type Args = InferType<typeof validationSchema>;
 
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
 const resolver = async (_, args: Args, { userId, roomService }: CustomContext) => {
-  await roomService.removeUserFromRoom(userId, args.input.roomId);
+  await sleep(1500);
+  await roomService.leaveRoom({ userId, roomId: args.input.roomId });
 
   return true;
 };

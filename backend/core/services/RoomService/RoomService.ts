@@ -21,23 +21,23 @@ export class RoomService {
   ) {}
 
   async createRoom(dto: CreateRoomDto & { invitedUsersIds: number[] }) {
-    const roomId = await this.roomRepository.addOne(dto);
+    const room = await this.roomRepository.addOne(dto);
 
-    await this.userToRoomParticipationRepository.addOne({ roomId, userId: dto.creatorId });
+    pubsub.publish("ROOM_CREATED", room);
 
-    await this.roomRepository.updateOneById(roomId, {
+    await this.userToRoomParticipationRepository.addOne({ roomId: room.id, userId: dto.creatorId });
+
+    await this.roomRepository.updateOneById(room.id, {
       participantsCount: 1,
     });
 
     await this.scheduledMessagesCountRepository.addOne({
       userId: dto.creatorId,
-      roomId,
+      roomId: room.id,
       count: 0,
     });
 
-    await this.inviteUsersToRoom({ roomId, inviterId: dto.creatorId, invitedUsersIds: dto.invitedUsersIds });
-
-    const room = await this.roomRepository.getOneById(roomId);
+    await this.inviteUsersToRoom({ roomId: room.id, inviterId: dto.creatorId, invitedUsersIds: dto.invitedUsersIds });
 
     return room;
   }
@@ -62,6 +62,8 @@ export class RoomService {
       pendingInvitationsCount: room.pendingInvitationsCount + invitedUsersIds.length,
     });
 
+    pubsub.publish("ROOM_PENDING_INVITATIONS_COUNT_CHANGE", room);
+
     for (const invitedUserId of invitedUsersIds) {
       let invitedUser = await this.userRepository.getById(invitedUserId);
 
@@ -77,27 +79,22 @@ export class RoomService {
 
       pubsub.publish("USER_INVITED_TO_ROOM", invitation);
       pubsub.publish("USER_INVITATIONS_COUNT_UPDATED", invitedUser);
-      pubsub.publish("ROOM_PENDING_INVITATIONS_COUNT_CHANGE", room);
     }
-
-    await this.roomRepository.updateOneById(roomId, {
-      pendingInvitationsCount: room.pendingInvitationsCount + invitedUsersIds.length,
-    });
   }
 
-  async removeUserFromRoom(userId: number, roomId: number) {
+  async leaveRoom({ userId, roomId }: { userId: number; roomId: number }) {
     const user = await this.userRepository.getById(userId);
-    const room = await this.roomRepository.getOneById(roomId);
+    let room = await this.roomRepository.getOneById(roomId);
 
     await this.userToRoomParticipationRepository.deleteOneByPk(userId, roomId);
 
-    await this.roomRepository.updateOneById(roomId, {
+    room = await this.roomRepository.updateOneById(roomId, {
       participantsCount: room.participantsCount - 1,
     });
 
-    pubsub.publish("ROOM_PARTICIPANT_LEFT", {
-      roomParticipantLeft: user,
-      roomId,
+    pubsub.publish("ROOM_PARTICIPANT_LEAVE", {
+      room,
+      user,
     });
   }
 

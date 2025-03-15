@@ -1,5 +1,5 @@
 import { useSearchParams } from "react-router-dom";
-import { RoomChat } from "@/widgets/room-chat";
+import { RoomChat } from "@/modules/room/chat";
 import Sidebar from "./sidebar/Sidebar.tsx";
 import { HiOutlineChat } from "react-icons/hi";
 import useNewInvitationSub from "../gql/useNewInvitationSub.ts";

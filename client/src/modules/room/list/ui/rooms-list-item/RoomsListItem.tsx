@@ -7,6 +7,7 @@ import { useEffect } from "react";
 import { emitter } from "@/global/event-emitter";
 import { EventCallback } from "@/global/event-emitter/emitter.ts";
 import useNewMessageSub from "../../gql/useNewMessageSub.ts";
+import useRoomParticipantLeaveSub from "../../gql/useRoomParticipantLeaveSub.ts";
 
 type Props = {
   room: Flatten<RoomsListQuery["rooms"]>;
@@ -16,6 +17,7 @@ const RoomsListItem = ({ room }: Props) => {
   const apolloClient = useApolloClient();
 
   useNewMessageSub({ room });
+  useRoomParticipantLeaveSub({ roomId: room.id });
 
   useEffect(() => {
     const handler: EventCallback<"MESSAGES_IS_VIEWED"> = (payload) => {
