@@ -5,7 +5,7 @@ import { Button } from "@/shared/ui";
 import { useMemo } from "react";
 import useRoomQuery from "@/widgets/room-chat/hooks/useRoomQuery.ts";
 import { useAuth } from "@/modules/auth";
-import useExcludeUserFromRoomMutation from "../../../../gql/useExcludeUserFromRoomMutation";
+import useExcludeUserFromRoomMutation from "../../gql/useExcludeUserFromRoomMutation.ts";
 
 type Props = {
   participant: Flatten<RoomChatGetRoomParticipantsQuery["room"]["participants"]>;

@@ -92,7 +92,7 @@ export class RoomService {
       participantsCount: room.participantsCount - 1,
     });
 
-    pubsub.publish("ROOM_PARTICIPANT_LEAVE", {
+    pubsub.publish("ROOM_PARTICIPANT_LEFT", {
       room,
       user,
     });

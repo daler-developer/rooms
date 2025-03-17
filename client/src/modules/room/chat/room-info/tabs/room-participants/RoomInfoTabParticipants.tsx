@@ -3,8 +3,8 @@ import { Scroll } from "@/shared/ui";
 import { UserCardSkeletons } from "@/entities/user";
 import RoomInfoTabParticipantsItem from "./RoomInfoTabParticipantsItem";
 import { NetworkStatus } from "@apollo/client";
-import useGetRoomParticipantsQuery from "../../../../gql/useGetRoomParticipantsQuery";
-import useUserOnlineStatusChangeSub from "../../../../gql/useUserOnlineStatusChangeSub";
+import useGetRoomParticipantsQuery from "../../gql/useGetRoomParticipantsQuery";
+import useUserOnlineStatusChangeSub from "../../../gql/useUserOnlineStatusChangeSub";
 import { useRoomChatStore } from "@/widgets/room-chat/context";
 
 const RoomInfoTabParticipants = () => {

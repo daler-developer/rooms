@@ -7,7 +7,7 @@ import { Avatar, IconButton } from "@/shared/ui";
 import Dropdown from "@/shared/ui/components/Dropdown/Dropdown.tsx";
 import { HiMiniEllipsisVertical } from "react-icons/hi2";
 import PendingInvitationsCount from "../../../pending-invitations/ui/PendingInvitationsCount.tsx";
-import RoomInfoModal, { type RoomInfoModalHandler } from "@/widgets/room-chat/ui/RoomInfo/RoomInfoModal.tsx";
+import RoomInfoModal, { type RoomInfoModalHandler } from "../../../room-info/RoomInfoModal.tsx";
 import ParticipantsOnlineCount from "./ParticipantsOnlineCount.tsx";
 import SelectedMessagesController from "./SelectedMessagesController.tsx";
 import useRoomQuery from "@/widgets/room-chat/hooks/useRoomQuery.ts";
