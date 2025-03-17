@@ -51,7 +51,6 @@ const MessagesList = () => {
 
   useSubscription(NEW_MESSAGE_SUB, {
     onData({ data, client }) {
-      console.log("new message");
       const newMessage = data.data!.newMessage.message;
       const isScheduled = !newMessage.sentAt;
       const isScrolledToBottom = scrollControl.isScrolledToBottom;

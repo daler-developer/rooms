@@ -14,7 +14,7 @@ const useCreateRoomMutation = () => {
         fields: {
           rooms(prevRooms, { toReference }) {
             if (!prevRooms) {
-              return prevRooms;
+              return [toReference(newRoom)];
             }
 
             return [...prevRooms, toReference(newRoom)];

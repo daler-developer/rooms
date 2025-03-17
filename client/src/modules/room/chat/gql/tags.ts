@@ -63,6 +63,16 @@ export const GET_ROOM_PARTICIPANTS_QUERY = gql(`
     }
 `);
 
+export const ROOM_PARTICIPANT_LEAVE_SUB = gql(`
+  subscription RoomChatParticipantLeave($roomId: Int!) {
+    roomParticipantLeave(roomId: $roomId) {
+      id
+      firstName
+      lastName
+    }
+  }
+`);
+
 export const MARK_MESSAGE_AS_VIEWS_BY_ME = gql(`
   mutation MarkMessageAsViewedByMe($messageId: Int!) {
     markMessageAsViewedByMe(messageId: $messageId) {

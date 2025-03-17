@@ -7,7 +7,7 @@ import useUserRejectedInvitationSub from "../gql/useUserRejectedInvitationSub.ts
 import useUserAcceptedInvitationSub from "../gql/useUserAcceptedInvitationSub.ts";
 
 const HomePage = () => {
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
 
   const roomId = Number(searchParams.get("roomId")) || null;
 
@@ -15,13 +15,18 @@ const HomePage = () => {
   useUserRejectedInvitationSub();
   useUserAcceptedInvitationSub();
 
+  const handleRoomLeave = () => {
+    searchParams.delete("roomId");
+    setSearchParams(searchParams);
+  };
+
   return (
     <div>
       <Sidebar />
       <div className="ml-[400px]">
         <div className="h-screen">
           {roomId ? (
-            <RoomChat roomId={roomId!} />
+            <RoomChat roomId={roomId!} onLeave={handleRoomLeave} />
           ) : (
             <div className="h-full flex items-center justify-center p-4">
               <div className="flex flex-col items-center justify-center">

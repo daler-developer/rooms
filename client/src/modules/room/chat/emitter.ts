@@ -1,14 +1,9 @@
-import mitt from "mitt";
+import { createEmitter } from "@/lib/emitter";
 
 type Events = {
-  MESSAGE_INSERTED: {
-    isMessageSentByCurrentUser: boolean;
-  };
-  SCHEDULED_MESSAGE_INSERTED: void;
+  ROOM_LEAVE: void;
 };
 
-const emitter = mitt<Events>();
+const { withEmitter: withRoomChatEmitter, useEmitter: useRoomChatEmitter } = createEmitter<Events>();
 
-export type EventCallback<K extends keyof Events> = (payload: Events[K]) => void;
-
-export default emitter;
+export { withRoomChatEmitter, useRoomChatEmitter };

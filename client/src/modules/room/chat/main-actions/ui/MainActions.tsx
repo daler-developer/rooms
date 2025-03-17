@@ -1,13 +1,16 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import useLeaveRoomMutation from "../gql/useLeaveRoomMutation.ts";
 import { HiMiniEllipsisVertical } from "react-icons/hi2";
 import { Dropdown, IconButton } from "@/shared/ui";
 import { useRoomId } from "../../context";
 import { InviteUsersToRoomModal, type RoomInviteMembersModalHandler } from "@/modules/invitation/invite-users-to-room";
 import MainActionsConfirmLeave from "./MainActionsConfirmLeave.tsx";
+import { useRoomChatEmitter } from "../../emitter.ts";
 
 const MainActions = () => {
   const [showConfirmLeaveModal, setShowConfirmLeaveModal] = useState(false);
+
+  const emitter = useRoomChatEmitter();
 
   const roomId = useRoomId();
 
@@ -18,6 +21,7 @@ const MainActions = () => {
   };
 
   const handleConfirmLeave = async () => {
+    emitter.emit("ROOM_LEAVE");
     await mutations.leaveRoom.mutate({
       variables: {
         input: {
