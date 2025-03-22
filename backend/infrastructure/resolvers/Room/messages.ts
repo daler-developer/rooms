@@ -15,7 +15,6 @@ type Parent = Room;
 const sleep = () => new Promise((resolve) => setTimeout(resolve, 500));
 
 const resolver = async (parent: Parent, args: Args, { messageService }: CustomContext) => {
-  await sleep();
   const result = await messageService.fetchMessagesByRoomId(parent.id, { offset: args.offset });
 
   return {

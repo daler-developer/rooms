@@ -1,8 +1,7 @@
 import { useMemo, useState } from "react";
-import { NetworkStatus } from "@apollo/client";
 import { Empty, Input, Scroll } from "@/shared/ui";
 import useExcludedFromRoomSub from "../gql/useExcludedFromRoomSub.ts";
-import useRoomCreatedSub from "../gql/useRoomCreatedSub.ts";
+import useNewRoomSub from "../gql/useNewRoomSub.ts";
 import RoomsListItem from "./rooms-list-item/RoomsListItem.tsx";
 import useGetRoomsQuery from "../gql/useGetRoomsQuery.ts";
 import RoomsListSkeletons from "./RoomsListSkeletons.tsx";
@@ -11,17 +10,15 @@ import { CreateRoomButton } from "@/modules/room/create";
 const RoomsList = () => {
   const [search, setSearch] = useState("");
 
-  const isSearchEmpty = search === "";
-
   const queries = {
     rooms: useGetRoomsQuery(),
   };
 
   useExcludedFromRoomSub();
-  useRoomCreatedSub();
+  useNewRoomSub();
 
   const filteredRooms = useMemo(() => {
-    if (queries.rooms.networkStatus !== NetworkStatus.ready) {
+    if (!queries.rooms.data) {
       return [];
     }
 
@@ -34,24 +31,20 @@ const RoomsList = () => {
   }, [search, queries.rooms.data, queries.rooms.networkStatus]);
 
   const showSkeletons = useMemo(() => {
-    return [NetworkStatus.loading].includes(queries.rooms.networkStatus);
-  }, [queries.rooms.networkStatus]);
+    return !queries.rooms.data;
+  }, [queries.rooms.networkStatus, queries.rooms.data]);
 
   const showRoomsList = useMemo(() => {
-    return [NetworkStatus.ready].includes(queries.rooms.networkStatus);
-  }, [queries.rooms.networkStatus]);
+    return queries.rooms.data && queries.rooms.data.rooms.length > 0;
+  }, [queries.rooms.networkStatus, queries.rooms.data]);
 
   const showEmptyState = useMemo(() => {
-    return [NetworkStatus.ready].includes(queries.rooms.networkStatus) && queries.rooms.data!.rooms.length === 0;
+    return queries.rooms.data && queries.rooms.data.rooms.length === 0;
   }, [queries.rooms.networkStatus, queries.rooms.data]);
 
   const showCreateRoomButton = useMemo(() => {
-    return queries.rooms.networkStatus !== NetworkStatus.loading;
-  }, [queries.rooms.networkStatus]);
-
-  const showNoSearchResults = useMemo(() => {
-    return [NetworkStatus.ready].includes(queries.rooms.networkStatus) && !isSearchEmpty && filteredRooms.length === 0;
-  }, [queries.rooms.networkStatus, filteredRooms]);
+    return queries.rooms.data;
+  }, [queries.rooms.data]);
 
   return (
     <div className="relative h-full overflow-hidden">
@@ -83,8 +76,8 @@ const RoomsList = () => {
                 ))}
               </Scroll>
             ) : (
-              <div className="mt-4">
-                <Empty title="No Results" />
+              <div className="h-full flex items-center justify-center">
+                <Empty title="No results" />
               </div>
             )}
           </div>

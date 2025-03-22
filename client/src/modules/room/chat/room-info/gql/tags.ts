@@ -24,7 +24,7 @@ export const EXCLUDE_USER_FROM_ROOM = gql(`
     }
 `);
 
-export const PARTICIPANT_JOINED = gql(`
+export const PARTICIPANT_JOINED_SUB = gql(`
     subscription RoomChatParticipantJoined($roomId: Int!) {
       roomParticipantJoined(roomId: $roomId) {
         id
@@ -32,6 +32,14 @@ export const PARTICIPANT_JOINED = gql(`
         lastName
         profilePictureUrl
         isOnline
+      }
+    }
+`);
+
+export const PARTICIPANT_LEFT_SUB = gql(`
+    subscription RoomChatParticipantLeft($roomId: Int!) {
+      roomParticipantLeft(roomId: $roomId) {
+        id
       }
     }
 `);

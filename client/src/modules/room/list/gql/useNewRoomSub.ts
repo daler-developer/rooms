@@ -1,21 +1,21 @@
-import { type Query } from "@/__generated__/graphql";
-import { CREATE_ROOM } from ".";
-import { useCustomMutation } from "@/shared/lib/graphql";
+import { useSubscription } from "@apollo/client";
+import { NEW_ROOM_SUB } from "./tags.ts";
+import { Query } from "@/__generated__/graphql.ts";
 
-const useCreateRoomMutation = () => {
-  return useCustomMutation(CREATE_ROOM, {
-    update(cache, { data }) {
-      if (!data) {
+const useNewRoomSub = () => {
+  return useSubscription(NEW_ROOM_SUB, {
+    onData({ data, client }) {
+      console.log("data", data);
+      if (!data.data) {
         return;
       }
-      const newRoom = data.createRoom;
-      cache.modify<Query>({
+      const newRoom = data.data.newRoom;
+
+      client.cache.modify<Query>({
         id: "ROOT_QUERY",
         fields: {
           rooms(prevRooms, { toReference, readField }) {
-            if (!prevRooms) {
-              return [toReference(newRoom)];
-            }
+            if (!prevRooms) return;
 
             const exists = Boolean(
               prevRooms.find((room) => {
@@ -35,4 +35,4 @@ const useCreateRoomMutation = () => {
   });
 };
 
-export default useCreateRoomMutation;
+export default useNewRoomSub;

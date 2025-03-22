@@ -23,7 +23,7 @@ export class RoomService {
   async createRoom(dto: CreateRoomDto & { invitedUsersIds: number[] }) {
     const room = await this.roomRepository.addOne(dto);
 
-    pubsub.publish("ROOM_CREATED", room);
+    pubsub.publish("NEW_ROOM", room);
 
     await this.userToRoomParticipationRepository.addOne({ roomId: room.id, userId: dto.creatorId });
 
@@ -52,6 +52,9 @@ export class RoomService {
     const participations = await this.userToRoomParticipationRepository.getManyByUserId(userId);
     const roomIds = participations.map((p) => p.roomId);
 
+    if (roomIds.length === 0) {
+      return [];
+    }
     return this.roomRepository.getManyByIds(roomIds);
   }
 

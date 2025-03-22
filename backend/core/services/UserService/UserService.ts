@@ -97,28 +97,40 @@ class UserService {
     return activeSessions.length > 0;
   }
 
-  async updateUserOnlineStatus({ userId, sessionId, isOnline }: { userId: number; sessionId: string; isOnline: boolean }) {
-    if (isOnline) {
-      await redisClient.sAdd(`user:${String(userId)}:active_sessions`, sessionId);
+  async handleUserConnect({ userId, sessionId }: { userId: number; sessionId: string }) {
+    console.log("connect", userId, sessionId);
+    // await redisClient.sAdd(`user:${String(userId)}:active_sessions`, sessionId);
+    //
+    // const user = await this.userRepository.getById(userId);
+    //
+    // pubsub.publish("USER_ONLINE_STATUS_CHANGE", {
+    //   usersOnlineStatusChange: user,
+    // });
+    // if (isOnline) {
+    //   await redisClient.sAdd(`user:${String(userId)}:active_sessions`, sessionId);
+    //
+    //   const user = await this.userRepository.getById(userId);
+    //
+    //   pubsub.publish("USER_ONLINE_STATUS_CHANGE", {
+    //     usersOnlineStatusChange: user,
+    //   });
+    //
+    //   return await this.userRepository.getById(userId);
+    // } else {
+    //   await redisClient.sRem(`user:${String(userId)}:active_sessions`, sessionId);
+    //
+    //   const user = await this.userRepository.getById(userId);
+    //
+    //   pubsub.publish("USER_ONLINE_STATUS_CHANGE", {
+    //     usersOnlineStatusChange: user,
+    //   });
+    //
+    //   return await this.userRepository.getById(userId);
+    // }
+  }
 
-      const user = await this.userRepository.getById(userId);
-
-      pubsub.publish("USER_ONLINE_STATUS_CHANGE", {
-        usersOnlineStatusChange: user,
-      });
-
-      return await this.userRepository.getById(userId);
-    } else {
-      await redisClient.sRem(`user:${String(userId)}:active_sessions`, sessionId);
-
-      const user = await this.userRepository.getById(userId);
-
-      pubsub.publish("USER_ONLINE_STATUS_CHANGE", {
-        usersOnlineStatusChange: user,
-      });
-
-      return await this.userRepository.getById(userId);
-    }
+  async handleUserDisconnect({ userId, sessionId }: { userId: number; sessionId: string }) {
+    console.log("disconnect", userId, sessionId);
   }
 
   async fetchRoomParticipants(roomId: number) {

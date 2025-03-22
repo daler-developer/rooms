@@ -1,4 +1,4 @@
-import { Avatar, Button } from "@/shared/ui";
+import { Avatar, Button, useToast } from "@/shared/ui";
 import { InvitationsListQuery } from "@/__generated__/graphql.ts";
 import useAcceptInvitationMutation from "../gql/useAcceptInvitationMutation.ts";
 import useRejectInvitationMutation from "../gql/useRejectInvitationMutation.ts";
@@ -8,12 +8,15 @@ type Props = {
 };
 
 const InvitationsListItem = ({ invitation }: Props) => {
+  const toast = useToast();
+
   const mutations = {
     acceptInvitation: useAcceptInvitationMutation(),
     rejectInvitation: useRejectInvitationMutation(),
   };
 
   const handleAcceptInvitation = async () => {
+    toast.success("Invitation accepted");
     await mutations.acceptInvitation.mutate({
       variables: {
         input: {
@@ -24,6 +27,7 @@ const InvitationsListItem = ({ invitation }: Props) => {
   };
 
   const handleRejectInvitation = async () => {
+    toast.success("Invitation rejected");
     await mutations.rejectInvitation.mutate({
       variables: {
         input: {

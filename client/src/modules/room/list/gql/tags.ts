@@ -78,9 +78,9 @@ export const NEW_MESSAGE_SUB = gql(`
   }
 `);
 
-export const ROOM_CREATED_SUB = gql(`
-  subscription RoomsListRoomCreated($skipFromCurrentSession: Boolean!) {
-    roomCreated(skipFromCurrentSession: $skipFromCurrentSession) {
+export const NEW_ROOM_SUB = gql(`
+  subscription RoomsListNewRoom {
+    newRoom {
       id
       name
       thumbnailUrl

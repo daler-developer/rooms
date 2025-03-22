@@ -1,6 +1,6 @@
 import { useQuery } from "@apollo/client";
-import { GET_ROOM_PARTICIPANTS_QUERY, PARTICIPANT_JOINED } from "./tags";
-import { RoomChatGetRoomParticipantsQueryVariables } from "@/__generated__/graphql";
+import { GET_ROOM_PARTICIPANTS_QUERY, PARTICIPANT_JOINED_SUB, PARTICIPANT_LEFT_SUB } from "./tags";
+import { RoomChatGetRoomParticipantsQueryVariables, RoomChatGetRoomParticipantsQuery } from "@/__generated__/graphql";
 import { useEffect } from "react";
 
 const useGetRoomParticipantsQuery = (variables: RoomChatGetRoomParticipantsQueryVariables) => {
@@ -11,12 +11,12 @@ const useGetRoomParticipantsQuery = (variables: RoomChatGetRoomParticipantsQuery
 
   useEffect(() => {
     if (query.data) {
-      const unsubscribe = query.subscribeToMore({
-        document: PARTICIPANT_JOINED,
+      const unsubscribeParticipantJoined = query.subscribeToMore({
+        document: PARTICIPANT_JOINED_SUB,
         variables: {
           roomId: variables.id,
         },
-        updateQuery(prev, { subscriptionData }) {
+        updateQuery(prev, { subscriptionData }): RoomChatGetRoomParticipantsQuery {
           const newParticipant = subscriptionData.data.roomParticipantJoined;
           return {
             ...prev,
@@ -28,8 +28,26 @@ const useGetRoomParticipantsQuery = (variables: RoomChatGetRoomParticipantsQuery
         },
       });
 
+      const unsubscribeParticipantLeft = query.subscribeToMore({
+        document: PARTICIPANT_LEFT_SUB,
+        variables: {
+          roomId: variables.id,
+        },
+        updateQuery(prev, { subscriptionData }): RoomChatGetRoomParticipantsQuery {
+          const participant = subscriptionData.data.roomParticipantLeft;
+          return {
+            ...prev,
+            room: {
+              ...prev.room,
+              participants: prev.room.participants.filter((_participant) => _participant.id !== participant.id),
+            },
+          };
+        },
+      });
+
       return () => {
-        unsubscribe();
+        unsubscribeParticipantJoined();
+        unsubscribeParticipantLeft();
       };
     }
   }, [query.data]);

@@ -13,7 +13,6 @@ type Parent = Room;
 const sleep = () => new Promise((resolve) => setTimeout(resolve, 1000));
 
 const resolver = async (parent: Parent, args: Args, { messageService }: CustomContext) => {
-  await sleep();
   return await messageService.fetchInvitedUsers(parent.id);
 };
 

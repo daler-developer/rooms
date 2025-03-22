@@ -5,10 +5,10 @@ import RoomInfoTabParticipantsItem from "./RoomInfoTabParticipantsItem";
 import { NetworkStatus } from "@apollo/client";
 import useGetRoomParticipantsQuery from "../../gql/useGetRoomParticipantsQuery";
 import useUserOnlineStatusChangeSub from "../../../gql/useUserOnlineStatusChangeSub";
-import { useRoomChatStore } from "@/widgets/room-chat/context";
+import { useRoomId } from "../../../context";
 
 const RoomInfoTabParticipants = () => {
-  const { roomId } = useRoomChatStore();
+  const roomId = useRoomId();
 
   const queries = {
     participants: useGetRoomParticipantsQuery({

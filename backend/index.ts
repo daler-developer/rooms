@@ -30,8 +30,6 @@ import { eq } from "drizzle-orm";
 
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
-setMaxListeners(1000);
-
 const errorHandlingPlugin = {
   // Called at the beginning of a request
   requestDidStart(requestContext) {
@@ -125,9 +123,13 @@ const start = async () => {
         const { userId } = authService.decodeAuthToken(authToken);
         const { sessionId } = authService.decodeSessionToken(sessionToken);
 
-        userService.updateUserOnlineStatus({ userId, sessionId, isOnline: true });
+        userService.handleUserConnect({ userId, sessionId });
+
+        return true;
+        // userService.updateUserOnlineStatus({ userId, sessionId, isOnline: true });
       },
       onDisconnect(ctx) {
+        console.log("exit");
         const authService = iocContainer.get<AuthService>(TYPES.AuthService);
         const userService = iocContainer.get<UserService>(TYPES.UserService);
 
@@ -137,7 +139,8 @@ const start = async () => {
         const { userId } = authService.decodeAuthToken(authToken);
         const { sessionId } = authService.decodeSessionToken(sessionToken);
 
-        userService.updateUserOnlineStatus({ userId, sessionId, isOnline: false });
+        userService.handleUserDisconnect({ userId, sessionId });
+        // userService.updateUserOnlineStatus({ userId, sessionId, isOnline: false });
       },
     },
     wsServer,
@@ -161,7 +164,7 @@ const start = async () => {
       },
     ],
     formatError(error) {
-      // console.log("e", error);
+      console.log("e", error);
       return {
         message: error.message,
         code: error.extensions.code,
