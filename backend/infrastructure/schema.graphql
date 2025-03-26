@@ -269,8 +269,8 @@ type Mutation {
     editEmail(input: EditMyEmailInput!): User!
     editFirstName(input: EditFirstNameInput!): User!
     editLastName(input: EditLastNameInput!): User!
-    resetPassword(input: ResetPasswordInput!): User!
     editProfilePicture(input: EditProfilePictureInput!): User!
+    resetPassword(input: ResetPasswordInput!): User!
     createRoom(input: CreateRoomInput!): Room!
     acceptInvitation(input: AcceptInvitationInput!): Invitation!
     rejectInvitation(input: RejectInvitationInput!): Invitation!
@@ -308,4 +308,5 @@ type Subscription {
     roomPendingInvitationsCountChange(roomId: Int!): Room!
     messagesDeleted(roomId: Int!): MessagesDeletedEvent!
     roomCreated(skipFromCurrentSession: Boolean!): Room!
+    userProfileUpdated(userId: Int!): User!
 }

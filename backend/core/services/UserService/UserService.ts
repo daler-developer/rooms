@@ -28,15 +28,31 @@ class UserService {
   }
 
   async editFirstName({ userId, newFirstName }: { userId: number; newFirstName: string }) {
-    return await this.userRepository.updateOneById(userId, {
+    const updatedUser = await this.userRepository.updateOneById(userId, {
       firstName: newFirstName,
     });
+
+    pubsub.publish("USER_PROFILE_UPDATED", updatedUser);
+
+    return updatedUser;
   }
 
   async editLastName({ userId, newLastName }: { userId: number; newLastName: string }) {
-    return await this.userRepository.updateOneById(userId, {
+    const updatedUser = await this.userRepository.updateOneById(userId, {
       lastName: newLastName,
     });
+
+    pubsub.publish("USER_PROFILE_UPDATED", updatedUser);
+
+    return updatedUser;
+  }
+
+  async editProfilePicture({ userId, newProfilePictureUrl }: { userId: number; newProfilePictureUrl: string | null }) {
+    const updatedUser = await this.userRepository.updateOneById(userId, { profilePictureUrl: newProfilePictureUrl });
+
+    pubsub.publish("USER_PROFILE_UPDATED", updatedUser);
+
+    return updatedUser;
   }
 
   async getUserById(id: number) {
@@ -55,12 +71,6 @@ class UserService {
 
   async unblockUser(userId: number) {
     await this.userRepository.setIsBlocked(userId, false);
-
-    return await this.getUserById(userId);
-  }
-
-  async removeUserAvatar(userId: number) {
-    await this.userRepository.removeAvatar(userId);
 
     return await this.getUserById(userId);
   }
@@ -85,10 +95,6 @@ class UserService {
       data: users,
       hasMore: moreUsers.length > 0,
     };
-  }
-
-  async fetchUsersCount({ offset, excludeIds, q }: { offset: number; excludeIds: number[]; q: string }) {
-    return this.userRepository.getManyCount({ offset, excludeIds, q });
   }
 
   async fetchUserIsOnlineStatus(userId: number) {
@@ -170,12 +176,6 @@ class UserService {
         },
       });
     }
-  }
-
-  async editProfilePicture({ userId, newProfilePictureUrl }: { userId: number; newProfilePictureUrl: string | null }) {
-    await this.userRepository.updateOneById(userId, { profilePictureUrl: newProfilePictureUrl });
-
-    return await this.getUserById(userId);
   }
 }
 
