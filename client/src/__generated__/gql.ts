@@ -17,12 +17,6 @@ const documents = {
     "\n  mutation StartSession {\n    startSession {\n      sessionToken\n    }\n  }\n": types.StartSessionDocument,
     "\n  query GetMeIdOnly {\n    me {\n      id\n    }\n  }\n": types.GetMeIdOnlyDocument,
     "\n  query GetMeTemp {\n    me {\n      id\n      email\n    }\n  }\n": types.GetMeTempDocument,
-    "\n  mutation BlockUser($input: BlockUserInput!) {\n    blockUser(input: $input) {\n      id\n      email\n      isBlocked\n    }\n  }\n": types.BlockUserDocument,
-    "\n  subscription MeBlockedStatus {\n    meIsBlockedStatus {\n      isBlocked\n    }\n  }\n": types.MeBlockedStatusDocument,
-    "\n  mutation LeaveRoom($input: LeaveRoomInput!) {\n    leaveRoom(input: $input)\n  }\n": types.LeaveRoomDocument,
-    "\n  subscription NewMessageSubscription($skipFromCurrentSession: Boolean!) {\n    newMessage(skipFromCurrentSession: $skipFromCurrentSession) {\n      message {\n        id\n        text\n        roomId\n        senderId\n      }\n    }\n  }\n": types.NewMessageSubscriptionDocument,
-    "\n  mutation UnblockUser($input: UnblockUserInput!) {\n    unblockUser(input: $input) {\n      id\n      isBlocked\n    }\n  }\n": types.UnblockUserDocument,
-    "\n  query GetMe {\n    me {\n      id\n      email\n      password\n      profilePictureUrl\n      invitationsCount\n    }\n  }\n": types.GetMeDocument,
     "\n  mutation Login($input: LoginInput!) {\n    login(input: $input) {\n      user {\n        id\n      }\n      token\n    }\n  }\n": types.LoginDocument,
     "\n  mutation Register($input: RegisterInput!) {\n    register(input: $input) {\n      user {\n        id\n        email\n        firstName\n        lastName\n      }\n      token\n    }\n  }\n": types.RegisterDocument,
     "\n  query CheckEmailAvailability($email: String!) {\n    checkEmailAvailability(email: $email)\n  }\n": types.CheckEmailAvailabilityDocument,
@@ -43,6 +37,7 @@ const documents = {
     "\n  mutation ProfileEditProfilePicture($input: EditProfilePictureInput!) {\n    editProfilePicture(input: $input) {\n      id\n      profilePictureUrl\n    }\n  }\n": types.ProfileEditProfilePictureDocument,
     "\n  mutation ProfileEditResetPassword($input: ResetPasswordInput!) {\n    resetPassword(input: $input) {\n      id\n      passwordLength\n    }\n  }\n": types.ProfileEditResetPasswordDocument,
     "\n  query ProfileCardGetMe {\n    me {\n      id\n      firstName\n      lastName\n      profilePictureUrl\n    }\n  }\n": types.ProfileCardGetMeDocument,
+    "\n  subscription UserProfileUpdated($userId: Int!) {\n    userProfileUpdated(userId: $userId) {\n      id\n      firstName\n      lastName\n      profilePictureUrl\n    }\n  }\n": types.UserProfileUpdatedDocument,
     "\n  mutation SendMessage($input: SendMessageInput!) {\n    sendMessage(input: $input) {\n      id\n      text\n      senderId\n      roomId\n      isViewedByMe\n      sentAt\n      sender {\n        id\n        email\n        profilePictureUrl\n        isOnline\n      }\n      images {\n        id\n        url\n      }\n      viewsCount\n    }\n  }\n": types.SendMessageDocument,
     "\n  mutation ScheduleMessage($input: ScheduleMessage!) {\n    scheduleMessage(input: $input) {\n      id\n      text\n      senderId\n      roomId\n      scheduledAt\n      sender {\n        id\n        email\n        profilePictureUrl\n        isOnline\n      }\n    }\n  }\n": types.ScheduleMessageDocument,
     "\n  mutation DeleteMessages($roomId: Int!, $messageIds: [Int!]!) {\n    deleteMessages(roomId: $roomId, messageIds: $messageIds)\n  }\n": types.DeleteMessagesDocument,
@@ -116,30 +111,6 @@ export function gql(source: "\n  query GetMeIdOnly {\n    me {\n      id\n    }\
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function gql(source: "\n  query GetMeTemp {\n    me {\n      id\n      email\n    }\n  }\n"): (typeof documents)["\n  query GetMeTemp {\n    me {\n      id\n      email\n    }\n  }\n"];
-/**
- * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
- */
-export function gql(source: "\n  mutation BlockUser($input: BlockUserInput!) {\n    blockUser(input: $input) {\n      id\n      email\n      isBlocked\n    }\n  }\n"): (typeof documents)["\n  mutation BlockUser($input: BlockUserInput!) {\n    blockUser(input: $input) {\n      id\n      email\n      isBlocked\n    }\n  }\n"];
-/**
- * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
- */
-export function gql(source: "\n  subscription MeBlockedStatus {\n    meIsBlockedStatus {\n      isBlocked\n    }\n  }\n"): (typeof documents)["\n  subscription MeBlockedStatus {\n    meIsBlockedStatus {\n      isBlocked\n    }\n  }\n"];
-/**
- * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
- */
-export function gql(source: "\n  mutation LeaveRoom($input: LeaveRoomInput!) {\n    leaveRoom(input: $input)\n  }\n"): (typeof documents)["\n  mutation LeaveRoom($input: LeaveRoomInput!) {\n    leaveRoom(input: $input)\n  }\n"];
-/**
- * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
- */
-export function gql(source: "\n  subscription NewMessageSubscription($skipFromCurrentSession: Boolean!) {\n    newMessage(skipFromCurrentSession: $skipFromCurrentSession) {\n      message {\n        id\n        text\n        roomId\n        senderId\n      }\n    }\n  }\n"): (typeof documents)["\n  subscription NewMessageSubscription($skipFromCurrentSession: Boolean!) {\n    newMessage(skipFromCurrentSession: $skipFromCurrentSession) {\n      message {\n        id\n        text\n        roomId\n        senderId\n      }\n    }\n  }\n"];
-/**
- * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
- */
-export function gql(source: "\n  mutation UnblockUser($input: UnblockUserInput!) {\n    unblockUser(input: $input) {\n      id\n      isBlocked\n    }\n  }\n"): (typeof documents)["\n  mutation UnblockUser($input: UnblockUserInput!) {\n    unblockUser(input: $input) {\n      id\n      isBlocked\n    }\n  }\n"];
-/**
- * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
- */
-export function gql(source: "\n  query GetMe {\n    me {\n      id\n      email\n      password\n      profilePictureUrl\n      invitationsCount\n    }\n  }\n"): (typeof documents)["\n  query GetMe {\n    me {\n      id\n      email\n      password\n      profilePictureUrl\n      invitationsCount\n    }\n  }\n"];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
@@ -220,6 +191,10 @@ export function gql(source: "\n  mutation ProfileEditResetPassword($input: Reset
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function gql(source: "\n  query ProfileCardGetMe {\n    me {\n      id\n      firstName\n      lastName\n      profilePictureUrl\n    }\n  }\n"): (typeof documents)["\n  query ProfileCardGetMe {\n    me {\n      id\n      firstName\n      lastName\n      profilePictureUrl\n    }\n  }\n"];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function gql(source: "\n  subscription UserProfileUpdated($userId: Int!) {\n    userProfileUpdated(userId: $userId) {\n      id\n      firstName\n      lastName\n      profilePictureUrl\n    }\n  }\n"): (typeof documents)["\n  subscription UserProfileUpdated($userId: Int!) {\n    userProfileUpdated(userId: $userId) {\n      id\n      firstName\n      lastName\n      profilePictureUrl\n    }\n  }\n"];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

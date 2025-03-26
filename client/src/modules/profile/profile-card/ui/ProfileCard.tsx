@@ -1,16 +1,18 @@
 import { Avatar } from "@/shared/ui";
-import { NetworkStatus, useQuery } from "@apollo/client";
-import { GET_ME } from "../gql/tags.ts";
+import { NetworkStatus } from "@apollo/client";
+import useGetMeQuery from "../gql/useGetMeQuery.ts";
 
 const ProfileCard = () => {
-  const { data, networkStatus } = useQuery(GET_ME);
+  const queries = {
+    me: useGetMeQuery(),
+  };
 
-  if (networkStatus === NetworkStatus.ready) {
+  if (queries.me.networkStatus === NetworkStatus.ready) {
     return (
       <div className="inline-flex items-center gap-2">
-        <Avatar size="md" src={data!.me.profilePictureUrl} />
+        <Avatar size="md" src={queries.me.data!.me.profilePictureUrl} />
         <div className="font-medium">
-          {data!.me.firstName} {data!.me.lastName}
+          {queries.me.data!.me.firstName} {queries.me.data!.me.lastName}
         </div>
       </div>
     );

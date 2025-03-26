@@ -10,3 +10,14 @@ export const GET_ME = gql(`
     }
   }
 `);
+
+export const USER_PROFILE_UPDATED_SUB = gql(`
+  subscription UserProfileUpdated($userId: Int!) {
+    userProfileUpdated(userId: $userId) {
+      id
+      firstName
+      lastName
+      profilePictureUrl
+    }
+  }
+`);
