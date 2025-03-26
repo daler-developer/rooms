@@ -1,4 +1,4 @@
-import { Button, Modal, Skeleton, useToast } from "@/shared/ui";
+import { Button, Modal, Spinner, useToast } from "@/shared/ui";
 import { forwardRef, MutableRefObject, useId, useImperativeHandle, useRef, useState } from "react";
 import InviteUsersToRoomForm from "./InviteUsersToRoomForm.tsx";
 import { FormProvider, useForm } from "@/shared/lib/form";
@@ -93,11 +93,8 @@ const InviteUsersToRoomModal = forwardRef<RoomInviteMembersModalHandler, {}>(({}
   if (queries.invitedUsers.loading || queries.participants.loading) {
     return (
       <Modal title="Invite Users" isOpen={showModal} onClose={() => setShowModal(false)}>
-        <div className="flex flex-col gap-2">
-          <Skeleton type="block" width={200} height={20} />
-          <Skeleton type="block" width={200} height={20} />
-          <Skeleton type="block" width={200} height={20} />
-          <Skeleton type="block" width={200} height={20} />
+        <div className="flex items-center justify-center">
+          <Spinner size="lg" />
         </div>
       </Modal>
     );

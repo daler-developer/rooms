@@ -36,7 +36,10 @@ const RoomInfoModal = forwardRef<RoomInfoModalHandler>((_, ref) => {
           onChange={(to) => setTab(to as Tab)}
         />
 
-        <div className="mt-4">{tab === "participants" && <RoomInfoTabParticipants />}</div>
+        <div className="mt-4">
+          {tab === "participants" && <RoomInfoTabParticipants />}
+          {tab === "settings" && <div>TODO</div>}
+        </div>
       </div>
     </Modal>
   );

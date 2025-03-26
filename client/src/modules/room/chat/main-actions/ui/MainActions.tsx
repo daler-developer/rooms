@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import useLeaveRoomMutation from "../gql/useLeaveRoomMutation.ts";
 import { HiMiniEllipsisVertical } from "react-icons/hi2";
 import { Dropdown, IconButton } from "@/shared/ui";

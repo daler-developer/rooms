@@ -301,6 +301,7 @@ type Subscription {
     roomParticipantLeave(roomId: Int!): User!
     roomParticipantJoined(roomId: Int!): User!
     roomParticipantJoin(roomId: Int!): User!
+    roomParticipantsCountChange(roomId: Int!): Room!
     newMessage(skipFromCurrentSession: Boolean!): NewMessageEvent!
     newRoom: Room!
     userTypingStatusChange(roomId: Int!): UserTypingStatusChangeEvent!

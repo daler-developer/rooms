@@ -63,9 +63,11 @@ const ScreenMainHeader = () => {
       <BaseScreenHeader
         left={
           <div className="flex items-center gap-2">
-            <Avatar size="md" src={roomData!.room.thumbnailUrl} />
+            <Avatar onClick={() => openRoomInfoModal()} className="cursor-pointer" size="md" src={roomData!.room.thumbnailUrl} />
             <div className="flex flex-col justify-between">
-              <div onClick={() => openRoomInfoModal()}>{roomData!.room.name}</div>
+              <div className="text-[16px] font-medium whitespace-nowrap hover:underline cursor-pointer" onClick={() => openRoomInfoModal()}>
+                {roomData!.room.name}
+              </div>
               {participantsTypingExceptMe.length > 0 ? <ParticipantsTypingList users={[...participantsTypingExceptMe]} /> : <ParticipantsOnlineCount />}
             </div>
           </div>

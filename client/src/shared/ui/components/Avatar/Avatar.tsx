@@ -74,7 +74,7 @@ const Avatar = forwardRef<HTMLDivElement, Props>(({ src, className, alt, size = 
   }
 
   return (
-    <div className={wrapperClasses} ref={ref}>
+    <div ref={ref} className={wrapperClasses} onClick={onClick}>
       {hasError && (
         <>
           <div className="bg-gray-100 w-full h-full rounded-full overflow-hidden">
