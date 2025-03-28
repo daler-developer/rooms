@@ -1,11 +1,8 @@
 import { useQuery, useSubscription } from "@apollo/client";
+import { Avatar } from "@/shared/ui";
 import { GET_ME, USER_TYPING_STATUS_CHANGED_SUB } from "@/widgets/room-chat/gql/tags.ts";
 import { useRoomChatStore } from "@/widgets/room-chat/context";
-import { InviteUsersToRoomModal, type RoomInviteMembersModalHandler } from "@/modules/invitation/invite-users-to-room";
 import { useRef } from "react";
-import { Avatar, IconButton } from "@/shared/ui";
-import Dropdown from "@/shared/ui/components/Dropdown/Dropdown.tsx";
-import { HiMiniEllipsisVertical } from "react-icons/hi2";
 import PendingInvitationsCount from "../../../pending-invitations/ui/PendingInvitationsCount.tsx";
 import RoomInfoModal, { type RoomInfoModalHandler } from "../../../room-info/RoomInfoModal.tsx";
 import ParticipantsOnlineCount from "./ParticipantsOnlineCount.tsx";
