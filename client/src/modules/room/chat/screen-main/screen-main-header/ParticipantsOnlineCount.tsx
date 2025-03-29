@@ -1,9 +1,12 @@
-import useGetRoomQuery from "../../../gql/useGetRoomQuery";
+import useGetRoomQuery from "../../gql/useGetRoomQuery";
+import useParticipantsOnlineCountChangeSub from "../../gql/useParticipantsOnlineCountChangeSub";
 
 const ParticipantsOnlineCount = () => {
   const queries = {
     room: useGetRoomQuery(),
   };
+
+  useParticipantsOnlineCountChangeSub();
 
   return (
     <div>

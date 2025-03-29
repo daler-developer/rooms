@@ -19,7 +19,6 @@ const ScheduledMessage = ({ message }: Props) => {
   };
 
   const [sendScheduledMessagesNowMutation] = useSendScheduledMessagesNowMutation();
-  const [deleteMessages] = useDeleteMessagesMutation();
 
   const contextMenuItems = [
     {
@@ -39,10 +38,10 @@ const ScheduledMessage = ({ message }: Props) => {
     {
       label: "Delete",
       async onClick() {
-        await deleteMessages({
-          roomId,
-          messageIds: [message.id],
-        });
+        // await deleteMessages({
+        //   roomId,
+        //   messageIds: [message.id],
+        // });
       },
     },
   ];

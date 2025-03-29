@@ -5,6 +5,7 @@ import { HiOutlineChat } from "react-icons/hi";
 import useNewInvitationSub from "../gql/useNewInvitationSub.ts";
 import useUserRejectedInvitationSub from "../gql/useUserRejectedInvitationSub.ts";
 import useUserAcceptedInvitationSub from "../gql/useUserAcceptedInvitationSub.ts";
+import { Avatar, Badge } from "@/shared/ui";
 
 const HomePage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -19,6 +20,16 @@ const HomePage = () => {
     searchParams.delete("roomId");
     setSearchParams(searchParams);
   };
+
+  // return (
+  //   <div className="p-4 flex gap-4">
+  //     <Avatar size="xs" badgeContent={<Badge badgeColor={"green"} size={"sm"} />} alt="A" />
+  //     <Avatar size="sm" badgeContent={<Badge badgeColor={"green"} size={"md"} />} alt="A" />
+  //     <Avatar size="md" badgeContent={<Badge badgeColor={"green"} size={"md"} />} alt="A" />
+  //     <Avatar size="lg" badgeContent={<Badge badgeColor={"green"} size={"md"} />} alt="A" />
+  //     <Avatar size="xl" badgeContent={<Badge badgeColor={"green"} size={"md"} />} alt="A" />
+  //   </div>
+  // );
 
   return (
     <div>

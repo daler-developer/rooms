@@ -11,6 +11,7 @@ import { UserToRoomRepository } from "../../repositories/UserToRoomRepository/Us
 import { UserToRoomParticipationRepository } from "../../repositories/UserToRoomParticipationRepository/UserToRoomParticipationRepository";
 import { AddUserDto } from "../../repositories/UserRepository/dto/AddUserDto";
 import { IncorrectPasswordGraphQLError, MeIsBlockedGraphQLError, UserNotFoundGraphQLError } from "../../../infrastructure/lib/graphql/errors";
+import { RoomRepository } from "../../repositories/RoomRepository/RoomRepository";
 
 const sleep = () => new Promise((res) => setTimeout(res, 500));
 
@@ -18,6 +19,7 @@ const sleep = () => new Promise((res) => setTimeout(res, 500));
 class UserService {
   constructor(
     @inject(TYPES.UserRepository) private userRepository: UserRepository,
+    @inject(TYPES.RoomRepository) private roomRepository: RoomRepository,
     @inject(TYPES.UserToRoomParticipationRepository) private userToRoomParticipationRepository: UserToRoomParticipationRepository,
   ) {}
 
@@ -104,14 +106,23 @@ class UserService {
   }
 
   async handleUserConnect({ userId, sessionId }: { userId: number; sessionId: string }) {
-    console.log("connect", userId, sessionId);
-    // await redisClient.sAdd(`user:${String(userId)}:active_sessions`, sessionId);
-    //
-    // const user = await this.userRepository.getById(userId);
-    //
-    // pubsub.publish("USER_ONLINE_STATUS_CHANGE", {
-    //   usersOnlineStatusChange: user,
-    // });
+    await redisClient.sAdd(`user:${String(userId)}:active_sessions`, sessionId);
+
+    const user = await this.userRepository.getById(userId);
+
+    pubsub.publish("USER_ONLINE_STATUS_CHANGE", {
+      usersOnlineStatusChange: user,
+    });
+
+    const participations = await this.userToRoomParticipationRepository.getManyByUserId(userId);
+    const roomIds = participations.map((p) => p.roomId);
+
+    for (const roomId of roomIds) {
+      pubsub.publish("ROOM_PARTICIPANTS_ONLINE_COUNT_CHANGE", {
+        roomId,
+      });
+    }
+
     // if (isOnline) {
     //   await redisClient.sAdd(`user:${String(userId)}:active_sessions`, sessionId);
     //

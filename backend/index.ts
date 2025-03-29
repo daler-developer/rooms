@@ -28,6 +28,8 @@ import db from "./infrastructure/db";
 import { messages } from "./infrastructure/entities/Message";
 import { eq } from "drizzle-orm";
 
+setMaxListeners(1000);
+
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 const errorHandlingPlugin = {

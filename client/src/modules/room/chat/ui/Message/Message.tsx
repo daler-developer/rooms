@@ -28,8 +28,6 @@ const Message = ({ message }: Props) => {
 
   const { data: roomData } = useRoomQuery();
 
-  const [deleteMessages] = useDeleteMessagesMutation();
-
   useSubscription(USERS_ONLINE_STATUS_CHANGE, {
     variables: {
       userIds: [message.sender.id],
@@ -64,7 +62,7 @@ const Message = ({ message }: Props) => {
     {
       label: "Delete",
       async onClick() {
-        await deleteMessages({ roomId, messageIds: [message.id] });
+        // await deleteMessages({ roomId, messageIds: [message.id] });
       },
     },
   ];

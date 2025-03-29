@@ -1,1 +1,0 @@
-ALTER TABLE "rooms" ADD COLUMN "pending_invitations_count" integer DEFAULT 0;

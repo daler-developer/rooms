@@ -28,8 +28,6 @@ const documents = {
     "\n  subscription InvitationsNewInvitationSub {\n    newInvitation {\n      userId\n      roomId\n      room {\n        id\n        name\n        thumbnailUrl\n      }\n      inviter {\n        id\n        firstName\n        lastName\n      }\n      createdAt\n    }\n  }\n": types.InvitationsNewInvitationSubDocument,
     "\n  query RoomInviteMembersGetParticipants($roomId: Int!) {\n    room(id: $roomId) {\n      id\n      participants {\n        id\n      }\n    }\n  }\n": types.RoomInviteMembersGetParticipantsDocument,
     "\n  query RoomInviteMembersGetInvitedUsers($roomId: Int!) {\n    room(id: $roomId) {\n      id\n      invitedUsers {\n        id\n      }\n    }\n  }\n": types.RoomInviteMembersGetInvitedUsersDocument,
-    "\n  query SearchUsers($filter: SearchUsersFilterInput!) {\n    searchUsers(filter: $filter) {\n      data {\n        id\n        email\n        profilePictureUrl\n      }\n      hasMore\n    }\n  }\n": types.SearchUsersDocument,
-    "\n  query RoomGetPendingInvitations($roomId: Int!) {\n    room(id: $roomId) {\n      id\n      pendingInvitations {\n        userId\n        roomId\n      }\n    }\n  }\n": types.RoomGetPendingInvitationsDocument,
     "\n  mutation InviteUsersToRoom($roomId: Int!, $invitedUsersIds: [Int!]!) {\n    inviteUsersToRoom(roomId: $roomId, invitedUsersIds: $invitedUsersIds)\n  }\n": types.InviteUsersToRoomDocument,
     "\n  query ProfileEditGetMe {\n    me {\n      id\n      firstName\n      lastName\n      profilePictureUrl\n      passwordLength\n    }\n  }\n": types.ProfileEditGetMeDocument,
     "\n  mutation ProfileEditFirstName($input: EditFirstNameInput!) {\n    editFirstName(input: $input) {\n      id\n      firstName\n    }\n  }\n": types.ProfileEditFirstNameDocument,
@@ -58,6 +56,8 @@ const documents = {
     "\n  subscription MessageViewedSub($messageId: Int!) {\n    messageViewed(messageId: $messageId) {\n      viewer {\n        id\n        email\n        profilePictureUrl\n      }\n      message {\n        id\n        viewsCount\n      }\n    }\n  }\n": types.MessageViewedSubDocument,
     "\n  subscription RoomChatUsersOnlineStatusChange($userIds: [Int!]!) {\n    usersOnlineStatusChange(userIds: $userIds) {\n      id\n      isOnline\n    }\n  }\n": types.RoomChatUsersOnlineStatusChangeDocument,
     "\n  subscription MessagesDeleted($roomId: Int!) {\n    messagesDeleted(roomId: $roomId) {\n      messageIds\n    }\n  }\n": types.MessagesDeletedDocument,
+    "\n  subscription RoomParticipantsOnlineCountChange($roomId: Int!) {\n    roomParticipantsOnlineCountChange(roomId: $roomId) {\n      id\n      participantsOnlineCount       \n    }\n  }\n": types.RoomParticipantsOnlineCountChangeDocument,
+    "\n  subscription RoomChatPendingInvitationsCountChange2($roomId: Int!) {\n    roomPendingInvitationsCountChange(roomId: $roomId) {\n      id\n      pendingInvitationsCount\n    }\n  }\n": types.RoomChatPendingInvitationsCountChange2Document,
     "\n  mutation RoomChatLeaveRoom($input: LeaveRoomInput!) {\n    leaveRoom(input: $input)\n  }\n": types.RoomChatLeaveRoomDocument,
     "\n  subscription RoomChatPendingInvitationsCountChange($roomId: Int!) {\n    roomPendingInvitationsCountChange(roomId: $roomId) {\n      id\n      pendingInvitationsCount\n    }\n  }\n": types.RoomChatPendingInvitationsCountChangeDocument,
     "\n    mutation RoomChatExcludeUserFromRoom($roomId: Int!, $userId: Int!) {\n      excludeUserFromRoom(roomId: $roomId, userId: $userId) {\n        id\n        name\n      }\n    }\n": types.RoomChatExcludeUserFromRoomDocument,
@@ -155,14 +155,6 @@ export function gql(source: "\n  query RoomInviteMembersGetParticipants($roomId:
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function gql(source: "\n  query RoomInviteMembersGetInvitedUsers($roomId: Int!) {\n    room(id: $roomId) {\n      id\n      invitedUsers {\n        id\n      }\n    }\n  }\n"): (typeof documents)["\n  query RoomInviteMembersGetInvitedUsers($roomId: Int!) {\n    room(id: $roomId) {\n      id\n      invitedUsers {\n        id\n      }\n    }\n  }\n"];
-/**
- * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
- */
-export function gql(source: "\n  query SearchUsers($filter: SearchUsersFilterInput!) {\n    searchUsers(filter: $filter) {\n      data {\n        id\n        email\n        profilePictureUrl\n      }\n      hasMore\n    }\n  }\n"): (typeof documents)["\n  query SearchUsers($filter: SearchUsersFilterInput!) {\n    searchUsers(filter: $filter) {\n      data {\n        id\n        email\n        profilePictureUrl\n      }\n      hasMore\n    }\n  }\n"];
-/**
- * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
- */
-export function gql(source: "\n  query RoomGetPendingInvitations($roomId: Int!) {\n    room(id: $roomId) {\n      id\n      pendingInvitations {\n        userId\n        roomId\n      }\n    }\n  }\n"): (typeof documents)["\n  query RoomGetPendingInvitations($roomId: Int!) {\n    room(id: $roomId) {\n      id\n      pendingInvitations {\n        userId\n        roomId\n      }\n    }\n  }\n"];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
@@ -275,6 +267,14 @@ export function gql(source: "\n  subscription RoomChatUsersOnlineStatusChange($u
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function gql(source: "\n  subscription MessagesDeleted($roomId: Int!) {\n    messagesDeleted(roomId: $roomId) {\n      messageIds\n    }\n  }\n"): (typeof documents)["\n  subscription MessagesDeleted($roomId: Int!) {\n    messagesDeleted(roomId: $roomId) {\n      messageIds\n    }\n  }\n"];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function gql(source: "\n  subscription RoomParticipantsOnlineCountChange($roomId: Int!) {\n    roomParticipantsOnlineCountChange(roomId: $roomId) {\n      id\n      participantsOnlineCount       \n    }\n  }\n"): (typeof documents)["\n  subscription RoomParticipantsOnlineCountChange($roomId: Int!) {\n    roomParticipantsOnlineCountChange(roomId: $roomId) {\n      id\n      participantsOnlineCount       \n    }\n  }\n"];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function gql(source: "\n  subscription RoomChatPendingInvitationsCountChange2($roomId: Int!) {\n    roomPendingInvitationsCountChange(roomId: $roomId) {\n      id\n      pendingInvitationsCount\n    }\n  }\n"): (typeof documents)["\n  subscription RoomChatPendingInvitationsCountChange2($roomId: Int!) {\n    roomPendingInvitationsCountChange(roomId: $roomId) {\n      id\n      pendingInvitationsCount\n    }\n  }\n"];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

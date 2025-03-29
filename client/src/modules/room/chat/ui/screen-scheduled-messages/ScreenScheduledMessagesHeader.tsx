@@ -7,13 +7,11 @@ import useDeleteMessagesMutation from "../../gql/useDeleteMessagesMutation";
 const ScreenScheduledMessagesHeader = () => {
   const { roomId, setTab, selectedScheduledMessages, clearScheduledSelectedMessages } = useRoomChatStore();
 
-  const [deleteMessages] = useDeleteMessagesMutation();
-
   const handleDelete = async () => {
-    deleteMessages({
-      roomId,
-      messageIds: selectedScheduledMessages,
-    });
+    // deleteMessages({
+    //   roomId,
+    //   messageIds: selectedScheduledMessages,
+    // });
     clearScheduledSelectedMessages();
   };
 

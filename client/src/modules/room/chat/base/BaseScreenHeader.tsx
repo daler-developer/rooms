@@ -5,7 +5,7 @@ type Props = {
   right?: ReactNode;
 };
 
-const BaseHeader = ({ left, right }: Props) => {
+const BaseScreenHeader = ({ left, right }: Props) => {
   return (
     <div className="flex items-center justify-between shrink-0 p-2 bg-shadow-lg bg-white border border-b-gray-300 basis-[70px]">
       <div>{left}</div>
@@ -13,7 +13,6 @@ const BaseHeader = ({ left, right }: Props) => {
       <div>{right}</div>
     </div>
   );
-}
+};
 
-
-export default BaseHeader;
+export default BaseScreenHeader;

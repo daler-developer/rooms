@@ -294,3 +294,21 @@ export const MESSAGES_DELETED = gql(`
     }
   }
 `);
+
+export const ROOM_PARTICIPANTS_ONLINE_COUNT_CHANGE_SUB = gql(`
+  subscription RoomParticipantsOnlineCountChange($roomId: Int!) {
+    roomParticipantsOnlineCountChange(roomId: $roomId) {
+      id
+      participantsOnlineCount       
+    }
+  }
+`);
+
+export const ROOM_PENDING_INVITATIONS_COUNT_CHANGE_SUB = gql(`
+  subscription RoomChatPendingInvitationsCountChange2($roomId: Int!) {
+    roomPendingInvitationsCountChange(roomId: $roomId) {
+      id
+      pendingInvitationsCount
+    }
+  }
+`);

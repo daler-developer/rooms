@@ -45,7 +45,7 @@ const RoomsListItem = ({ room }: Props) => {
   return (
     <Link to={`/home?roomId=${room.id}`} className="w-full flex items-center gap-2 border-gray-200 p-1 cursor-pointer [&:not(:last-child)]:border-b-[0.5px]">
       <div className="shrink-0">
-        <Avatar size="md" src={room.thumbnailUrl} />
+        <Avatar alt={room.name} size="md" src={room.thumbnailUrl} />
       </div>
       <div className="flex-grow overflow-hidden flex flex-col justify-between text-[14px]">
         <div className="text-[16px] font-black whitespace-nowrap overflow-hidden overflow-ellipsis">{room.name}</div>

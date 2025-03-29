@@ -1,19 +1,21 @@
 import clsx from "clsx";
 import { forwardRef, ReactNode, useEffect, useState } from "react";
+import { FaUser } from "react-icons/fa";
 import Skeleton from "../Skeleton/Skeleton.tsx";
 
 type AvatarSize = "xs" | "sm" | "md" | "lg" | "xl";
 
 type Props = {
-  alt?: string;
   className?: string;
   src?: string | null;
   size?: AvatarSize;
   badgeContent?: ReactNode;
   onClick?: () => void;
+  children?: string;
+  alt?: string;
 };
 
-const Avatar = forwardRef<HTMLDivElement, Props>(({ src, className, alt, size = "lg", badgeContent, onClick }, ref) => {
+const Avatar = forwardRef<HTMLDivElement, Props>(({ src, className, size = "lg", badgeContent, onClick, alt }, ref) => {
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
 
@@ -51,10 +53,27 @@ const Avatar = forwardRef<HTMLDivElement, Props>(({ src, className, alt, size = 
   );
 
   const badgeContentWrapperClasses = clsx("absolute transform translate-x-1/2 translate-y-1/2", {
-    "bottom-[15px] right-[15px]": size === "md",
+    "bottom-[0px] right-[0px]": size === "xs",
     "bottom-[5px] right-[5px]": size === "sm",
+    "bottom-[8px] right-[8px]": size === "md",
     "bottom-[10px] right-[20px]": size === "lg",
     "bottom-[16px] right-[30px]": size === "xl",
+  });
+
+  const fallbackIconClasses = clsx("text-gray-500", {
+    "text-[10px]": size === "xs",
+    "text-[20px]": size === "sm",
+    "text-[28px]": size === "md",
+    "text-[55px]": size === "lg",
+    "text-[70px]": size === "xl",
+  });
+
+  const fallbackTextClasses = clsx("text-gray-500 font-medium", {
+    "text-[10px]": size === "xs",
+    "text-[20px]": size === "sm",
+    "text-[28px]": size === "md",
+    "text-[55px]": size === "lg",
+    "text-[70px]": size === "xl",
   });
 
   const skeletonSize = () => {
@@ -77,10 +96,8 @@ const Avatar = forwardRef<HTMLDivElement, Props>(({ src, className, alt, size = 
     <div ref={ref} className={wrapperClasses} onClick={onClick}>
       {hasError && (
         <>
-          <div className="bg-gray-100 w-full h-full rounded-full overflow-hidden">
-            <svg className="w-full h-full text-gray-400 -left-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-              <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd"></path>
-            </svg>
+          <div className="bg-gray-200 w-full h-full rounded-full overflow-hidden flex items-center justify-around">
+            {alt ? <span className={fallbackTextClasses}>{alt[0].toUpperCase()}</span> : <FaUser className={fallbackIconClasses} />}
           </div>
         </>
       )}

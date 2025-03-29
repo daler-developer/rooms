@@ -6,13 +6,11 @@ import useDeleteMessagesMutation from "../../../gql/useDeleteMessagesMutation.ts
 const SelectedMessagesController = () => {
   const { roomId, selectedMessages, clearSelectedMessages } = useRoomChatStore();
 
-  const [deleteMessages, { loading: isDeletingMessages }] = useDeleteMessagesMutation();
-
   const handleDelete = async () => {
-    deleteMessages({
-      roomId,
-      messageIds: selectedMessages,
-    });
+    // deleteMessages({
+    //   roomId,
+    //   messageIds: selectedMessages,
+    // });
     clearSelectedMessages();
   };
 
@@ -29,7 +27,7 @@ const SelectedMessagesController = () => {
       }
       right={
         <div className="flex items-center gap-1">
-          <Button type="button" color="red" isLoading={isDeletingMessages} onClick={handleDelete}>
+          <Button type="button" color="red" isLoading={false} onClick={handleDelete}>
             Delete
           </Button>
           <Button type="button" color="light" onClick={handleCancel}>

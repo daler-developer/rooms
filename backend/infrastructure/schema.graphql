@@ -90,7 +90,7 @@ type Room {
     myScheduledMessagesCount: Int!
     lastMessage: Message
     unreadMessagesCount: Int!
-    thumbnailUrl: String!
+    thumbnailUrl: String
     invitedUsers: [User!]!
 }
 
@@ -302,6 +302,7 @@ type Subscription {
     roomParticipantJoined(roomId: Int!): User!
     roomParticipantJoin(roomId: Int!): User!
     roomParticipantsCountChange(roomId: Int!): Room!
+    roomParticipantsOnlineCountChange(roomId: Int!): Room!
     newMessage(skipFromCurrentSession: Boolean!): NewMessageEvent!
     newRoom: Room!
     userTypingStatusChange(roomId: Int!): UserTypingStatusChangeEvent!
