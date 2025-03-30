@@ -1,22 +1,20 @@
-// import SendMessageForm from "@/widgets/room-chat/ui/SendMessageForm/SendMessageForm.tsx";
 import { useEffect, useMemo, useRef } from "react";
+import { usePrevValue } from "@/shared/hooks";
 import createRoomChatStore from "@/widgets/room-chat/store";
 import { withRoomChatStore } from "../store";
 import { useRoomChatEmitter, withRoomChatEmitter } from "../emitter.ts";
 import { RoomChatStoreContext, useRoomChatStore } from "@/widgets/room-chat/context";
-// import MessagesList from "@/widgets/room-chat/ui/MessagesList.tsx";
-// import Header from "@/widgets/room-chat/ui/Header/Header.tsx";
-import { useQuery } from "@apollo/client";
-import { GET_ME } from "@/widgets/room-chat/gql/tags.ts";
+import useGetMeQuery from "../gql/useGetMeQuery.ts";
 import MeExcludedFromRoomModal from "@/widgets/room-chat/ui/MeExcludedFromRoomModal/MeExcludedFromRoomModal.tsx";
 import useRoomQuery from "@/widgets/room-chat/hooks/useRoomQuery.ts";
 import useGetMessagesQuery from "../gql/useGetMessagesQuery.ts";
 import useGetScheduledMessagesQuery from "../gql/useGetScheduledMessagesQuery.ts";
 import useRoomParticipantLeaveSub from "../gql/useRoomParticipantLeaveSub.ts";
+import useRoomParticipantTypingStartSub from "../gql/useRoomParticipantTypingStartSub.ts";
+import useRoomParticipantTypingStopSub from "../gql/useRoomParticipantTypingStopSub.ts";
 import ScreenScheduledMessages from "@/widgets/room-chat/ui/screen-scheduled-messages/ScreenScheduledMessages.tsx";
 import ScreenMain from "../screen-main/ScreenMain.tsx";
 import ScreenSkeletons from "./screen-skeletons/ScreenSkeletons.tsx";
-import { usePrevValue } from "@/shared/hooks";
 import { RoomChatIdContext } from "../context";
 
 type Props = {
@@ -28,9 +26,11 @@ const RoomChat = (_: Props) => {
   const { tab } = useRoomChatStore();
 
   useRoomParticipantLeaveSub();
+  useRoomParticipantTypingStartSub();
+  useRoomParticipantTypingStopSub();
 
   const queries = {
-    me: useQuery(GET_ME),
+    me: useGetMeQuery(),
     room: useRoomQuery(),
     messages: useGetMessagesQuery(),
     scheduledMessages: useGetScheduledMessagesQuery(),

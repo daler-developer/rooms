@@ -46,6 +46,14 @@ class NestedObject<TValues extends { [key: string]: any }> {
     (this.values as any)[pathSlice(path, 1)[0]].setValue(pathSlice(path, 1)[1], value);
   }
 
+  public setIsDirty<TPath extends NestedPaths<TValues>>(path: TPath, isDirty: boolean) {
+    this.values[pathSlice(path, 1)[0]].setIsDirty(pathSlice(path, 1)[1], isDirty);
+  }
+
+  public getIsDirty(path: TPath): boolean {
+    return this.values[pathSlice(path, 1)[0]].getIsDirty(pathSlice(path, 1)[1]);
+  }
+
   public constructValues(): TValues {
     const res = {} as TValues;
 

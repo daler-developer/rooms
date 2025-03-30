@@ -284,6 +284,8 @@ type Mutation {
     excludeUserFromRoom(roomId: Int!, userId: Int!): Room!
     deleteMessages(roomId: Int!, messageIds: [Int!]!): Boolean!
     sendScheduledMessagesNow(messageIds: [Int!]!): Boolean!
+    notifyTypingStart(roomId: Int!): Boolean!
+    notifyTypingStop(roomId: Int!): Boolean!
     test(input: TestInput!): TestResult!
 }
 
@@ -303,6 +305,8 @@ type Subscription {
     roomParticipantJoin(roomId: Int!): User!
     roomParticipantsCountChange(roomId: Int!): Room!
     roomParticipantsOnlineCountChange(roomId: Int!): Room!
+    roomParticipantTypingStart(roomId: Int!): User!
+    roomParticipantTypingStop(roomId: Int!): User!
     newMessage(skipFromCurrentSession: Boolean!): NewMessageEvent!
     newRoom: Room!
     userTypingStatusChange(roomId: Int!): UserTypingStatusChangeEvent!

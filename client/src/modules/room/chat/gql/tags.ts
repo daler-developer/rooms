@@ -48,6 +48,18 @@ export const DELETE_MESSAGES = gql(`
   }
 `);
 
+export const NOTIFY_TYPING_START = gql(`
+  mutation RoomChatNotifyTypingStart($roomId: Int!) {
+    notifyTypingStart(roomId: $roomId)
+  }
+`);
+
+export const NOTIFY_TYPING_STOP = gql(`
+  mutation RoomChatNotifyTypingStop($roomId: Int!) {
+    notifyTypingStop(roomId: $roomId)
+  }
+`);
+
 export const GET_ROOM_PARTICIPANTS_QUERY = gql(`
     query RoomChatGetRoomParticipants($id: Int!) {
       room(id: $id) {
@@ -309,6 +321,24 @@ export const ROOM_PENDING_INVITATIONS_COUNT_CHANGE_SUB = gql(`
     roomPendingInvitationsCountChange(roomId: $roomId) {
       id
       pendingInvitationsCount
+    }
+  }
+`);
+
+export const ROOM_PARTICIPANT_TYPING_START = gql(`
+  subscription RoomChatParticipantTypingStart($roomId: Int!) {
+    roomParticipantTypingStart(roomId: $roomId) {
+      id
+      firstName
+      lastName
+    }
+  }
+`);
+
+export const ROOM_PARTICIPANT_TYPING_STOP = gql(`
+  subscription RoomChatParticipantTypingStop($roomId: Int!) {
+    roomParticipantTypingStop(roomId: $roomId) {
+      id
     }
   }
 `);

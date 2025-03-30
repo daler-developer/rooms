@@ -135,6 +135,8 @@ export type Mutation = {
   markMessageAsViewedByMe: Message;
   notifyMeOnlineStatusChange: User;
   notifyMeTypingStatusChange: Scalars['Boolean']['output'];
+  notifyTypingStart: Scalars['Boolean']['output'];
+  notifyTypingStop: Scalars['Boolean']['output'];
   register: RegisterResult;
   rejectInvitation: Invitation;
   resetPassword: User;
@@ -222,6 +224,16 @@ export type MutationNotifyMeOnlineStatusChangeArgs = {
 
 export type MutationNotifyMeTypingStatusChangeArgs = {
   isTyping?: InputMaybe<Scalars['Boolean']['input']>;
+  roomId: Scalars['Int']['input'];
+};
+
+
+export type MutationNotifyTypingStartArgs = {
+  roomId: Scalars['Int']['input'];
+};
+
+
+export type MutationNotifyTypingStopArgs = {
   roomId: Scalars['Int']['input'];
 };
 
@@ -365,7 +377,7 @@ export type Room = {
   pendingInvitations: Array<Invitation>;
   pendingInvitationsCount: Scalars['Int']['output'];
   scheduledMessages: RoomMessagesList;
-  thumbnailUrl: Scalars['String']['output'];
+  thumbnailUrl?: Maybe<Scalars['String']['output']>;
   unreadMessagesCount: Scalars['Int']['output'];
 };
 
@@ -450,6 +462,8 @@ export type Subscription = {
   roomParticipantJoined: User;
   roomParticipantLeave: User;
   roomParticipantLeft: User;
+  roomParticipantTypingStart: User;
+  roomParticipantTypingStop: User;
   roomParticipantsCountChange: Room;
   roomParticipantsOnlineCountChange: Room;
   roomPendingInvitationsCountChange: Room;
@@ -496,6 +510,16 @@ export type SubscriptionRoomParticipantLeaveArgs = {
 
 
 export type SubscriptionRoomParticipantLeftArgs = {
+  roomId: Scalars['Int']['input'];
+};
+
+
+export type SubscriptionRoomParticipantTypingStartArgs = {
+  roomId: Scalars['Int']['input'];
+};
+
+
+export type SubscriptionRoomParticipantTypingStopArgs = {
   roomId: Scalars['Int']['input'];
 };
 
@@ -632,7 +656,7 @@ export type InvitationsCountUpdatedSubSubscription = { __typename?: 'Subscriptio
 export type InvitationsListQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type InvitationsListQuery = { __typename?: 'Query', invitations: Array<{ __typename?: 'Invitation', userId: number, roomId: number, createdAt: string, room: { __typename?: 'Room', id: number, name: string, thumbnailUrl: string }, inviter: { __typename?: 'User', id: number, firstName: string, lastName: string } }> };
+export type InvitationsListQuery = { __typename?: 'Query', invitations: Array<{ __typename?: 'Invitation', userId: number, roomId: number, createdAt: string, room: { __typename?: 'Room', id: number, name: string, thumbnailUrl?: string | null }, inviter: { __typename?: 'User', id: number, firstName: string, lastName: string } }> };
 
 export type InvitationsListAcceptInvitationMutationVariables = Exact<{
   input: AcceptInvitationInput;
@@ -651,7 +675,7 @@ export type InvitationsListRejectInvitationMutation = { __typename?: 'Mutation',
 export type InvitationsNewInvitationSubSubscriptionVariables = Exact<{ [key: string]: never; }>;
 
 
-export type InvitationsNewInvitationSubSubscription = { __typename?: 'Subscription', newInvitation: { __typename?: 'Invitation', userId: number, roomId: number, createdAt: string, room: { __typename?: 'Room', id: number, name: string, thumbnailUrl: string }, inviter: { __typename?: 'User', id: number, firstName: string, lastName: string } } };
+export type InvitationsNewInvitationSubSubscription = { __typename?: 'Subscription', newInvitation: { __typename?: 'Invitation', userId: number, roomId: number, createdAt: string, room: { __typename?: 'Room', id: number, name: string, thumbnailUrl?: string | null }, inviter: { __typename?: 'User', id: number, firstName: string, lastName: string } } };
 
 export type RoomInviteMembersGetParticipantsQueryVariables = Exact<{
   roomId: Scalars['Int']['input'];
@@ -742,6 +766,20 @@ export type DeleteMessagesMutationVariables = Exact<{
 
 export type DeleteMessagesMutation = { __typename?: 'Mutation', deleteMessages: boolean };
 
+export type RoomChatNotifyTypingStartMutationVariables = Exact<{
+  roomId: Scalars['Int']['input'];
+}>;
+
+
+export type RoomChatNotifyTypingStartMutation = { __typename?: 'Mutation', notifyTypingStart: boolean };
+
+export type RoomChatNotifyTypingStopMutationVariables = Exact<{
+  roomId: Scalars['Int']['input'];
+}>;
+
+
+export type RoomChatNotifyTypingStopMutation = { __typename?: 'Mutation', notifyTypingStop: boolean };
+
 export type RoomChatGetRoomParticipantsQueryVariables = Exact<{
   id: Scalars['Int']['input'];
 }>;
@@ -774,7 +812,7 @@ export type RoomChatGetRoomQueryVariables = Exact<{
 }>;
 
 
-export type RoomChatGetRoomQuery = { __typename?: 'Query', room: { __typename?: 'Room', id: number, name: string, creatorId: number, thumbnailUrl: string, pendingInvitationsCount: number, participantsOnlineCount: number, myScheduledMessagesCount: number, scheduledMessages: { __typename?: 'RoomMessagesList', hasMore: boolean, data: Array<{ __typename?: 'Message', id: number, text?: string | null, senderId: number, roomId: number, scheduledAt?: string | null, sender: { __typename?: 'User', id: number, email: string, profilePictureUrl?: string | null, isOnline: boolean } }> }, participantsTyping: Array<{ __typename?: 'User', id: number, firstName: string, lastName: string }> } };
+export type RoomChatGetRoomQuery = { __typename?: 'Query', room: { __typename?: 'Room', id: number, name: string, creatorId: number, thumbnailUrl?: string | null, pendingInvitationsCount: number, participantsOnlineCount: number, myScheduledMessagesCount: number, scheduledMessages: { __typename?: 'RoomMessagesList', hasMore: boolean, data: Array<{ __typename?: 'Message', id: number, text?: string | null, senderId: number, roomId: number, scheduledAt?: string | null, sender: { __typename?: 'User', id: number, email: string, profilePictureUrl?: string | null, isOnline: boolean } }> }, participantsTyping: Array<{ __typename?: 'User', id: number, firstName: string, lastName: string }> } };
 
 export type RoomChatGetMessagesQueryVariables = Exact<{
   roomId: Scalars['Int']['input'];
@@ -876,6 +914,20 @@ export type RoomChatPendingInvitationsCountChange2SubscriptionVariables = Exact<
 
 export type RoomChatPendingInvitationsCountChange2Subscription = { __typename?: 'Subscription', roomPendingInvitationsCountChange: { __typename?: 'Room', id: number, pendingInvitationsCount: number } };
 
+export type RoomChatParticipantTypingStartSubscriptionVariables = Exact<{
+  roomId: Scalars['Int']['input'];
+}>;
+
+
+export type RoomChatParticipantTypingStartSubscription = { __typename?: 'Subscription', roomParticipantTypingStart: { __typename?: 'User', id: number, firstName: string, lastName: string } };
+
+export type RoomChatParticipantTypingStopSubscriptionVariables = Exact<{
+  roomId: Scalars['Int']['input'];
+}>;
+
+
+export type RoomChatParticipantTypingStopSubscription = { __typename?: 'Subscription', roomParticipantTypingStop: { __typename?: 'User', id: number } };
+
 export type RoomChatLeaveRoomMutationVariables = Exact<{
   input: LeaveRoomInput;
 }>;
@@ -924,7 +976,7 @@ export type CreateRoomMutationVariables = Exact<{
 }>;
 
 
-export type CreateRoomMutation = { __typename?: 'Mutation', createRoom: { __typename?: 'Room', id: number, name: string, thumbnailUrl: string, participantsCount: number, unreadMessagesCount: number, lastMessage?: { __typename?: 'Message', id: number, text?: string | null, sender: { __typename?: 'User', id: number, firstName: string, lastName: string } } | null } };
+export type CreateRoomMutation = { __typename?: 'Mutation', createRoom: { __typename?: 'Room', id: number, name: string, thumbnailUrl?: string | null, participantsCount: number, unreadMessagesCount: number, lastMessage?: { __typename?: 'Message', id: number, text?: string | null, sender: { __typename?: 'User', id: number, firstName: string, lastName: string } } | null } };
 
 export type CreateRoomUsersOnlineStatusChangeSubscriptionVariables = Exact<{
   userIds: Array<Scalars['Int']['input']> | Scalars['Int']['input'];
@@ -936,7 +988,7 @@ export type CreateRoomUsersOnlineStatusChangeSubscription = { __typename?: 'Subs
 export type RoomsListQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type RoomsListQuery = { __typename?: 'Query', rooms: Array<{ __typename?: 'Room', id: number, name: string, thumbnailUrl: string, participantsCount: number, unreadMessagesCount: number, lastMessage?: { __typename?: 'Message', id: number, text?: string | null, sender: { __typename?: 'User', id: number, firstName: string, lastName: string } } | null }> };
+export type RoomsListQuery = { __typename?: 'Query', rooms: Array<{ __typename?: 'Room', id: number, name: string, thumbnailUrl?: string | null, participantsCount: number, unreadMessagesCount: number, lastMessage?: { __typename?: 'Message', id: number, text?: string | null, sender: { __typename?: 'User', id: number, firstName: string, lastName: string } } | null }> };
 
 export type RoomsListParticipantLeaveSubscriptionVariables = Exact<{
   roomId: Scalars['Int']['input'];
@@ -967,7 +1019,7 @@ export type RoomsListNewMessageSubSubscription = { __typename?: 'Subscription', 
 export type RoomsListNewRoomSubscriptionVariables = Exact<{ [key: string]: never; }>;
 
 
-export type RoomsListNewRoomSubscription = { __typename?: 'Subscription', newRoom: { __typename?: 'Room', id: number, name: string, thumbnailUrl: string, participantsCount: number, unreadMessagesCount: number, lastMessage?: { __typename?: 'Message', id: number, text?: string | null, sender: { __typename?: 'User', id: number, firstName: string, lastName: string } } | null } };
+export type RoomsListNewRoomSubscription = { __typename?: 'Subscription', newRoom: { __typename?: 'Room', id: number, name: string, thumbnailUrl?: string | null, participantsCount: number, unreadMessagesCount: number, lastMessage?: { __typename?: 'Message', id: number, text?: string | null, sender: { __typename?: 'User', id: number, firstName: string, lastName: string } } | null } };
 
 export type HomeNewInvitationSubscriptionVariables = Exact<{ [key: string]: never; }>;
 
@@ -990,7 +1042,7 @@ export type GetRoomQueryVariables = Exact<{
 }>;
 
 
-export type GetRoomQuery = { __typename?: 'Query', room: { __typename?: 'Room', id: number, name: string, creatorId: number, thumbnailUrl: string, pendingInvitationsCount: number, participantsOnlineCount: number, myScheduledMessagesCount: number, scheduledMessages: { __typename?: 'RoomMessagesList', hasMore: boolean, data: Array<{ __typename?: 'Message', id: number, text?: string | null, senderId: number, roomId: number, scheduledAt?: string | null, sender: { __typename?: 'User', id: number, email: string, profilePictureUrl?: string | null, isOnline: boolean } }> }, participantsTyping: Array<{ __typename?: 'User', id: number, firstName: string, lastName: string }> } };
+export type GetRoomQuery = { __typename?: 'Query', room: { __typename?: 'Room', id: number, name: string, creatorId: number, thumbnailUrl?: string | null, pendingInvitationsCount: number, participantsOnlineCount: number, myScheduledMessagesCount: number, scheduledMessages: { __typename?: 'RoomMessagesList', hasMore: boolean, data: Array<{ __typename?: 'Message', id: number, text?: string | null, senderId: number, roomId: number, scheduledAt?: string | null, sender: { __typename?: 'User', id: number, email: string, profilePictureUrl?: string | null, isOnline: boolean } }> }, participantsTyping: Array<{ __typename?: 'User', id: number, firstName: string, lastName: string }> } };
 
 export type RoomPendingInvitationsCountChangeSubscriptionVariables = Exact<{
   roomId: Scalars['Int']['input'];
@@ -1040,6 +1092,8 @@ export const UserProfileUpdatedDocument = {"kind":"Document","definitions":[{"ki
 export const SendMessageDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"SendMessage"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"SendMessageInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"sendMessage"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"text"}},{"kind":"Field","name":{"kind":"Name","value":"senderId"}},{"kind":"Field","name":{"kind":"Name","value":"roomId"}},{"kind":"Field","name":{"kind":"Name","value":"isViewedByMe"}},{"kind":"Field","name":{"kind":"Name","value":"sentAt"}},{"kind":"Field","name":{"kind":"Name","value":"sender"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"profilePictureUrl"}},{"kind":"Field","name":{"kind":"Name","value":"isOnline"}}]}},{"kind":"Field","name":{"kind":"Name","value":"images"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"url"}}]}},{"kind":"Field","name":{"kind":"Name","value":"viewsCount"}}]}}]}}]} as unknown as DocumentNode<SendMessageMutation, SendMessageMutationVariables>;
 export const ScheduleMessageDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"ScheduleMessage"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ScheduleMessage"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"scheduleMessage"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"text"}},{"kind":"Field","name":{"kind":"Name","value":"senderId"}},{"kind":"Field","name":{"kind":"Name","value":"roomId"}},{"kind":"Field","name":{"kind":"Name","value":"scheduledAt"}},{"kind":"Field","name":{"kind":"Name","value":"sender"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"profilePictureUrl"}},{"kind":"Field","name":{"kind":"Name","value":"isOnline"}}]}}]}}]}}]} as unknown as DocumentNode<ScheduleMessageMutation, ScheduleMessageMutationVariables>;
 export const DeleteMessagesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"DeleteMessages"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"roomId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"messageIds"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"deleteMessages"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"roomId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"roomId"}}},{"kind":"Argument","name":{"kind":"Name","value":"messageIds"},"value":{"kind":"Variable","name":{"kind":"Name","value":"messageIds"}}}]}]}}]} as unknown as DocumentNode<DeleteMessagesMutation, DeleteMessagesMutationVariables>;
+export const RoomChatNotifyTypingStartDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"RoomChatNotifyTypingStart"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"roomId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"notifyTypingStart"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"roomId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"roomId"}}}]}]}}]} as unknown as DocumentNode<RoomChatNotifyTypingStartMutation, RoomChatNotifyTypingStartMutationVariables>;
+export const RoomChatNotifyTypingStopDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"RoomChatNotifyTypingStop"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"roomId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"notifyTypingStop"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"roomId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"roomId"}}}]}]}}]} as unknown as DocumentNode<RoomChatNotifyTypingStopMutation, RoomChatNotifyTypingStopMutationVariables>;
 export const RoomChatGetRoomParticipantsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"RoomChatGetRoomParticipants"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"room"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"participants"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"firstName"}},{"kind":"Field","name":{"kind":"Name","value":"lastName"}},{"kind":"Field","name":{"kind":"Name","value":"profilePictureUrl"}},{"kind":"Field","name":{"kind":"Name","value":"isOnline"}}]}}]}}]}}]} as unknown as DocumentNode<RoomChatGetRoomParticipantsQuery, RoomChatGetRoomParticipantsQueryVariables>;
 export const RoomChatParticipantLeaveDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"subscription","name":{"kind":"Name","value":"RoomChatParticipantLeave"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"roomId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"roomParticipantLeave"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"roomId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"roomId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"firstName"}},{"kind":"Field","name":{"kind":"Name","value":"lastName"}}]}}]}}]} as unknown as DocumentNode<RoomChatParticipantLeaveSubscription, RoomChatParticipantLeaveSubscriptionVariables>;
 export const MarkMessageAsViewedByMeDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"MarkMessageAsViewedByMe"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"messageId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"markMessageAsViewedByMe"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"messageId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"messageId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"viewsCount"}},{"kind":"Field","name":{"kind":"Name","value":"isViewedByMe"}}]}}]}}]} as unknown as DocumentNode<MarkMessageAsViewedByMeMutation, MarkMessageAsViewedByMeMutationVariables>;
@@ -1059,6 +1113,8 @@ export const RoomChatUsersOnlineStatusChangeDocument = {"kind":"Document","defin
 export const MessagesDeletedDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"subscription","name":{"kind":"Name","value":"MessagesDeleted"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"roomId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"messagesDeleted"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"roomId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"roomId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"messageIds"}}]}}]}}]} as unknown as DocumentNode<MessagesDeletedSubscription, MessagesDeletedSubscriptionVariables>;
 export const RoomParticipantsOnlineCountChangeDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"subscription","name":{"kind":"Name","value":"RoomParticipantsOnlineCountChange"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"roomId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"roomParticipantsOnlineCountChange"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"roomId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"roomId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"participantsOnlineCount"}}]}}]}}]} as unknown as DocumentNode<RoomParticipantsOnlineCountChangeSubscription, RoomParticipantsOnlineCountChangeSubscriptionVariables>;
 export const RoomChatPendingInvitationsCountChange2Document = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"subscription","name":{"kind":"Name","value":"RoomChatPendingInvitationsCountChange2"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"roomId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"roomPendingInvitationsCountChange"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"roomId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"roomId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"pendingInvitationsCount"}}]}}]}}]} as unknown as DocumentNode<RoomChatPendingInvitationsCountChange2Subscription, RoomChatPendingInvitationsCountChange2SubscriptionVariables>;
+export const RoomChatParticipantTypingStartDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"subscription","name":{"kind":"Name","value":"RoomChatParticipantTypingStart"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"roomId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"roomParticipantTypingStart"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"roomId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"roomId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"firstName"}},{"kind":"Field","name":{"kind":"Name","value":"lastName"}}]}}]}}]} as unknown as DocumentNode<RoomChatParticipantTypingStartSubscription, RoomChatParticipantTypingStartSubscriptionVariables>;
+export const RoomChatParticipantTypingStopDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"subscription","name":{"kind":"Name","value":"RoomChatParticipantTypingStop"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"roomId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"roomParticipantTypingStop"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"roomId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"roomId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<RoomChatParticipantTypingStopSubscription, RoomChatParticipantTypingStopSubscriptionVariables>;
 export const RoomChatLeaveRoomDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"RoomChatLeaveRoom"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"LeaveRoomInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"leaveRoom"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}]}]}}]} as unknown as DocumentNode<RoomChatLeaveRoomMutation, RoomChatLeaveRoomMutationVariables>;
 export const RoomChatPendingInvitationsCountChangeDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"subscription","name":{"kind":"Name","value":"RoomChatPendingInvitationsCountChange"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"roomId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"roomPendingInvitationsCountChange"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"roomId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"roomId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"pendingInvitationsCount"}}]}}]}}]} as unknown as DocumentNode<RoomChatPendingInvitationsCountChangeSubscription, RoomChatPendingInvitationsCountChangeSubscriptionVariables>;
 export const RoomChatExcludeUserFromRoomDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"RoomChatExcludeUserFromRoom"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"roomId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"userId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"excludeUserFromRoom"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"roomId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"roomId"}}},{"kind":"Argument","name":{"kind":"Name","value":"userId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"userId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}}]}}]} as unknown as DocumentNode<RoomChatExcludeUserFromRoomMutation, RoomChatExcludeUserFromRoomMutationVariables>;

@@ -5,6 +5,7 @@ class Field<TValue> {
   public validationErrors: string[];
   public additionalErrors: string[];
   public isTouched: boolean;
+  public isDirty: boolean;
   public shouldValidateOnChange: boolean;
 
   constructor(value: any) {
@@ -13,6 +14,7 @@ class Field<TValue> {
     this.validationErrors = [];
     this.additionalErrors = [];
     this.isTouched = false;
+    this.isDirty = false;
     this.shouldValidateOnChange = false;
   }
 
@@ -26,6 +28,10 @@ class Field<TValue> {
 
   public setIsTouched(_: unknown, isTouched: boolean): void {
     this.isTouched = isTouched;
+  }
+
+  public setIsDirty(_: unknown, isDirty: boolean): void {
+    this.isDirty = isDirty;
   }
 
   public setValidationErrors(_: unknown, validationErrors: string[]): void {
@@ -66,6 +72,10 @@ class Field<TValue> {
 
   public getIsEdited(): boolean {
     return this.value !== this.initialValue;
+  }
+
+  public getIsDirty(): boolean {
+    return this.isDirty;
   }
 
   public clearValidationErrors(): void {

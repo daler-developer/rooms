@@ -36,6 +36,14 @@ class Form<TValues extends { [key: string]: any }> {
     this.onStateUpdated();
   }
 
+  public setIsDirty<TPath extends NestedPaths<TValues>>(path: TPath, isDirty: boolean) {
+    this.root.setIsDirty(path, isDirty);
+  }
+
+  public getIsDirty<TPath extends NestedPaths<TValues>>(path: TPath): boolean {
+    return this.root.getIsDirty(path);
+  }
+
   public setValidationErrors<TPath extends NestedPaths<TValues>>(path: TPath, messages: string[]) {
     this.root.setValidationErrors(path, messages);
     this.onStateUpdated();

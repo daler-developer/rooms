@@ -87,6 +87,14 @@ class NestedArray<TValues extends any[]> {
     return this.values[pathSlice(path, 1)[0]].getIsTouched(pathSlice(path, 1)[1]);
   }
 
+  public setIsDirty<TPath extends NestedPaths<TValues>>(path: TPath, isDirty: boolean) {
+    this.values[pathSlice(path, 1)[0]].setIsDirty(pathSlice(path, 1)[1], isDirty);
+  }
+
+  public getIsDirty(path: TPath): boolean {
+    return this.values[pathSlice(path, 1)[0]].getIsDirty(pathSlice(path, 1)[1]);
+  }
+
   public clearErrors() {
     for (const value of this.values) {
       value.clearErrors();

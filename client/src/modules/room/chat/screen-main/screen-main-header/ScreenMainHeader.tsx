@@ -1,3 +1,4 @@
+import { useAuth } from "@/modules/auth";
 import { Avatar, Button } from "@/shared/ui";
 import useGetRoomQuery from "../../gql/useGetRoomQuery.ts";
 import { useRoomChatStore } from "../../store";
@@ -9,7 +10,6 @@ import ParticipantsTypingList from "./ParticipantsTypingList.tsx";
 import MainActions from "../../main-actions/ui/MainActions.tsx";
 import BaseScreen from "../../base/BaseScreen.tsx";
 import useDeleteMessagesMutation from "../../gql/useDeleteMessagesMutation.ts";
-import { useAuth } from "@/modules/auth";
 
 const ScreenMainHeader = () => {
   const { roomId, selectedMessages, clearSelectedMessages } = useRoomChatStore();

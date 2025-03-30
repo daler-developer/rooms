@@ -1,23 +1,21 @@
-import { Button, ContextMenu, IconButton, Input, Scroll } from "@/shared/ui";
-import { ElementRef, SyntheticEvent, useEffect, useMemo, useRef } from "react";
+import { IconButton, Input } from "@/shared/ui";
+import { ElementRef, useEffect, useMemo, useRef } from "react";
+import { v4 as uuid } from "uuid";
 import { useMutation, useApolloClient } from "@apollo/client";
 import { GrSend } from "react-icons/gr";
-import { GET_ROOM, NOTIFY_ME_IS_TYPING, SEND_MESSAGE_MUTATION, SCHEDULE_MESSAGE_MUTATION } from "@/widgets/room-chat/gql/tags.ts";
+import { useForm, FormProvider } from "@/shared/lib/form";
+import { NOTIFY_ME_IS_TYPING, SEND_MESSAGE_MUTATION, SCHEDULE_MESSAGE_MUTATION } from "../gql/tags";
 import { useRoomChatStore } from "@/widgets/room-chat/context";
-import { v4 as uuid } from "uuid";
-import SendMessageFormUploadedImage from "@/widgets/room-chat/ui/SendMessageFormUploadedImage.tsx";
-import { TemporaryMessage, TemporaryScheduledMessage } from "@/widgets/room-chat/store";
+import { TemporaryMessage, TemporaryScheduledMessage } from "../store";
 import Dropdown from "@/shared/ui/components/Dropdown/Dropdown.tsx";
 import ScheduleMessageModal, { ScheduleMessageModalHandle } from "@/widgets/room-chat/ui/ScheduleMessage/ScheduleMessageModal.tsx";
-import scheduleMessageModal from "@/widgets/room-chat/ui/ScheduleMessage/ScheduleMessageModal.tsx";
 import { flushSync } from "react-dom";
-import useRoomQuery from "@/widgets/room-chat/hooks/useRoomQuery.ts";
-import { CiCalendar } from "react-icons/ci";
-import ViewScheduledMessagesButton from "@/widgets/room-chat/ui/SendMessageForm/ViewScheduledMessagesButton.tsx";
-import { useForm, FormProvider } from "@/shared/lib/form";
+import useGetRoomQuery from "../gql/useGetRoomQuery.ts";
+import ViewScheduledMessagesButton from "./ViewScheduledMessagesButton.tsx";
 import * as yup from "yup";
-import UploadedImages from "@/widgets/room-chat/ui/SendMessageForm/uploaded-images/UploadedImages.tsx";
-import emitter from "../../emitter";
+import UploadedImages from "./uploaded-images/UploadedImages.tsx";
+import { FormFields } from "./types.ts";
+import MessageTextInput from "./MessageTextInput.tsx";
 
 type Props = {
   showScheduledMessagesButton?: boolean;
@@ -40,15 +38,7 @@ const validationSchema = yup.object({});
 const SendMessageForm = ({ showScheduledMessagesButton = true, onlyScheduledMessages = false }: Props) => {
   const { roomId, addTemporaryMessage, removeTemporaryMessage, addTemporaryScheduledMessage, removeTemporaryScheduledMessage } = useRoomChatStore();
 
-  const inputHandle = useRef<ElementRef<typeof Input>>(null!);
-
-  const apolloClient = useApolloClient();
-
-  useEffect(() => {
-    inputHandle.current.focus();
-  }, []);
-
-  const form = useForm<Fields>({
+  const form = useForm<FormFields>({
     initialValues: {
       text: "",
       images: [],
@@ -71,7 +61,7 @@ const SendMessageForm = ({ showScheduledMessagesButton = true, onlyScheduledMess
           addTemporaryScheduledMessage(temporaryScheduledMessage);
         });
 
-        emitter.emit("SCHEDULED_MESSAGE_INSERTED");
+        // emitter.emit("SCHEDULED_MESSAGE_INSERTED");
 
         apolloClient.cache.modify({
           id: apolloClient.cache.identify({ __typename: "Room", id: roomId }),
@@ -151,14 +141,14 @@ const SendMessageForm = ({ showScheduledMessagesButton = true, onlyScheduledMess
           addTemporaryMessage(temporaryMessage);
         });
 
-        emitter.emit("MESSAGE_INSERTED", {
-          isMessageSentByCurrentUser: true,
-        });
+        // emitter.emit("MESSAGE_INSERTED", {
+        //   isMessageSentByCurrentUser: true,
+        // });
       }
     },
   });
 
-  const { data } = useRoomQuery();
+  const { data } = useGetRoomQuery();
 
   const [sendMessage] = useMutation(SEND_MESSAGE_MUTATION);
   const [scheduleMessage] = useMutation(SCHEDULE_MESSAGE_MUTATION);
@@ -265,17 +255,7 @@ const SendMessageForm = ({ showScheduledMessagesButton = true, onlyScheduledMess
       <FormProvider form={form}>
         <form className="h-full" onSubmit={form.handleSubmit}>
           <div className="h-full relative flex items-center bg-white px-2 gap-2">
-            {form.renderField("text", ({ getFieldProps }) => (
-              <Input
-                ref={inputHandle}
-                onKeyDown={handleKeyDown}
-                className="flex-grow"
-                placeholder="Message text"
-                {...getFieldProps({
-                  onChange: handleChange,
-                })}
-              />
-            ))}
+            <MessageTextInput />
             {viewerHasScheduledMessages && showScheduledMessagesButton && <ViewScheduledMessagesButton />}
 
             {onlyScheduledMessages ? (

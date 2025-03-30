@@ -1,7 +1,7 @@
 import { Scroll } from "@/shared/ui";
 import { useFormContext } from "@/shared/lib/form";
-import UploadedImagesItem from "./UploadedImagesItem";
-import { Fields } from "../SendMessageForm";
+import UploadedImagesItem from "./UploadedImagesItem.tsx";
+import { Fields } from "../SendMessageForm.tsx";
 
 const UploadedImages = () => {
   const form = useFormContext<Fields>();

@@ -4,65 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="9d8dd518-8c4b-4bd6-b4e8-e875abc9fa9e" name="Changes" comment="CONFIG: add drizzle config to git ignore">
-      <change afterPath="$PROJECT_DIR$/backend/infrastructure/resolvers/Subscription/roomParticipantsOnlineCountChange.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/client/src/modules/room/chat/base/BaseScreen.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/client/src/modules/room/chat/base/BaseScreenContent.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/client/src/modules/room/chat/base/BaseScreenFooter.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/client/src/modules/room/chat/base/BaseScreenHeader.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/client/src/modules/room/chat/gql/useParticipantsOnlineCountChangeSub.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/client/src/modules/room/chat/gql/useRoomPendingInvitationsCountChangeSub.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/client/src/modules/room/chat/screen-main/ScreenMain.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/client/src/modules/room/chat/screen-main/screen-main-content/ScreenMainContent.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/client/src/modules/room/chat/screen-main/screen-main-footer/ScreenMainFooter.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/client/src/modules/room/chat/screen-main/screen-main-header/ParticipantsOnlineCount.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/client/src/modules/room/chat/screen-main/screen-main-header/ParticipantsTypingList.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/client/src/modules/room/chat/screen-main/screen-main-header/PendingInvitations.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/client/src/modules/room/chat/screen-main/screen-main-header/ScreenMainHeader.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/core/services/UserService/UserService.ts" beforeDir="false" afterPath="$PROJECT_DIR$/backend/core/services/UserService/UserService.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/drizzle/0000_tidy_roland_deschain.sql" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/drizzle/0001_sticky_la_nuit.sql" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/drizzle/0002_friendly_black_bird.sql" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/drizzle/0003_clever_war_machine.sql" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/drizzle/0004_perpetual_proteus.sql" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/drizzle/0005_special_thunderbolt.sql" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/drizzle/0006_steady_violations.sql" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/drizzle/0007_abandoned_wilson_fisk.sql" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/drizzle/0008_wide_epoch.sql" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/drizzle/0009_smart_living_mummy.sql" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/drizzle/0010_mighty_junta.sql" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/drizzle/meta/0000_snapshot.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/drizzle/meta/0001_snapshot.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/drizzle/meta/0002_snapshot.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/drizzle/meta/0003_snapshot.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/drizzle/meta/0004_snapshot.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/drizzle/meta/0005_snapshot.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/drizzle/meta/0006_snapshot.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/drizzle/meta/0007_snapshot.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/drizzle/meta/0008_snapshot.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/drizzle/meta/0009_snapshot.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/drizzle/meta/0010_snapshot.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/drizzle/meta/_journal.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/backend/index.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/infrastructure/entities/Room.ts" beforeDir="false" afterPath="$PROJECT_DIR$/backend/infrastructure/entities/Room.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/infrastructure/schema.graphql" beforeDir="false" afterPath="$PROJECT_DIR$/backend/infrastructure/schema.graphql" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/src/__generated__/gql.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/__generated__/gql.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/src/__generated__/graphql.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/__generated__/graphql.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/src/modules/room/chat/gql/tags.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/modules/room/chat/gql/tags.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/src/modules/room/chat/gql/useDeleteMessagesMutation.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/modules/room/chat/gql/useDeleteMessagesMutation.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/src/modules/room/chat/hooks/useRoomQuery.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/src/modules/room/chat/ui/Message/Message.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/modules/room/chat/ui/Message/Message.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/src/modules/room/chat/ui/RoomChat.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/modules/room/chat/ui/RoomChat.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/src/modules/room/chat/ui/ScheduledMessages/ScheduledMessage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/modules/room/chat/ui/ScheduledMessages/ScheduledMessage.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/src/modules/room/chat/ui/base/BaseHeader.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/modules/room/chat/ui/base/BaseHeader.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/src/modules/room/chat/ui/screen-main/screen-main-header/ParticipantsOnlineCount.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/modules/room/chat/ui/screen-main/screen-main-header/ParticipantsOnlineCount.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/src/modules/room/chat/ui/screen-main/screen-main-header/SelectedMessagesController.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/modules/room/chat/ui/screen-main/screen-main-header/SelectedMessagesController.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/src/modules/room/chat/ui/screen-scheduled-messages/ScreenScheduledMessagesHeader.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/modules/room/chat/ui/screen-scheduled-messages/ScreenScheduledMessagesHeader.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/src/modules/room/list/ui/rooms-list-item/RoomsListItem.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/modules/room/list/ui/rooms-list-item/RoomsListItem.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/src/pages/home/ui/HomePage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/pages/home/ui/HomePage.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/src/shared/ui/components/Avatar/Avatar.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/shared/ui/components/Avatar/Avatar.tsx" afterDir="false" />
-    </list>
+    <list default="true" id="9d8dd518-8c4b-4bd6-b4e8-e875abc9fa9e" name="Changes" comment="FEATURE: room chat header" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -118,7 +60,7 @@
       <updated>1709570678819</updated>
       <workItem from="1709570679846" duration="26000" />
       <workItem from="1738694212219" duration="1412000" />
-      <workItem from="1743271118045" duration="2180000" />
+      <workItem from="1743271118045" duration="2284000" />
     </task>
     <task id="LOCAL-00001" summary="Initial">
       <option name="closed" value="true" />
@@ -152,7 +94,15 @@
       <option name="project" value="LOCAL" />
       <updated>1743271145754</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="FEATURE: room chat header">
+      <option name="closed" value="true" />
+      <created>1743273381475</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1743273381475</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -161,6 +111,7 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Initial" />
     <MESSAGE value="CONFIG: add drizzle config to git ignore" />
-    <option name="LAST_COMMIT_MESSAGE" value="CONFIG: add drizzle config to git ignore" />
+    <MESSAGE value="FEATURE: room chat header" />
+    <option name="LAST_COMMIT_MESSAGE" value="FEATURE: room chat header" />
   </component>
 </project>

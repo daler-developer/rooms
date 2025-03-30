@@ -188,6 +188,32 @@ class UserService {
       });
     }
   }
+
+  async notifyTypingStart({ roomId, userId, sessionId }: { roomId: number; sessionId: string; userId: number }) {
+    const sessionsCount = await redisClient.sCard(`rooms:${roomId}:participants:${userId}:currently_typing_session_ids`);
+
+    if (sessionsCount === 0) {
+      pubsub.publish("USER_TYPING_START", {
+        userId,
+        roomId,
+      });
+    }
+
+    await redisClient.sAdd(`rooms:${roomId}:participants:${userId}:currently_typing_session_ids`, sessionId);
+  }
+
+  async notifyTypingStop({ roomId, sessionId, userId }: { roomId: number; sessionId: string; userId: number }) {
+    await redisClient.sRem(`rooms:${roomId}:participants:${userId}:currently_typing_session_ids`, sessionId);
+
+    const sessionsCount = await redisClient.sCard(`rooms:${roomId}:participants:${userId}:currently_typing_session_ids`);
+
+    if (sessionsCount === 0) {
+      pubsub.publish("USER_TYPING_STOP", {
+        userId,
+        roomId,
+      });
+    }
+  }
 }
 
 export default UserService;

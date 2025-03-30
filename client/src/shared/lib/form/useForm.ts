@@ -49,6 +49,7 @@ const useForm = <TValues extends { [key: string]: any }>({ initialValues, valida
 
   return {
     isEdited: form.current.getIsEdited.bind(form.current),
+    isDirty: form.current.getIsDirty.bind(form.current),
     isSubmitting: form.current.getIsSubmitting.call(form.current),
     setInitialValues: form.current.setInitialValues.bind(form.current),
     reset: form.current.reset.bind(form.current),
@@ -90,6 +91,7 @@ const useForm = <TValues extends { [key: string]: any }>({ initialValues, valida
             onChange(e) {
               const value = e.target.value as PathValue<TValues, TPath>;
               form.current.setValue(path, value);
+              form.current.setIsDirty(path, true);
               if (form.current.getIsLastSubmitFailed()) {
                 form.current.validate();
               }
