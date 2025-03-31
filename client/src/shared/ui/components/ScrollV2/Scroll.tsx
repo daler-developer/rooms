@@ -159,18 +159,22 @@ const Scroll = forwardRef<ScrollHandle, Props>(
     }));
 
     const showTopScrollHint = useMemo(() => {
+      return false;
       return !isScrolledToTop;
     }, [isScrolledToTop]);
 
     const showBottomScrollHint = useMemo(() => {
+      return false;
       return !isScrolledToBottom;
     }, [isScrolledToBottom]);
 
     const showLeftScrollHint = useMemo(() => {
+      return false;
       return !isScrolledToLeft;
     }, [isScrolledToLeft]);
 
     const showRightScrollHint = useMemo(() => {
+      return false;
       return !isScrolledToRight;
     }, [isScrolledToRight]);
 

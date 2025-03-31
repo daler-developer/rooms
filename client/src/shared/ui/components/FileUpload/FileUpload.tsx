@@ -1,4 +1,4 @@
-import { ChangeEvent, ComponentProps, useMemo, useRef } from "react";
+import { ChangeEvent, ComponentProps, ReactElement, useMemo, useRef, cloneElement } from "react";
 import { AiOutlineCloudUpload } from "react-icons/ai";
 import { useToast } from "@/shared/ui";
 import { fileMatchesAccept } from "./utils";
@@ -10,9 +10,10 @@ type Props = {
   onUpload?: (files: File[]) => void;
   accept?: ComponentProps<"input">["accept"];
   label?: string;
+  trigger?: ReactElement;
 };
 
-const FileUpload = ({ multiple = false, onUpload, accept, label }: Props) => {
+const FileUpload = ({ multiple = false, onUpload, accept, label, trigger }: Props) => {
   const isDragging = useIsDragging();
 
   const rootEl = useRef<HTMLDivElement>(null!);
@@ -56,6 +57,22 @@ const FileUpload = ({ multiple = false, onUpload, accept, label }: Props) => {
 
     return `Accepted types: ${list}`;
   }, [accept]);
+
+  const isCustomTrigger = Boolean(trigger);
+
+  if (isCustomTrigger) {
+    return (
+      <>
+        {cloneElement(trigger!, {
+          onClick: () => {
+            filesInputRef.current.click();
+          },
+        })}
+
+        <input hidden accept={accept} type="file" ref={filesInputRef} multiple={multiple} onChange={handleChange} />
+      </>
+    );
+  }
 
   return (
     <>

@@ -4,13 +4,18 @@ import { v4 as uuid } from "uuid";
 import { HiX } from "react-icons/hi";
 import { IconButton, Spinner } from "@/shared/ui";
 import { useFormContext } from "@/shared/lib/form";
+import { FormFields } from "../types";
+import { useSupabaseOperation } from "@/global/superbase";
+import { messageImageRepository } from "@/global/superbase/repository";
 
 type Props = {
   imageKey: string;
 };
 
 const UploadedImagesItem = ({ imageKey }: Props) => {
-  const form = useFormContext();
+  const form = useFormContext<FormFields>();
+
+  const supabaseAddOneProfilePicture = useSupabaseOperation(messageImageRepository.addOne);
 
   const imageIndex = form.getValue("images").findIndex((image) => image.key === imageKey)!;
   const image = form.getValue("images")[imageIndex];
@@ -18,25 +23,21 @@ const UploadedImagesItem = ({ imageKey }: Props) => {
   useLayoutEffect(() => {
     let ignore = false;
 
-    (async () => {
+    const uploadFile = async () => {
       form.setValue(`images.${imageIndex}.isLoading`, true);
 
-      const imageName = uuid();
+      const publicUrl = await supabaseAddOneProfilePicture.run({ file: image.fileObject });
 
-      const { data } = await supabaseClient.storage.from("message_files").upload(imageName, image.fileObject);
+      form.setValue(`images.${imageIndex}.isLoading`, false);
 
       if (ignore) {
         return;
       }
 
-      if (data) {
-        const { publicUrl } = supabaseClient.storage.from("message_files").getPublicUrl(imageName).data;
+      form.setValue(`images.${imageIndex}.imageUrl`, publicUrl);
+    };
 
-        form.setValue(`images.${imageIndex}.imageUrl`, publicUrl);
-      }
-
-      form.setValue(`images.${imageIndex}.isLoading`, false);
-    })();
+    uploadFile();
 
     return () => {
       ignore = true;
@@ -53,7 +54,7 @@ const UploadedImagesItem = ({ imageKey }: Props) => {
 
   return (
     <div className="w-[150px] h-[150px] shrink-0 border rounded-md relative">
-      <img className="w-full h-full" src={getImageUrl()} />
+      <img alt={image.fileObject.name} className="w-full h-full object-cover" src={getImageUrl()} />
 
       {!image.isLoading && (
         <div className="absolute top-0 right-0">

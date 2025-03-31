@@ -211,12 +211,6 @@ export const GET_MESSAGE_VIEWERS = gql(`
     }
 `);
 
-export const NOTIFY_ME_IS_TYPING = gql(`
-    mutation NotifyMeIsTyping($roomId: Int!, $isTyping: Boolean!) {
-      notifyMeTypingStatusChange(roomId: $roomId, isTyping: $isTyping)
-    }
-`);
-
 export const EXCLUDE_USER_FROM_ROOM = gql(`
     mutation RoomChatExcludeFrom($roomId: Int!, $userId: Int!) {
       excludeUserFromRoom(roomId: $roomId, userId: $userId) {

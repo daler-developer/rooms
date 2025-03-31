@@ -1,10 +1,12 @@
-import { IconButton, Input } from "@/shared/ui";
-import { ElementRef, useEffect, useMemo, useRef } from "react";
+import { useMemo, useRef } from "react";
+import { GoPaperclip } from "react-icons/go";
 import { v4 as uuid } from "uuid";
+import { IconButton, FileUpload } from "@/shared/ui";
+import { useFilePaste } from "@/shared/hooks";
 import { useMutation, useApolloClient } from "@apollo/client";
 import { GrSend } from "react-icons/gr";
 import { useForm, FormProvider } from "@/shared/lib/form";
-import { NOTIFY_ME_IS_TYPING, SEND_MESSAGE_MUTATION, SCHEDULE_MESSAGE_MUTATION } from "../gql/tags";
+import { SEND_MESSAGE_MUTATION, SCHEDULE_MESSAGE_MUTATION } from "../gql/tags";
 import { useRoomChatStore } from "@/widgets/room-chat/context";
 import { TemporaryMessage, TemporaryScheduledMessage } from "../store";
 import Dropdown from "@/shared/ui/components/Dropdown/Dropdown.tsx";
@@ -63,14 +65,14 @@ const SendMessageForm = ({ showScheduledMessagesButton = true, onlyScheduledMess
 
         // emitter.emit("SCHEDULED_MESSAGE_INSERTED");
 
-        apolloClient.cache.modify({
-          id: apolloClient.cache.identify({ __typename: "Room", id: roomId }),
-          fields: {
-            myScheduledMessagesCount(prevCount: number) {
-              return prevCount + 1;
-            },
-          },
-        });
+        // apolloClient.cache.modify({
+        //   id: apolloClient.cache.identify({ __typename: "Room", id: roomId }),
+        //   fields: {
+        //     myScheduledMessagesCount(prevCount: number) {
+        //       return prevCount + 1;
+        //     },
+        //   },
+        // });
 
         scheduleMessage({
           variables: {
@@ -153,54 +155,18 @@ const SendMessageForm = ({ showScheduledMessagesButton = true, onlyScheduledMess
   const [sendMessage] = useMutation(SEND_MESSAGE_MUTATION);
   const [scheduleMessage] = useMutation(SCHEDULE_MESSAGE_MUTATION);
 
-  const [notifyMeIsTyping] = useMutation(NOTIFY_ME_IS_TYPING);
-
   const scheduleMessageModalComp = useRef<ScheduleMessageModalHandle>(null!);
   const hiddenSubmitBtn = useRef<HTMLInputElement>(null!);
 
   const isTextInputEmpty = !form.getValue("text").trim();
 
-  useEffect(() => {
-    const handler = (event: ClipboardEvent) => {
-      event.preventDefault();
-
-      const clipboardData = event.clipboardData || window.clipboardData;
-
-      if (clipboardData && clipboardData.files.length > 0) {
-        for (const image of Array.from(clipboardData.files)) {
-          form.appendArrayItem("images", {
-            key: uuid(),
-            fileObject: image,
-            imageUrl: null,
-            isLoading: false,
-          });
-        }
-      }
-    };
-
-    window.addEventListener("paste", handler);
-
-    return () => {
-      window.removeEventListener("paste", handler);
-    };
-  }, []);
-
-  const handleChange = (e) => {
-    const hasText = Boolean(e.target.value.trim());
-
-    if (hasText) {
-      notifyMeIsTyping({
-        variables: {
-          roomId,
-          isTyping: true,
-        },
-      });
-    } else {
-      notifyMeIsTyping({
-        variables: {
-          roomId,
-          isTyping: false,
-        },
+  const appendMessageImages = (images: File[]) => {
+    for (const image of images) {
+      form.appendArrayItem("images", {
+        key: uuid(),
+        fileObject: image,
+        imageUrl: null,
+        isLoading: false,
       });
     }
   };
@@ -250,12 +216,28 @@ const SendMessageForm = ({ showScheduledMessagesButton = true, onlyScheduledMess
 
   const sendButton = <IconButton disabled={isTextInputEmpty || hasLoadingImages} type="button" Icon={GrSend} color="default" onClick={handleSendClick} />;
 
+  useFilePaste({
+    multiple: true,
+    accept: "image/*",
+    onUpload(files) {
+      appendMessageImages(files);
+    },
+  });
+
   return (
     <>
       <FormProvider form={form}>
         <form className="h-full" onSubmit={form.handleSubmit}>
           <div className="h-full relative flex items-center bg-white px-2 gap-2">
+            <FileUpload
+              multiple
+              accept="image/*"
+              trigger={<IconButton type="button" color="light" Icon={GoPaperclip} />}
+              onUpload={(files) => appendMessageImages(files)}
+            />
+
             <MessageTextInput />
+
             {viewerHasScheduledMessages && showScheduledMessagesButton && <ViewScheduledMessagesButton />}
 
             {onlyScheduledMessages ? (

@@ -9,6 +9,7 @@ import usePageScroll from "./usePageScroll.ts";
 import useIsFirstRender from "./useIsFirstRender.ts";
 import usePrevValue from "./usePrevValue.ts";
 import useForceUpdate from "./useForceUpdate.ts";
+import useFilePaste from "./useFilePaste.ts";
 
 export {
   useTypedDispatch,
@@ -22,4 +23,5 @@ export {
   useIsFirstRender,
   usePrevValue,
   useForceUpdate,
+  useFilePaste,
 };
