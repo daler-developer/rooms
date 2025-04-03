@@ -26,7 +26,7 @@ type InputHandle = {
   focus: () => void;
 };
 
-const Input = forwardRef<InputHandle, Props>(
+const Input = forwardRef<HTMLInputElement, Props>(
   (
     {
       label,
@@ -50,14 +50,14 @@ const Input = forwardRef<InputHandle, Props>(
     ref,
   ) => {
     const id = useId();
-
-    const inputEl = useRef<HTMLInputElement>(null!);
-
-    useImperativeHandle(ref, () => ({
-      focus() {
-        inputEl.current.focus();
-      },
-    }));
+    //
+    // const inputEl = useRef<HTMLInputElement>(null!);
+    //
+    // useImperativeHandle(ref, () => ({
+    //   focus() {
+    //     inputEl.current.focus();
+    //   },
+    // }));
 
     const withBeforeIcon = Boolean(BeforeIcon);
     const withAfterIcon = Boolean(AfterIcon);
@@ -103,7 +103,7 @@ const Input = forwardRef<InputHandle, Props>(
         <div className={inputContainerClasses} onClick={onClick} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
           {withBeforeIcon && <BeforeIcon className={beforeIconClasses} />}
           <input
-            ref={inputEl}
+            ref={ref}
             id={id}
             type={type}
             className={inputClasses}

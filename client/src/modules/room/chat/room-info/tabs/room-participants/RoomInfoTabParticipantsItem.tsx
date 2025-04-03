@@ -1,9 +1,9 @@
 import { type RoomChatGetRoomParticipantsQuery } from "@/__generated__/graphql.ts";
 import { UserCard } from "@/entities/user";
-import { useRoomChatStore } from "@/widgets/room-chat/context";
+import { useRoomChatStore } from "../../../context";
 import { Button } from "@/shared/ui";
 import { useMemo } from "react";
-import useRoomQuery from "@/widgets/room-chat/hooks/useRoomQuery.ts";
+import useGetRoomQuery from "../../../gql/useGetRoomQuery.ts";
 import { useAuth } from "@/modules/auth";
 import useExcludeUserFromRoomMutation from "../../gql/useExcludeUserFromRoomMutation.ts";
 
@@ -17,7 +17,7 @@ const RoomInfoTabParticipantsItem = ({ participant }: Props) => {
   const { roomId } = useRoomChatStore();
 
   const queries = {
-    room: useRoomQuery(),
+    room: useGetRoomQuery(),
   };
 
   const mutations = {

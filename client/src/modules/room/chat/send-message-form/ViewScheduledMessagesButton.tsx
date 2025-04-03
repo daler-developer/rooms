@@ -1,13 +1,13 @@
 import { CiCalendar } from "react-icons/ci";
 import { IconButton } from "@/shared/ui";
-import { useRoomChatStore } from "@/widgets/room-chat/context";
-import useRoomQuery from "@/widgets/room-chat/hooks/useRoomQuery.ts";
+import { useRoomChatStore } from "../store";
+import useGetRoomQuery from "../gql/useGetRoomQuery";
 
 const ViewScheduledMessagesButton = () => {
   const { setTab } = useRoomChatStore();
 
   const queries = {
-    room: useRoomQuery(),
+    room: useGetRoomQuery(),
   };
 
   return (

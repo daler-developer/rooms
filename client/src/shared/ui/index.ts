@@ -9,6 +9,7 @@ import Alert from "./components/Alert/Alert.tsx";
 import Pagination from "./components/Pagination/Pagination.tsx";
 import Tabs from "./components/Tabs/Tabs.tsx";
 import FileUpload from "./components/FileUpload/FileUpload.tsx";
+import VisuallyHiddenInput from "./components/VisuallyHiddenInput/VisuallyHiddenInput.tsx";
 import Badge, { type BadgeColor } from "./components/Badge/Badge.tsx";
 import Input from "./components/Input/Input.tsx";
 import MouseDownMove from "./components/MouseDownMove/MouseDownMove.tsx";
@@ -48,6 +49,7 @@ export {
   Pagination,
   Tabs,
   FileUpload,
+  VisuallyHiddenInput,
   Badge,
   type BadgeColor,
   Input,

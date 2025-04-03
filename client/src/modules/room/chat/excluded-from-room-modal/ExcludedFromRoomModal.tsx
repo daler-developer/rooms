@@ -1,11 +1,11 @@
-import { Button, Modal } from "@/shared/ui";
 import { useState } from "react";
 import { useSubscription } from "@apollo/client";
-import { ME_IS_EXCLUDED_FROM_ROOM } from "@/widgets/room-chat/gql/tags.ts";
-import { useRoomChatStore } from "@/widgets/room-chat/context";
-import {  } from "../../emitter";
+import { Button, Modal } from "@/shared/ui";
+import { ME_IS_EXCLUDED_FROM_ROOM } from "../gql/tags";
+import { useRoomChatStore } from "../store";
+import { useRoomChatEmitter } from "../emitter";
 
-const MeExcludedFromRoomModal = () => {
+const ExcludedFromRoomModal = () => {
   const [showModal, setShowModal] = useState(false);
 
   const { roomId } = useRoomChatStore();
@@ -16,6 +16,7 @@ const MeExcludedFromRoomModal = () => {
     onData({ data }) {
       if (data.data!.meIsExcludedFromRoom.id === roomId) {
         setShowModal(true);
+        emitter.emit("EXCLUDED_FROM_ROOM");
       }
     },
   });
@@ -44,4 +45,4 @@ const MeExcludedFromRoomModal = () => {
   );
 };
 
-export default MeExcludedFromRoomModal;
+export default ExcludedFromRoomModal;

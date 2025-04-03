@@ -1,10 +1,10 @@
 import { Scroll } from "@/shared/ui";
 import { useFormContext } from "@/shared/lib/form";
 import UploadedImagesItem from "./UploadedImagesItem.tsx";
-import { Fields } from "../SendMessageForm.tsx";
+import { FormFields } from "../types";
 
 const UploadedImages = () => {
-  const form = useFormContext<Fields>();
+  const form = useFormContext<FormFields>();
 
   return (
     <div className="absolute bottom-[100%] left-0 right-0">

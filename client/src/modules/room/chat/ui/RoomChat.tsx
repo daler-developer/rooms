@@ -3,27 +3,34 @@ import { usePrevValue } from "@/shared/hooks";
 import createRoomChatStore from "@/widgets/room-chat/store";
 import { withRoomChatStore } from "../store";
 import { useRoomChatEmitter, withRoomChatEmitter } from "../emitter.ts";
-import { RoomChatStoreContext, useRoomChatStore } from "@/widgets/room-chat/context";
+import { RoomChatStoreContext } from "../context";
+import { useRoomChatStore } from "../store";
 import useGetMeQuery from "../gql/useGetMeQuery.ts";
-import MeExcludedFromRoomModal from "@/widgets/room-chat/ui/MeExcludedFromRoomModal/MeExcludedFromRoomModal.tsx";
-import useRoomQuery from "@/widgets/room-chat/hooks/useRoomQuery.ts";
+import ExcludedFromRoomModal from "../excluded-from-room-modal/ExcludedFromRoomModal.tsx";
+import useGetRoomQuery from "../gql/useGetRoomQuery.ts";
 import useGetMessagesQuery from "../gql/useGetMessagesQuery.ts";
 import useGetScheduledMessagesQuery from "../gql/useGetScheduledMessagesQuery.ts";
 import useRoomParticipantLeaveSub from "../gql/useRoomParticipantLeaveSub.ts";
 import useRoomParticipantTypingStartSub from "../gql/useRoomParticipantTypingStartSub.ts";
 import useRoomParticipantTypingStopSub from "../gql/useRoomParticipantTypingStopSub.ts";
-import ScreenScheduledMessages from "@/widgets/room-chat/ui/screen-scheduled-messages/ScreenScheduledMessages.tsx";
+import ScreenScheduledMessages from "../screen-scheduled-messages/ScreenScheduledMessages.tsx";
 import ScreenMain from "../screen-main/ScreenMain.tsx";
 import ScreenSkeletons from "./screen-skeletons/ScreenSkeletons.tsx";
 import { RoomChatIdContext } from "../context";
 
 type Props = {
   roomId: number;
-  onLeave?: () => void;
+  onClose?: () => void;
 };
 
 const RoomChat = (_: Props) => {
-  const { tab } = useRoomChatStore();
+  const { tab, messageTextInputEl } = useRoomChatStore();
+
+  useEffect(() => {
+    if (messageTextInputEl) {
+      messageTextInputEl.focus();
+    }
+  }, [messageTextInputEl]);
 
   useRoomParticipantLeaveSub();
   useRoomParticipantTypingStartSub();
@@ -31,7 +38,7 @@ const RoomChat = (_: Props) => {
 
   const queries = {
     me: useGetMeQuery(),
-    room: useRoomQuery(),
+    room: useGetRoomQuery(),
     messages: useGetMessagesQuery(),
     scheduledMessages: useGetScheduledMessagesQuery(),
   };
@@ -55,7 +62,7 @@ const RoomChat = (_: Props) => {
   return (
     <>
       <Screen />
-      <MeExcludedFromRoomModal />
+      <ExcludedFromRoomModal />
     </>
   );
 };
@@ -64,8 +71,8 @@ const RoomChatWrapper = (props: Props) => {
   const emitter = useRoomChatEmitter();
 
   useEffect(() => {
-    emitter.on("ROOM_LEAVE", () => {
-      props.onLeave?.();
+    emitter.on("EXCLUDED_FROM_ROOM", () => {
+      props.onClose?.();
     });
   }, []);
 

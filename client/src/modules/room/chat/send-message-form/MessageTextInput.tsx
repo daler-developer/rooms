@@ -1,14 +1,20 @@
-import { useEffect } from "react";
+import { KeyboardEventHandler, useEffect, useRef } from "react";
+import { usePrevValue } from "@/shared/hooks";
 import { useFormContext } from "@/shared/lib/form";
 import { Input } from "@/shared/ui";
 import { useRoomId } from "../context";
+import { useRoomChatStore } from "../store";
 import { FormFields } from "./types";
 import useNotifyTypingStartMutation from "../gql/useNotifyTypingStartMutation.ts";
 import useNotifyTypingStopMutation from "../gql/useNotifyTypingStopMutation.ts";
-import { usePrevValue } from "@/shared/hooks";
+import ScheduleMessageModal, { type ScheduleMessageModalHandle } from "@/widgets/room-chat/ui/ScheduleMessage/ScheduleMessageModal.tsx";
 
 const MessageTextInput = () => {
   const roomId = useRoomId();
+
+  const { messageTextInputEl, setMessageTextInputEl, tab, hiddenSubmitButton } = useRoomChatStore();
+
+  const scheduleMessageModalComp = useRef<ScheduleMessageModalHandle>(null!);
 
   const form = useFormContext<FormFields>();
 
@@ -42,7 +48,43 @@ const MessageTextInput = () => {
     }
   }, [isDirty, text, prevText]);
 
-  return form.renderField("text", ({ getFieldProps }) => <Input className="flex-grow" placeholder="Message text" {...getFieldProps()} />);
+  const handleKeyDown: KeyboardEventHandler<HTMLInputElement> = async (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+
+      const isTextInputEmpty = form.getValue("text").trim() === "";
+
+      if (tab === "main" && !isTextInputEmpty) {
+        hiddenSubmitButton!.click();
+      }
+
+      if (tab === "scheduled-messages" && !isTextInputEmpty) {
+        const dateTime = await scheduleMessageModalComp.current.open();
+        form.setValue("scheduleAt", dateTime);
+        hiddenSubmitButton!.click();
+      }
+    }
+  };
+
+  return (
+    <>
+      {form.renderField("text", ({ getFieldProps }) => (
+        <Input
+          ref={(el) => {
+            if (el !== messageTextInputEl) {
+              setMessageTextInputEl(el);
+            }
+          }}
+          className="flex-grow"
+          placeholder="Message text"
+          {...getFieldProps()}
+          onKeyDown={handleKeyDown}
+        />
+      ))}
+
+      <ScheduleMessageModal ref={scheduleMessageModalComp} />
+    </>
+  );
 };
 
 export default MessageTextInput;

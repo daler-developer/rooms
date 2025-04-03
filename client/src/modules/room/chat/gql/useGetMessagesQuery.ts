@@ -1,9 +1,9 @@
 import { useQuery } from "@apollo/client";
 import { GET_MESSAGES } from "./tags.ts";
-import { useRoomChatStore } from "@/widgets/room-chat/context";
+import { useRoomChatStore } from "../context";
 
 const useGetMessagesQuery = () => {
-  const { roomId, messagesOffset } = useRoomChatStore();
+  const { roomId } = useRoomChatStore();
 
   return useQuery(GET_MESSAGES, {
     variables: {

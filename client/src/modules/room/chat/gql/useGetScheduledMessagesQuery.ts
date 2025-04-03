@@ -1,6 +1,6 @@
 import { useQuery } from "@apollo/client";
 import { GET_SCHEDULED_MESSAGES } from "./tags.ts";
-import { useRoomChatStore } from "@/widgets/room-chat/context";
+import { useRoomChatStore } from "../context";
 
 const useGetScheduledMessagesQuery = () => {
   const { roomId } = useRoomChatStore();

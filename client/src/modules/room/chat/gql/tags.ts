@@ -1,7 +1,7 @@
 import { gql } from "@/__generated__";
 
 export const SEND_MESSAGE_MUTATION = gql(`
-  mutation SendMessage($input: SendMessageInput!) {
+  mutation RoomChatSendMessage($input: SendMessageInput!) {
     sendMessage(input: $input) {
       id
       text
