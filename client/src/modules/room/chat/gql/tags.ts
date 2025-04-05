@@ -226,26 +226,13 @@ export const SEND_SCHEDULED_MESSAGES_NOW = gql(`
   }
 `);
 
-export const USER_TYPING_STATUS_CHANGED_SUB = gql(`
-    subscription UserTypingStatusChange($roomId: Int!) {
-      userTypingStatusChange(roomId: $roomId) {
-        isTyping
-        user {
-          id
-          firstName
-          lastName
-        }
-      }
-    }
-`);
-
 export const ME_IS_EXCLUDED_FROM_ROOM = gql(`
-    subscription MeIsExcludedFromRoomSub {
-      meIsExcludedFromRoom {
-        id
-        name
-      }
+  subscription MeIsExcludedFromRoomSub {
+    meIsExcludedFromRoom {
+      id
+      name
     }
+  }
 `);
 
 export const NEW_MESSAGE_SUB = gql(`

@@ -101,7 +101,7 @@ type MessageImage {
 
 type Message {
     id: Int!
-    text: String
+    text: String!
     roomId: Int!
     senderId: Int!
     room: Room!

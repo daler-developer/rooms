@@ -17,7 +17,8 @@ const Badge = ({ badgeContent, badgeColor, size = "md", className }: Props) => {
   const rootClasses = clsx(
     "text-[10px] font-bold shadow-[0_0_0_2px_white]",
     {
-      "w-[10px] h-[10px] rounded-full": isBadgeContentEmpty,
+      "w-[8px] h-[8px] rounded-full": isBadgeContentEmpty && size === "sm",
+      "w-[10px] h-[10px] rounded-full": isBadgeContentEmpty && size === "md",
       "px-[5px] py-[3px] text-white rounded-sm": !isBadgeContentEmpty,
       "bg-green-400": badgeColor === "green",
       "bg-gray-400": badgeColor === "gray",

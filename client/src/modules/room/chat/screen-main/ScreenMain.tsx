@@ -4,7 +4,7 @@ import ScreenMainContent from "./screen-main-content/ScreenMainContent";
 import ScreenMainFooter from "./screen-main-footer/ScreenMainFooter";
 
 const ScreenMain = () => {
-  return <BaseScreen header={<ScreenMainHeader />} content={null} footer={<ScreenMainFooter />} />;
+  return <BaseScreen header={<ScreenMainHeader />} content={<ScreenMainContent />} footer={<ScreenMainFooter />} />;
 };
 
 export default ScreenMain;

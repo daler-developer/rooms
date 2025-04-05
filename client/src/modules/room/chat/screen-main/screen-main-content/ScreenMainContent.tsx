@@ -1,4 +1,4 @@
-import MessagesList from "@/widgets/room-chat/ui/screen-main/MessagesList.tsx";
+import MessagesList from "../../messages-list/MessagesList.tsx";
 import BaseScreen from "../../base/BaseScreen.tsx";
 
 const ScreenMainContent = () => {

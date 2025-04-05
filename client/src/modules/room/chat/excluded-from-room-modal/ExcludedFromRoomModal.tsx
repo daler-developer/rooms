@@ -2,13 +2,13 @@ import { useState } from "react";
 import { useSubscription } from "@apollo/client";
 import { Button, Modal } from "@/shared/ui";
 import { ME_IS_EXCLUDED_FROM_ROOM } from "../gql/tags";
-import { useRoomChatStore } from "../store";
 import { useRoomChatEmitter } from "../emitter";
+import { useRoomId } from "../context";
 
 const ExcludedFromRoomModal = () => {
   const [showModal, setShowModal] = useState(false);
 
-  const { roomId } = useRoomChatStore();
+  const roomId = useRoomId();
 
   const emitter = useRoomChatEmitter();
 
@@ -16,13 +16,13 @@ const ExcludedFromRoomModal = () => {
     onData({ data }) {
       if (data.data!.meIsExcludedFromRoom.id === roomId) {
         setShowModal(true);
-        emitter.emit("EXCLUDED_FROM_ROOM");
       }
     },
   });
 
   const handleLeave = () => {
     setShowModal(false);
+    emitter.emit("EXCLUDED_FROM_ROOM");
   };
 
   const leaveRoom = (

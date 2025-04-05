@@ -68,9 +68,9 @@ const useHandleSendMessage = () => {
         },
       });
 
-      flushSync(() => {
-        roomChatStore.addTemporaryMessage(temporaryMessage);
-      });
+      // flushSync(() => {
+      //   roomChatStore.addTemporaryMessage(temporaryMessage);
+      // });
 
       emitter.emit("MESSAGE_INSERTED", {
         senderIsMe: true,

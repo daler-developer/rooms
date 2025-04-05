@@ -1,12 +1,11 @@
-import { create } from "zustand";
-import { RoomChatGetMessagesQuery, GetRoomQuery } from "@/__generated__/graphql.ts";
+import { GetRoomQuery } from "@/__generated__/graphql.ts";
 import { ScrollHandle } from "@/shared/ui";
 import { createZustandStoreFactory } from "@/shared/lib/zustand";
 
 export type TemporaryMessage = {
   id: string;
-  text: Flatten<RoomChatGetMessagesQuery["room"]["messages"]["data"]>["text"];
-  sentAt: Flatten<RoomChatGetMessagesQuery["room"]["messages"]["data"]>["sentAt"];
+  text: string;
+  sentAt: string;
   imageUrls: string[];
 };
 

@@ -1,9 +1,9 @@
-import { ComponentProps } from "react";
+import { ComponentProps, forwardRef } from "react";
 
 type Props = ComponentProps<"input">;
 
-const VisuallyHiddenInput = (props: Props) => {
-  return <input hidden {...props} />;
-};
+const VisuallyHiddenInput = forwardRef<HTMLInputElement, Props>((props, ref) => {
+  return <input ref={ref} hidden {...props} />;
+});
 
 export default VisuallyHiddenInput;
