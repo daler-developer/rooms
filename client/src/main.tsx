@@ -84,15 +84,15 @@ const client = new ApolloClient({
       },
       Room: {
         fields: {
-          messages: {
-            keyArgs: false,
-            merge(existing, incoming) {
-              return {
-                data: [...(existing?.data || []), ...incoming.data],
-                hasMore: incoming.hasMore,
-              };
-            },
-          },
+          // messages: {
+          //   keyArgs: false,
+          //   merge(existing, incoming) {
+          //     return {
+          //       data: [...(existing?.data || []), ...incoming.data],
+          //       hasMore: incoming.hasMore,
+          //     };
+          //   },
+          // },
         },
       },
     },

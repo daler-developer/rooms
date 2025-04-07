@@ -13,7 +13,7 @@ const useScrollControl = () => {
   const refCallback = useCallback((el: any | null) => {
     ref.current = el;
 
-    let unsubscribe: () => void = null;
+    let unsubscribe: null | (() => void) = null;
 
     if (el) {
       unsubscribe = ref.current.subscribeToIsScrolledToBottomChanged((to) => {

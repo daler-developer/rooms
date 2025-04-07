@@ -236,20 +236,28 @@ export const ME_IS_EXCLUDED_FROM_ROOM = gql(`
 `);
 
 export const NEW_MESSAGE_SUB = gql(`
-  subscription NewMessageSub($skipFromCurrentSession: Boolean!) {
+  subscription RoomChatNewMessage($skipFromCurrentSession: Boolean!) {
     newMessage(skipFromCurrentSession: $skipFromCurrentSession) {
       message {
         id
         text
         senderId
         roomId
-        scheduledAt
+        isViewedByMe
+        sentAt
         sender {
           id
+          firstName
+          lastName
           email
           profilePictureUrl
           isOnline
         }
+        images {
+          id
+          url
+        }
+        viewsCount
       }
     }
   }

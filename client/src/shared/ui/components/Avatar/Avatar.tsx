@@ -1,5 +1,5 @@
 import clsx from "clsx";
-import { forwardRef, ReactNode, useEffect, useState } from "react";
+import { forwardRef, ReactNode, useLayoutEffect, useState } from "react";
 import { FaUser } from "react-icons/fa";
 import Skeleton from "../Skeleton/Skeleton.tsx";
 
@@ -19,10 +19,14 @@ const Avatar = forwardRef<HTMLDivElement, Props>(({ src, className, size = "lg",
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const img = new Image();
 
     img.src = src || "";
+
+    if (img.complete) {
+      setIsLoading(false);
+    }
 
     img.onload = () => {
       setIsLoading(false);

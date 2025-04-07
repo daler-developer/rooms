@@ -26,6 +26,7 @@ const TemporaryMessage = ({ temporaryMessage, withSentAtDivider }: Props) => {
       senderIsMe={true}
       senderFirstName={queries.me.data!.me.firstName}
       senderLastName={queries.me.data!.me.lastName}
+      senderProfilePictureUrl={queries.me.data!.me.profilePictureUrl}
       bottomRight={<BaseMessage.SentAt sentAt={temporaryMessage.sentAt} />}
       bottomLeft={<BaseMessage.ViewsCount viewsCount={0} />}
       divider={withSentAtDivider && <BaseMessage.Divider children={formattedSentAt} />}

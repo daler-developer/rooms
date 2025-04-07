@@ -24,9 +24,18 @@ const Message = ({ message, withSentAtDivider }: Props) => {
       senderIsMe={message.sender.id === userId}
       senderFirstName={message.sender.firstName}
       senderLastName={message.sender.lastName}
+      senderProfilePictureUrl={message.sender.profilePictureUrl}
       bottomRight={<BaseMessage.SentAt sentAt={message.sentAt!} />}
       bottomLeft={<BaseMessage.ViewsCount viewsCount={message.viewsCount} />}
       divider={withSentAtDivider && <BaseMessage.Divider children={formattedSentAt} />}
+      contextMenuItems={[
+        {
+          label: "Select",
+          onClick() {
+            console.log("select", message);
+          },
+        },
+      ]}
     />
   );
 };

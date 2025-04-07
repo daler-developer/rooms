@@ -1,5 +1,4 @@
 import { useCallback } from "react";
-import { flushSync } from "react-dom";
 import { v4 as uuid } from "uuid";
 import { SendMessageInput, Room } from "@/__generated__/graphql";
 import { useCustomMutation } from "@/shared/lib/graphql";
@@ -36,6 +35,10 @@ const useHandleSendMessage = () => {
 
       roomChatStore.addTemporaryMessage(temporaryMessage);
 
+      emitter.emit("MESSAGE_INSERTED", {
+        senderIsMe: true,
+      });
+
       const input: SendMessageInput = {
         roomId,
         text: values.text,
@@ -66,14 +69,6 @@ const useHandleSendMessage = () => {
             },
           });
         },
-      });
-
-      // flushSync(() => {
-      //   roomChatStore.addTemporaryMessage(temporaryMessage);
-      // });
-
-      emitter.emit("MESSAGE_INSERTED", {
-        senderIsMe: true,
       });
     },
     [roomId, queries.room.data],

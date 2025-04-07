@@ -8,6 +8,8 @@ type Events = {
   };
 };
 
+type EventCallback<K extends keyof Events> = (payload: Events[K]) => void;
+
 const { withEmitter: withRoomChatEmitter, useEmitter: useRoomChatEmitter } = createEmitter<Events>();
 
-export { withRoomChatEmitter, useRoomChatEmitter };
+export { withRoomChatEmitter, useRoomChatEmitter, type EventCallback };

@@ -17,7 +17,7 @@ export type Props = {
   intersectionAnchor?: HTMLElement;
   onIntersect?: () => void;
   senderIsMe: boolean;
-  senderProfilePictureUrl?: string;
+  senderProfilePictureUrl?: string | null;
   senderIsOnline: boolean;
   senderFirstName: string;
   senderLastName: string;

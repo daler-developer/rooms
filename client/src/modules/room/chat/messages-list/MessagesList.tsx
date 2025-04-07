@@ -1,4 +1,4 @@
-import { ReactNode, useMemo } from "react";
+import { ElementRef, ReactNode, useEffect, useLayoutEffect, useMemo, useRef } from "react";
 import dayjs from "dayjs";
 import { RoomChatGetMessagesQuery } from "@/__generated__/graphql.ts";
 import BaseMessagesList from "../base/BaseMessagesList.tsx";
@@ -6,9 +6,36 @@ import Message from "./Message.tsx";
 import TemporaryMessage from "./TemporaryMessage.tsx";
 import useGetMessagesQuery from "../gql/useGetMessagesQuery.ts";
 import { useRoomChatStore, TemporaryMessage as TemporaryMessageType } from "../store";
+import { useRoomChatEmitter, type EventCallback } from "../emitter.ts";
+import { useWaitForDomUpdate } from "@/shared/hooks";
 
 const MessagesList = () => {
+  const waitForDomUpdate = useWaitForDomUpdate();
   const roomChatStore = useRoomChatStore();
+  const emitter = useRoomChatEmitter();
+  const baseMessagesComp = useRef<ElementRef<typeof BaseMessagesList>>(null);
+
+  useEffect(() => {
+    const handler: EventCallback<"MESSAGE_INSERTED"> = async ({ senderIsMe }) => {
+      if (!baseMessagesComp.current) return;
+
+      await waitForDomUpdate();
+
+      if (senderIsMe) {
+        baseMessagesComp.current.scrollToBottom();
+      }
+
+      if (!senderIsMe && baseMessagesComp.current.isScrolledToBottom) {
+        baseMessagesComp.current?.scrollToBottom();
+      }
+    };
+
+    emitter.on("MESSAGE_INSERTED", handler);
+
+    return () => {
+      emitter.off("MESSAGE_INSERTED", handler);
+    };
+  }, []);
 
   const queries = {
     messages: useGetMessagesQuery(),
@@ -53,7 +80,7 @@ const MessagesList = () => {
   }, [queries.messages.data, roomChatStore.temporaryMessages]);
 
   if (queries.messages.data) {
-    return <BaseMessagesList>{messages}</BaseMessagesList>;
+    return <BaseMessagesList ref={baseMessagesComp}>{messages}</BaseMessagesList>;
   }
 
   return null;

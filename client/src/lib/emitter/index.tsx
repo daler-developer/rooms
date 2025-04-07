@@ -34,6 +34,8 @@ const createEmitter = <TEvents extends Record<EventType, unknown>>() => {
     return useContext(Context);
   };
 
+  type Temp = string;
+
   return {
     withEmitter,
     useEmitter,
