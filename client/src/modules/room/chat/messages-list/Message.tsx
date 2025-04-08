@@ -18,6 +18,8 @@ const Message = ({ message, withSentAtDivider }: Props) => {
 
   return (
     <BaseMessage
+      selectable
+      id={message.id}
       text={message.text}
       imageUrls={message.images.map((image) => image.url)}
       senderIsOnline={message.sender.isOnline}
@@ -28,14 +30,7 @@ const Message = ({ message, withSentAtDivider }: Props) => {
       bottomRight={<BaseMessage.SentAt sentAt={message.sentAt!} />}
       bottomLeft={<BaseMessage.ViewsCount viewsCount={message.viewsCount} />}
       divider={withSentAtDivider && <BaseMessage.Divider children={formattedSentAt} />}
-      contextMenuItems={[
-        {
-          label: "Select",
-          onClick() {
-            console.log("select", message);
-          },
-        },
-      ]}
+      contextMenuItems={[]}
     />
   );
 };

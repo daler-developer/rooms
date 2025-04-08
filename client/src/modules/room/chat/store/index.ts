@@ -44,6 +44,8 @@ type RoomChatState = {
   setMessagesListEl: (to: HTMLDivElement | null) => void;
 
   selectedMessages: number[];
+  setSelectedMessages: (selectedMessages: Array<number | string>) => void;
+
   clearSelectedMessages: () => void;
   addSelectedMessage: (messageId: number) => void;
   removeSelectedMessage: (messageId: number) => void;
@@ -227,7 +229,14 @@ const { useStore: useRoomChatStore, withStore: withRoomChatStore } = createZusta
   roomId: -1,
 
   temporaryMessages: [],
+
   selectedMessages: [],
+  setSelectedMessages(to) {
+    set({
+      selectedMessages: to,
+    });
+  },
+
   messagesListEl: null,
   messagesListScrollHandler: null,
 

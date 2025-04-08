@@ -6,8 +6,10 @@ type Item = {
   onClick?: () => void;
 };
 
+export type ContextMenuItems = Item[];
+
 type Props = {
-  items?: Item[];
+  items?: ContextMenuItems;
   children: ReactNode;
   onShow?: () => void;
   onHide?: () => void;

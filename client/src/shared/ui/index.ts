@@ -31,7 +31,7 @@ import TimeInput, { type Time } from "./components/TimeInput/TimeInput.tsx";
 import Scroll, { type ScrollHandle } from "./components/ScrollV2/Scroll.tsx";
 import useScrollControl from "./components/ScrollV2/useScrollControl.ts";
 import Select from "./components/Select/Select.tsx";
-import ContextMenu from "./components/ContextMenu/ContextMenu.tsx";
+import ContextMenu, { type ContextMenuItems } from "./components/ContextMenu/ContextMenu.tsx";
 import ToastProvider from "./components/Toast/ToastProvider.tsx";
 import useToast from "./components/Toast/useToast.ts";
 
@@ -75,6 +75,7 @@ export {
   type ScrollHandle,
   Select,
   ContextMenu,
+  type ContextMenuItems,
   ToastProvider,
   useToast,
 };

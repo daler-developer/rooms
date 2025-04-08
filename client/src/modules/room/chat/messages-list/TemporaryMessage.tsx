@@ -20,6 +20,7 @@ const TemporaryMessage = ({ temporaryMessage, withSentAtDivider }: Props) => {
 
   return (
     <BaseMessage
+      id={temporaryMessage.id}
       text={temporaryMessage.text}
       imageUrls={temporaryMessage.imageUrls}
       senderIsOnline={true}

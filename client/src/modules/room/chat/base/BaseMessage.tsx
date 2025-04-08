@@ -1,4 +1,4 @@
-import { Avatar, Badge, ContextMenu, MouseDownMove } from "@/shared/ui";
+import { Avatar, Badge, ContextMenu, MouseDownMove, type ContextMenuItems } from "@/shared/ui";
 import clsx from "clsx";
 import dayjs from "dayjs";
 import { ComponentProps, ReactNode, useEffect, useMemo, useRef, useState } from "react";
@@ -6,12 +6,13 @@ import { HiOutlineCheckCircle, HiOutlineEye } from "react-icons/hi2";
 import BaseMessageSentAt from "./BaseMessageSentAt";
 import BaseMessageViewsCount from "./BaseMessageViewsCount";
 import BaseMessageDivider from "./BaseMessageDivider";
+import { useBaseMessagesContext } from "./baseMessagesContext.tsx";
 
 export type Props = {
+  id: number | string;
   text: string;
   contextMenuItems?: ComponentProps<typeof ContextMenu>["items"];
   isInSelectMode?: boolean;
-  isSelected?: boolean;
   onSelect?: () => void;
   onDeselect?: () => void;
   intersectionAnchor?: HTMLElement;
@@ -25,13 +26,14 @@ export type Props = {
   bottomLeft?: ReactNode;
   bottomRight?: ReactNode;
   divider?: ReactNode;
+  selectable?: boolean;
 };
 
 const BaseMessage = ({
+  id,
   text,
-  contextMenuItems,
+  contextMenuItems = [],
   isInSelectMode = false,
-  isSelected = false,
   onSelect,
   onDeselect,
   intersectionAnchor,
@@ -45,10 +47,15 @@ const BaseMessage = ({
   bottomLeft,
   bottomRight,
   divider,
+  selectable = false,
 }: Props) => {
   const [isContextMenuVisible, setIsContextMenuVisible] = useState(false);
 
   const rootElRef = useRef<HTMLDivElement>(null!);
+
+  const baseMessagesContext = useBaseMessagesContext();
+
+  const isSelected = baseMessagesContext.selectedMessages.includes(id);
 
   useEffect(() => {
     let observer: IntersectionObserver;
@@ -80,12 +87,12 @@ const BaseMessage = ({
   }, [intersectionAnchor, onIntersect]);
 
   const handleClick = () => {
-    if (isInSelectMode) {
-      if (isSelected) {
-        onDeselect?.();
-      } else {
-        onSelect?.();
-      }
+    if (selectable && isSelected) {
+      baseMessagesContext.handleDeselect(id);
+    }
+
+    if (selectable && !isSelected && baseMessagesContext.hasSelectedMessages) {
+      baseMessagesContext.handleSelect(id);
     }
   };
 
@@ -114,11 +121,26 @@ const BaseMessage = ({
     "left-[5px] bottom-full": !senderIsMe,
   });
 
+  const defaultContextMenuItems: ContextMenuItems = [];
+
+  if (selectable) {
+    defaultContextMenuItems.push({
+      label: "Select",
+      onClick() {
+        baseMessagesContext.handleSelect(id);
+      },
+    });
+  }
+
   return (
     <div>
       {divider}
 
-      <ContextMenu items={contextMenuItems} onShow={() => setIsContextMenuVisible(true)} onHide={() => setIsContextMenuVisible(false)}>
+      <ContextMenu
+        items={defaultContextMenuItems.concat(contextMenuItems)}
+        onShow={() => setIsContextMenuVisible(true)}
+        onHide={() => setIsContextMenuVisible(false)}
+      >
         <MouseDownMove
           onMouseDownMove={() => {
             if (isInSelectMode && !isSelected) {

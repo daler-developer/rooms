@@ -79,11 +79,11 @@ const MessagesList = () => {
     return [];
   }, [queries.messages.data, roomChatStore.temporaryMessages]);
 
-  if (queries.messages.data) {
-    return <BaseMessagesList ref={baseMessagesComp}>{messages}</BaseMessagesList>;
-  }
-
-  return null;
+  return (
+    <BaseMessagesList ref={baseMessagesComp} selectedMessages={roomChatStore.selectedMessages} onSelectedMessagesChange={roomChatStore.setSelectedMessages}>
+      {messages}
+    </BaseMessagesList>
+  );
 };
 
 export default MessagesList;
