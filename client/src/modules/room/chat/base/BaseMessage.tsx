@@ -1,41 +1,39 @@
-import { Avatar, Badge, ContextMenu, MouseDownMove, type ContextMenuItems } from "@/shared/ui";
+import { Avatar, Badge, ContextMenu, MouseDownMove, ListGroup, useContextMenuControl } from "@/shared/ui";
 import clsx from "clsx";
-import dayjs from "dayjs";
-import { ComponentProps, ReactNode, useEffect, useMemo, useRef, useState } from "react";
-import { HiOutlineCheckCircle, HiOutlineEye } from "react-icons/hi2";
+import { IconType } from "react-icons";
+import { ReactNode, useEffect, useRef } from "react";
+import { HiOutlineCheckCircle } from "react-icons/hi2";
 import BaseMessageSentAt from "./BaseMessageSentAt";
 import BaseMessageViewsCount from "./BaseMessageViewsCount";
 import BaseMessageDivider from "./BaseMessageDivider";
 import { useBaseMessagesContext } from "./baseMessagesContext.tsx";
+import { FaRegCircleCheck } from "react-icons/fa6";
 
 export type Props = {
   id: number | string;
   text: string;
-  contextMenuItems?: ComponentProps<typeof ContextMenu>["items"];
-  isInSelectMode?: boolean;
-  onSelect?: () => void;
-  onDeselect?: () => void;
-  intersectionAnchor?: HTMLElement;
-  onIntersect?: () => void;
   senderIsMe: boolean;
   senderProfilePictureUrl?: string | null;
   senderIsOnline: boolean;
   senderFirstName: string;
   senderLastName: string;
   imageUrls: string[];
+  onIntersect?: () => void;
   bottomLeft?: ReactNode;
   bottomRight?: ReactNode;
+  intersectionAnchor?: HTMLElement;
   divider?: ReactNode;
   selectable?: boolean;
+  contextMenuActions?: Array<{
+    label: string;
+    onClick: () => void;
+    Icon: IconType;
+  }>;
 };
 
 const BaseMessage = ({
   id,
   text,
-  contextMenuItems = [],
-  isInSelectMode = false,
-  onSelect,
-  onDeselect,
   intersectionAnchor,
   onIntersect,
   senderLastName,
@@ -48,13 +46,11 @@ const BaseMessage = ({
   bottomRight,
   divider,
   selectable = false,
+  contextMenuActions = [],
 }: Props) => {
-  const [isContextMenuVisible, setIsContextMenuVisible] = useState(false);
-
+  const contextMenuContext = useContextMenuControl();
   const rootElRef = useRef<HTMLDivElement>(null!);
-
   const baseMessagesContext = useBaseMessagesContext();
-
   const isSelected = baseMessagesContext.selectedMessages.includes(id);
 
   useEffect(() => {
@@ -104,7 +100,7 @@ const BaseMessage = ({
   const containerElClasses = clsx("flex gap-2 pl-6 pr-6 rounded-md", {
     "": senderIsMe,
     "": !senderIsMe,
-    "bg-black bg-opacity-[0.2]": isSelected || isContextMenuVisible,
+    "bg-black bg-opacity-[0.2]": isSelected || contextMenuContext.state.isOpen,
   });
 
   const messageBodyClasses = clsx("relative min-w-[150px] py-[2px] px-[6px] text-[14px]", {
@@ -121,30 +117,47 @@ const BaseMessage = ({
     "left-[5px] bottom-full": !senderIsMe,
   });
 
-  const defaultContextMenuItems: ContextMenuItems = [];
-
-  if (selectable) {
-    defaultContextMenuItems.push({
-      label: "Select",
-      onClick() {
-        baseMessagesContext.handleSelect(id);
-      },
-    });
-  }
-
   return (
     <div>
       {divider}
 
       <ContextMenu
-        items={defaultContextMenuItems.concat(contextMenuItems)}
-        onShow={() => setIsContextMenuVisible(true)}
-        onHide={() => setIsContextMenuVisible(false)}
+        ref={contextMenuContext.ref}
+        enabled={!baseMessagesContext.hasSelectedMessages}
+        placement="bottom-left"
+        placementFallback="bottom-right"
+        content={
+          <div>
+            <ListGroup>
+              <ListGroup.Item
+                Icon={FaRegCircleCheck}
+                onClick={() => {
+                  baseMessagesContext.handleSelect(id);
+                  contextMenuContext.close();
+                }}
+              >
+                Select
+              </ListGroup.Item>
+              {contextMenuActions.map((action) => (
+                <ListGroup.Item
+                  key={action.label}
+                  Icon={action.Icon}
+                  onClick={() => {
+                    contextMenuContext.close();
+                    action.onClick();
+                  }}
+                >
+                  {action.label}
+                </ListGroup.Item>
+              ))}
+            </ListGroup>
+          </div>
+        }
       >
         <MouseDownMove
           onMouseDownMove={() => {
-            if (isInSelectMode && !isSelected) {
-              onSelect?.();
+            if (baseMessagesContext.hasSelectedMessages && !isSelected) {
+              baseMessagesContext.handleSelect(id);
             }
           }}
         >

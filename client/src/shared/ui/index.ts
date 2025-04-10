@@ -32,8 +32,10 @@ import Scroll, { type ScrollHandle } from "./components/ScrollV2/Scroll.tsx";
 import useScrollControl from "./components/ScrollV2/useScrollControl.ts";
 import Select from "./components/Select/Select.tsx";
 import ContextMenu, { type ContextMenuItems } from "./components/ContextMenu/ContextMenu.tsx";
+import useContextMenuControl from "./components/ContextMenu/useContextMenuControl.ts";
 import ToastProvider from "./components/Toast/ToastProvider.tsx";
 import useToast from "./components/Toast/useToast.ts";
+import ListGroup from "./components/ListGroup/ListGroup.tsx";
 
 export {
   Upload,
@@ -75,7 +77,9 @@ export {
   type ScrollHandle,
   Select,
   ContextMenu,
+  useContextMenuControl,
   type ContextMenuItems,
   ToastProvider,
   useToast,
+  ListGroup,
 };

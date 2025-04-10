@@ -3,6 +3,7 @@ import BaseMessage from "../base/BaseMessage.tsx";
 import { useAuth } from "@/modules/auth";
 import dayjs from "dayjs";
 import { useMemo } from "react";
+import { MdDeleteOutline } from "react-icons/md";
 
 type Props = {
   message: Flatten<RoomChatGetMessagesQuery["room"]["messages"]["data"]>;
@@ -15,6 +16,8 @@ const Message = ({ message, withSentAtDivider }: Props) => {
   const formattedSentAt = useMemo(() => {
     return dayjs(message.sentAt!).format("MMMM D, YYYY");
   }, [message.sentAt]);
+
+  const handleDelete = () => {};
 
   return (
     <BaseMessage
@@ -30,7 +33,15 @@ const Message = ({ message, withSentAtDivider }: Props) => {
       bottomRight={<BaseMessage.SentAt sentAt={message.sentAt!} />}
       bottomLeft={<BaseMessage.ViewsCount viewsCount={message.viewsCount} />}
       divider={withSentAtDivider && <BaseMessage.Divider children={formattedSentAt} />}
-      contextMenuItems={[]}
+      contextMenuActions={[
+        {
+          label: "Delete",
+          Icon: MdDeleteOutline,
+          onClick() {
+            handleDelete();
+          },
+        },
+      ]}
     />
   );
 };

@@ -1,3 +1,4 @@
 import ContextMenu from "./ContextMenu.tsx";
+import useContextMenuControl from "./useContextMenuControl.ts";
 
-export { ContextMenu };
+export { ContextMenu, useContextMenuControl };

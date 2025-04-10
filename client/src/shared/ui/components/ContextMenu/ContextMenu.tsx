@@ -1,5 +1,7 @@
-import { cloneElement, CSSProperties, ReactNode, useEffect, useMemo, useState } from "react";
+import { cloneElement, CSSProperties, forwardRef, ReactElement, ReactNode, useEffect, useImperativeHandle, useMemo, useRef, useState } from "react";
 import { Portal } from "@/shared/ui";
+import { type ContextMenuPlacement } from "./types.ts";
+import { disableAllScrolling, enableAllScrolling, calcPosition, checkIfIsViewport } from "./utils.ts";
 
 type Item = {
   label: string;
@@ -10,129 +12,166 @@ export type ContextMenuItems = Item[];
 
 type Props = {
   items?: ContextMenuItems;
-  children: ReactNode;
+  children: ReactElement;
   onShow?: () => void;
   onHide?: () => void;
+  content: ReactNode;
+  placement?: ContextMenuPlacement;
+  placementFallback?: ContextMenuPlacement;
+  enabled?: boolean;
 };
 
-const preventScroll = (event) => {
-  event.preventDefault();
+export type ExposedState = {
+  isOpen: boolean;
 };
 
-const preventArrowKeys = (event) => {
-  if (["ArrowUp", "ArrowDown", "Space", "PageUp", "PageDown"].includes(event.key)) {
-    event.preventDefault();
-  }
-};
+type Subscriber = (state: ExposedState) => void;
 
-const disableAllScrolling = () => {
-  window.addEventListener("wheel", preventScroll, { passive: false });
-  window.addEventListener("touchmove", preventScroll, { passive: false });
-  window.addEventListener("keydown", preventArrowKeys, { passive: false });
-  window.addEventListener("scroll", preventScroll, { passive: false });
-};
-
-const enableAllScrolling = () => {
-  window.removeEventListener("wheel", preventScroll);
-  window.removeEventListener("touchmove", preventScroll);
-  window.removeEventListener("keydown", preventArrowKeys);
-  window.removeEventListener("scroll", preventScroll);
+export type ContextMenuHandle = {
+  close: () => void;
+  subscribeToStateUpdateChange: (callback: Subscriber) => () => void;
 };
 
 let hasAtLeastOneContextMenuVisibleOnTheScreen = false;
 
-const ContextMenu = ({ children, items, onHide, onShow }: Props) => {
-  const [showContextMenu, setShowContextMenu] = useState(false);
-  const [position, setPosition] = useState({
-    x: 0,
-    y: 0,
-  });
+const ContextMenu = forwardRef<ContextMenuHandle, Props>(
+  ({ children, onHide, onShow, content, placement = "bottom-left", placementFallback, enabled = true }, ref) => {
+    const [showContextMenu, setShowContextMenu] = useState(false);
+    const [position, setPosition] = useState({
+      x: 0,
+      y: 0,
+    });
 
-  useEffect(() => {
-    const handler = () => {
-      if (showContextMenu && hasContextMenuItems) {
+    const rootEl = useRef<HTMLDivElement>(null!);
+
+    const subscribers = useRef<Subscriber[]>([]);
+
+    useEffect(() => {
+      subscribers.current.forEach((callback) => {
+        callback({ isOpen: showContextMenu });
+      });
+    }, [showContextMenu]);
+
+    useImperativeHandle(ref, () => ({
+      close() {
         setShowContextMenu(false);
         enableAllScrolling();
         hasAtLeastOneContextMenuVisibleOnTheScreen = false;
         onHide?.();
+      },
+      subscribeToStateUpdateChange(callback) {
+        subscribers.current.push(callback);
+
+        return () => {
+          subscribers.current = subscribers.current.filter((_handler) => _handler !== callback);
+        };
+      },
+    }));
+
+    useEffect(() => {
+      const handler = () => {
+        if (showContextMenu) {
+          setShowContextMenu(false);
+          enableAllScrolling();
+          hasAtLeastOneContextMenuVisibleOnTheScreen = false;
+          onHide?.();
+        }
+      };
+
+      document.addEventListener("click", handler);
+
+      return () => {
+        document.removeEventListener("click", handler);
+      };
+    }, [showContextMenu, onHide]);
+
+    const contextMenuStyles = useMemo<CSSProperties>(() => {
+      const styles: CSSProperties = {
+        position: "fixed",
+        top: position.y + "px",
+        left: position.x + "px",
+      };
+
+      if (!showContextMenu) {
+        styles.visibility = "hidden";
       }
+
+      return styles;
+    }, [showContextMenu, position.x, position.y]);
+
+    const handleContextMenu = (e: MouseEvent) => {
+      e.preventDefault();
+
+      if (hasAtLeastOneContextMenuVisibleOnTheScreen) {
+        return;
+      }
+
+      if (!enabled) {
+        return;
+      }
+
+      let [x, y] = calcPosition(e.clientX, e.clientY, rootEl.current.getBoundingClientRect().width, rootEl.current.getBoundingClientRect().height, placement);
+
+      const isInViewport = checkIfIsViewport(rootEl.current.getBoundingClientRect().width, rootEl.current.getBoundingClientRect().height, x, y);
+
+      if (!isInViewport && placementFallback) {
+        [x, y] = calcPosition(
+          e.clientX,
+          e.clientY,
+          rootEl.current.getBoundingClientRect().width,
+          rootEl.current.getBoundingClientRect().height,
+          placementFallback,
+        );
+      }
+
+      setPosition({
+        x,
+        y,
+      });
+      setShowContextMenu(true);
+      disableAllScrolling();
+      hasAtLeastOneContextMenuVisibleOnTheScreen = true;
+      onShow?.();
     };
 
-    document.addEventListener("click", handler);
+    return (
+      <>
+        {cloneElement(children, {
+          onContextMenu: handleContextMenu,
+        })}
 
-    return () => {
-      document.removeEventListener("click", handler);
-    };
-  }, [showContextMenu, onHide]);
-
-  const contextMenuStyles = useMemo<CSSProperties>(() => {
-    return {
-      position: "fixed",
-      top: position.y + "px",
-      left: position.x + "px",
-    };
-  }, [position.x, position.y]);
-
-  const handleContextMenu = (e: MouseEvent) => {
-    e.preventDefault();
-
-    if (!hasContextMenuItems) {
-      return;
-    }
-
-    if (hasAtLeastOneContextMenuVisibleOnTheScreen) {
-      return;
-    }
-
-    setPosition({
-      x: e.clientX,
-      y: e.clientY,
-    });
-    setShowContextMenu(true);
-    disableAllScrolling();
-    hasAtLeastOneContextMenuVisibleOnTheScreen = true;
-    onShow?.();
-  };
-
-  const hasContextMenuItems = items?.length > 0;
-
-  return (
-    <>
-      {cloneElement(children, {
-        onContextMenu: handleContextMenu,
-      })}
-
-      <Portal to={document.body}>
-        {showContextMenu && hasContextMenuItems && (
+        <Portal to={document.body}>
           <div
-            className="rounded-sm border border-gray-400 shadow-md bg-white z-1 min-w-[150px]"
+            ref={rootEl}
+            className="z-1 min-w-[150px]"
             style={contextMenuStyles}
             onClick={(e) => {
               e.stopPropagation();
             }}
           >
-            <ul>
-              {items!.map((item) => (
-                <li
-                  key={item.label}
-                  className="p-1 hover:bg-gray-200 cursor-pointer"
-                  onClick={() => {
-                    item.onClick?.();
-                    setShowContextMenu(false);
-                    enableAllScrolling();
-                    hasAtLeastOneContextMenuVisibleOnTheScreen = false;
-                    onHide?.();
-                  }}
-                >
-                  {item.label}
-                </li>
-              ))}
-            </ul>
+            {content}
+            {/*<ul>*/}
+            {/*  {items!.map((item) => (*/}
+            {/*    <li*/}
+            {/*      key={item.label}*/}
+            {/*      className="p-1 hover:bg-gray-200 cursor-pointer"*/}
+            {/*      onClick={() => {*/}
+            {/*        item.onClick?.();*/}
+            {/*        setShowContextMenu(false);*/}
+            {/*        enableAllScrolling();*/}
+            {/*        hasAtLeastOneContextMenuVisibleOnTheScreen = false;*/}
+            {/*        onHide?.();*/}
+            {/*      }}*/}
+            {/*    >*/}
+            {/*      {item.label}*/}
+            {/*    </li>*/}
+            {/*  ))}*/}
+            {/*</ul>*/}
           </div>
-        )}
-      </Portal>
-    </>
-  );
-};
+        </Portal>
+      </>
+    );
+  },
+);
 
 export default ContextMenu;
