@@ -121,14 +121,17 @@ export class MessageService {
         sessionId,
       }),
     );
+    const scheduledMessagesCount = await this.scheduledMessagesCountRepository.getOneByPk({ userId: senderId, roomId });
 
+    pubsub.publish("ROOM_SCHEDULED_MESSAGES_COUNT_CHANGE", {
+      roomId,
+      count: scheduledMessagesCount.count + 1,
+    });
     pubsub.publish("NEW_MESSAGE", {
       newMessage: {
         message,
       },
     });
-
-    const scheduledMessagesCount = await this.scheduledMessagesCountRepository.getOneByPk({ userId: senderId, roomId });
 
     await this.scheduledMessagesCountRepository.updateOneByPk(
       { userId: senderId, roomId },

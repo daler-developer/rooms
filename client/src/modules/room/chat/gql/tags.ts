@@ -347,3 +347,9 @@ export const MESSAGE_VIEWS_COUNT_CHANGE_SUB = gql(`
     messageViewsCountChange(messageId: $messageId)
   }
 `);
+
+export const ROOM_SCHEDULED_MESSAGES_COUNT_CHANGE_SUB = gql(`
+  subscription RoomChatScheduledMessagesCountChange($roomId: Int!) {
+    roomScheduledMessagesCountChange(roomId: $roomId)
+  }
+`);

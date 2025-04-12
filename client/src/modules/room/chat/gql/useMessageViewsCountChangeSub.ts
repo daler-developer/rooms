@@ -1,5 +1,5 @@
-import { Message, RoomChatMessageViewsCountChangeSubscriptionVariables } from "@/__generated__/graphql.ts";
 import { useSubscription } from "@apollo/client";
+import { Message, RoomChatMessageViewsCountChangeSubscriptionVariables } from "@/__generated__/graphql.ts";
 import { MESSAGE_VIEWS_COUNT_CHANGE_SUB } from "./tags.ts";
 
 const useMessageViewsCountChangeSub = (variables: RoomChatMessageViewsCountChangeSubscriptionVariables) => {

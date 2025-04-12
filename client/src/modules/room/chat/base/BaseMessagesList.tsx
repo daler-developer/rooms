@@ -57,7 +57,7 @@ const BaseMessagesList = forwardRef<BaseMessagesListHandle, Props>(({ children, 
         selectedMessages,
       }}
     >
-      <div className="h-full border-4 border-black">
+      <div className="h-full">
         <Scroll
           ref={scrollControl.ref}
           height="full"

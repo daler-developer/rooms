@@ -41,6 +41,10 @@ const Message = ({ message, withSentAtDivider }: Props) => {
       return;
     }
 
+    if (message.sender.id === userId) {
+      return;
+    }
+
     mutations.markMessageAsViewed.mutate({
       messageId: message.id,
     });

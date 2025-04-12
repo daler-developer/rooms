@@ -62,6 +62,7 @@ const documents = {
     "\n  subscription RoomChatParticipantTypingStart($roomId: Int!) {\n    roomParticipantTypingStart(roomId: $roomId) {\n      id\n      firstName\n      lastName\n    }\n  }\n": types.RoomChatParticipantTypingStartDocument,
     "\n  subscription RoomChatParticipantTypingStop($roomId: Int!) {\n    roomParticipantTypingStop(roomId: $roomId) {\n      id\n    }\n  }\n": types.RoomChatParticipantTypingStopDocument,
     "\n  subscription RoomChatMessageViewsCountChange($messageId: Int!) {\n    messageViewsCountChange(messageId: $messageId)\n  }\n": types.RoomChatMessageViewsCountChangeDocument,
+    "\n  subscription RoomChatScheduledMessagesCountChange($roomId: Int!) {\n    roomScheduledMessagesCountChange(roomId: $roomId)\n  }\n": types.RoomChatScheduledMessagesCountChangeDocument,
     "\n  mutation RoomChatLeaveRoom($input: LeaveRoomInput!) {\n    leaveRoom(input: $input)\n  }\n": types.RoomChatLeaveRoomDocument,
     "\n  subscription RoomChatPendingInvitationsCountChange($roomId: Int!) {\n    roomPendingInvitationsCountChange(roomId: $roomId) {\n      id\n      pendingInvitationsCount\n    }\n  }\n": types.RoomChatPendingInvitationsCountChangeDocument,
     "\n    mutation RoomChatExcludeUserFromRoom($roomId: Int!, $userId: Int!) {\n      excludeUserFromRoom(roomId: $roomId, userId: $userId) {\n        id\n        name\n      }\n    }\n": types.RoomChatExcludeUserFromRoomDocument,
@@ -302,6 +303,10 @@ export function gql(source: "\n  subscription RoomChatParticipantTypingStop($roo
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function gql(source: "\n  subscription RoomChatMessageViewsCountChange($messageId: Int!) {\n    messageViewsCountChange(messageId: $messageId)\n  }\n"): (typeof documents)["\n  subscription RoomChatMessageViewsCountChange($messageId: Int!) {\n    messageViewsCountChange(messageId: $messageId)\n  }\n"];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function gql(source: "\n  subscription RoomChatScheduledMessagesCountChange($roomId: Int!) {\n    roomScheduledMessagesCountChange(roomId: $roomId)\n  }\n"): (typeof documents)["\n  subscription RoomChatScheduledMessagesCountChange($roomId: Int!) {\n    roomScheduledMessagesCountChange(roomId: $roomId)\n  }\n"];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
