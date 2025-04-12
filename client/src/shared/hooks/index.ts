@@ -10,6 +10,7 @@ import useIsFirstRender from "./useIsFirstRender.ts";
 import usePrevValue from "./usePrevValue.ts";
 import useForceUpdate from "./useForceUpdate.ts";
 import useFilePaste from "./useFilePaste.ts";
+import useLatest from "./useLatest.ts";
 import useWaitForDomUpdate from "./useWaitForDomUpdate.ts";
 
 export {
@@ -25,5 +26,6 @@ export {
   usePrevValue,
   useForceUpdate,
   useFilePaste,
+  useLatest,
   useWaitForDomUpdate,
 };

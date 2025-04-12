@@ -6,6 +6,7 @@ type Props = {
   children: ReactNode[];
   selectedMessages: Array<number | string>;
   onSelectedMessagesChange: (selectedMessages: Array<number | string>) => void;
+  onReachStart?: () => void;
 };
 
 type BaseMessagesListHandle = {
@@ -13,7 +14,7 @@ type BaseMessagesListHandle = {
   isScrolledToBottom: boolean;
 };
 
-const BaseMessagesList = forwardRef<BaseMessagesListHandle, Props>(({ children, selectedMessages, onSelectedMessagesChange }, ref) => {
+const BaseMessagesList = forwardRef<BaseMessagesListHandle, Props>(({ children, onReachStart, selectedMessages, onSelectedMessagesChange }, ref) => {
   const scrollControl = useScrollControl();
 
   useEffect(() => {
@@ -56,11 +57,19 @@ const BaseMessagesList = forwardRef<BaseMessagesListHandle, Props>(({ children, 
         selectedMessages,
       }}
     >
-      <Scroll ref={scrollControl.ref} height="full">
-        <div ref={wrapperEl} className="flex flex-col gap-6 pt-8 pb-8">
-          {children}
-        </div>
-      </Scroll>
+      <div className="h-full border-4 border-black">
+        <Scroll
+          ref={scrollControl.ref}
+          height="full"
+          onScrollToTop={() => {
+            onReachStart?.();
+          }}
+        >
+          <div ref={wrapperEl} className="flex flex-col gap-6 pt-8 pb-8">
+            {children}
+          </div>
+        </Scroll>
+      </div>
     </BaseMessagesContext.Provider>
   );
 });

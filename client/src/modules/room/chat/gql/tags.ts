@@ -43,7 +43,7 @@ export const SCHEDULE_MESSAGE_MUTATION = gql(`
 `);
 
 export const DELETE_MESSAGES = gql(`
-  mutation DeleteMessages($roomId: Int!, $messageIds: [Int!]!) {
+  mutation RoomChatDeleteMessages($roomId: Int!, $messageIds: [Int!]!) {
     deleteMessages(roomId: $roomId, messageIds: $messageIds)
   }
 `);
@@ -87,7 +87,17 @@ export const ROOM_PARTICIPANT_LEAVE_SUB = gql(`
 
 export const MARK_MESSAGE_AS_VIEWS_BY_ME = gql(`
   mutation MarkMessageAsViewedByMe($messageId: Int!) {
-    markMessageAsViewedByMe(messageId: $messageId) {
+    markMessageAsViewed(messageId: $messageId) {
+      id
+      viewsCount
+      isViewedByMe
+    }
+  }
+`);
+
+export const MARK_MESSAGE_AS_VIEWED = gql(`
+  mutation RoomChatMarkMessageAsViewed($messageId: Int!) {
+    markMessageAsViewed(messageId: $messageId) {
       id
       viewsCount
       isViewedByMe
@@ -329,5 +339,11 @@ export const ROOM_PARTICIPANT_TYPING_STOP = gql(`
     roomParticipantTypingStop(roomId: $roomId) {
       id
     }
+  }
+`);
+
+export const MESSAGE_VIEWS_COUNT_CHANGE_SUB = gql(`
+  subscription RoomChatMessageViewsCountChange($messageId: Int!) {
+    messageViewsCountChange(messageId: $messageId)
   }
 `);

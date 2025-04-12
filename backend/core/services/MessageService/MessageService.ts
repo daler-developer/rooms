@@ -190,7 +190,7 @@ export class MessageService {
     return true;
   }
 
-  async markMessageAsViewsByUser(messageId: number, userId: number) {
+  async markMessageAsViewed({ messageId, userId }: { messageId: number; userId: number }) {
     let message = await this.messageRepository.getOneById(messageId);
 
     await redisClient.hIncrBy(`rooms:${message.roomId}:unread_messages`, String(userId), -1);
@@ -214,6 +214,10 @@ export class MessageService {
         viewer: user,
         message,
       },
+    });
+    pubsub.publish("MESSAGE_VIEWS_COUNT_CHANGE", {
+      messageId,
+      count: message.viewsCount,
     });
 
     return message;

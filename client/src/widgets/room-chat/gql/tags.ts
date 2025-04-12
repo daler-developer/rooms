@@ -64,8 +64,8 @@ export const GET_ROOM_PARTICIPANTS_QUERY = gql(`
 `);
 
 export const MARK_MESSAGE_AS_VIEWS_BY_ME = gql(`
-  mutation MarkMessageAsViewedByMe($messageId: Int!) {
-    markMessageAsViewedByMe(messageId: $messageId) {
+  mutation MarkMessageAsViewedByMeTemp($messageId: Int!) {
+    markMessageAsViewed(messageId: $messageId) {
       id
       viewsCount
       isViewedByMe

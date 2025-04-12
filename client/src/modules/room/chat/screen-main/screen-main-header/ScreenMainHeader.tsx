@@ -4,6 +4,7 @@ import useGetRoomQuery from "../../gql/useGetRoomQuery.ts";
 import { useRoomChatStore } from "../../store";
 import { useRef } from "react";
 import PendingInvitations from "./PendingInvitations.tsx";
+import { useRoomId } from "../../context";
 import RoomInfoModal, { type RoomInfoModalHandler } from "../../room-info/RoomInfoModal.tsx";
 import ParticipantsOnlineCount from "./ParticipantsOnlineCount.tsx";
 import ParticipantsTypingList from "./ParticipantsTypingList.tsx";
@@ -12,7 +13,8 @@ import BaseScreen from "../../base/BaseScreen.tsx";
 import useDeleteMessagesMutation from "../../gql/useDeleteMessagesMutation.ts";
 
 const ScreenMainHeader = () => {
-  const { roomId, selectedMessages, clearSelectedMessages } = useRoomChatStore();
+  const { selectedMessages, clearSelectedMessages } = useRoomChatStore();
+  const roomId = useRoomId();
 
   const roomInfoModalComp = useRef<RoomInfoModalHandler>(null!);
 
@@ -28,10 +30,8 @@ const ScreenMainHeader = () => {
 
   const handleDelete = async () => {
     mutations.deleteMessages.mutate({
-      variables: {
-        roomId,
-        messageIds: selectedMessages,
-      },
+      roomId,
+      messageIds: selectedMessages,
     });
     clearSelectedMessages();
   };

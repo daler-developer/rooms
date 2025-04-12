@@ -58,6 +58,15 @@ const client = new ApolloClient({
     typePolicies: {
       Query: {
         fields: {
+          // messages: {
+          //   keyArgs: false,
+          //   merge(existing, incoming) {
+          //     return {
+          //       data: [...(existing?.data || []), ...incoming.data],
+          //       hasMore: incoming.hasMore,
+          //     };
+          //   },
+          // },
           searchUsers: {
             keyArgs: false,
             merge(existing, incoming) {

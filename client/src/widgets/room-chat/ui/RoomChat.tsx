@@ -4,7 +4,7 @@ import createRoomChatStore from "@/widgets/room-chat/store";
 import { RoomChatStoreContext, useRoomChatStore } from "@/widgets/room-chat/context";
 // import MessagesList from "@/widgets/room-chat/ui/MessagesList.tsx";
 // import Header from "@/widgets/room-chat/ui/Header/Header.tsx";
-import { NetworkStatus, useQuery } from "@apollo/client";
+import { useQuery } from "@apollo/client";
 import { GET_ME } from "@/widgets/room-chat/gql/tags.ts";
 import MeExcludedFromRoomModal from "@/widgets/room-chat/ui/MeExcludedFromRoomModal/MeExcludedFromRoomModal.tsx";
 import { usePrevValue } from "@/shared/hooks";

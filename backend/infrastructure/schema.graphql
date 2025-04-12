@@ -278,7 +278,7 @@ type Mutation {
     sendMessage(input: SendMessageInput!): Message!
     scheduleMessage(input: ScheduleMessage!): Message!
     notifyMeTypingStatusChange(roomId: Int!, isTyping: Boolean): Boolean!
-    markMessageAsViewedByMe(messageId: Int!): Message!
+    markMessageAsViewed(messageId: Int!): Message!
     inviteUsersToRoom(roomId: Int!, invitedUsersIds: [Int!]!): Boolean!
     notifyMeOnlineStatusChange(status: String!): User!
     excludeUserFromRoom(roomId: Int!, userId: Int!): Room!
@@ -311,6 +311,7 @@ type Subscription {
     newRoom: Room!
     userTypingStatusChange(roomId: Int!): UserTypingStatusChangeEvent!
     messageViewed(messageId: Int!): MessageViewedEvent!
+    messageViewsCountChange(messageId: Int!): Int!
     roomPendingInvitationsCountChange(roomId: Int!): Room!
     messagesDeleted(roomId: Int!): MessagesDeletedEvent!
     roomCreated(skipFromCurrentSession: Boolean!): Room!

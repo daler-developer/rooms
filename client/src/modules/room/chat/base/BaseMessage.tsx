@@ -8,6 +8,7 @@ import BaseMessageViewsCount from "./BaseMessageViewsCount";
 import BaseMessageDivider from "./BaseMessageDivider";
 import { useBaseMessagesContext } from "./baseMessagesContext.tsx";
 import { FaRegCircleCheck } from "react-icons/fa6";
+import { useLatest } from "@/shared/hooks";
 
 export type Props = {
   id: number | string;
@@ -18,7 +19,7 @@ export type Props = {
   senderFirstName: string;
   senderLastName: string;
   imageUrls: string[];
-  onIntersect?: () => void;
+  onMessageVisible?: () => void;
   bottomLeft?: ReactNode;
   bottomRight?: ReactNode;
   intersectionAnchor?: HTMLElement;
@@ -34,8 +35,7 @@ export type Props = {
 const BaseMessage = ({
   id,
   text,
-  intersectionAnchor,
-  onIntersect,
+  onMessageVisible,
   senderLastName,
   senderFirstName,
   senderProfilePictureUrl,
@@ -52,35 +52,30 @@ const BaseMessage = ({
   const rootElRef = useRef<HTMLDivElement>(null!);
   const baseMessagesContext = useBaseMessagesContext();
   const isSelected = baseMessagesContext.selectedMessages.includes(id);
+  const onMessageVisibleRef = useLatest(onMessageVisible);
 
   useEffect(() => {
-    let observer: IntersectionObserver;
-
-    if (onIntersect) {
-      observer = new IntersectionObserver(
-        async (entries) => {
-          for (const entry of entries) {
-            if (entry.isIntersecting) {
-              onIntersect?.();
-            }
+    const observer = new IntersectionObserver(
+      async (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            onMessageVisibleRef.current?.();
           }
-        },
-        {
-          root: undefined,
-          threshold: 1,
-          rootMargin: "0px",
-        },
-      );
+        }
+      },
+      {
+        root: undefined,
+        threshold: 1,
+        rootMargin: "0px",
+      },
+    );
 
-      observer.observe(rootElRef.current);
-    }
+    observer.observe(rootElRef.current);
 
     return () => {
-      if (observer) {
-        observer.disconnect();
-      }
+      observer.disconnect();
     };
-  }, [intersectionAnchor, onIntersect]);
+  }, []);
 
   const handleClick = () => {
     if (selectable && isSelected) {

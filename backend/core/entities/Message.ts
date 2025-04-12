@@ -7,6 +7,7 @@ export class Message {
     public roomId: number,
     public isDeleted: boolean,
     public sessionId: string,
+    public viewsCount: number,
     public sentAt?: string | null,
     public scheduledAt?: string | null,
   ) {}

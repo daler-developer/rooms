@@ -1,4 +1,4 @@
-import { ElementRef, ReactNode, useEffect, useLayoutEffect, useMemo, useRef } from "react";
+import { ElementRef, ReactNode, useEffect, useMemo, useRef } from "react";
 import dayjs from "dayjs";
 import { RoomChatGetMessagesQuery } from "@/__generated__/graphql.ts";
 import BaseMessagesList from "../base/BaseMessagesList.tsx";
@@ -7,13 +7,19 @@ import TemporaryMessage from "./TemporaryMessage.tsx";
 import useGetMessagesQuery from "../gql/useGetMessagesQuery.ts";
 import { useRoomChatStore, TemporaryMessage as TemporaryMessageType } from "../store";
 import { useRoomChatEmitter, type EventCallback } from "../emitter.ts";
-import { useWaitForDomUpdate } from "@/shared/hooks";
+import { useKeyboard, useWaitForDomUpdate } from "@/shared/hooks";
 
 const MessagesList = () => {
   const waitForDomUpdate = useWaitForDomUpdate();
   const roomChatStore = useRoomChatStore();
   const emitter = useRoomChatEmitter();
   const baseMessagesComp = useRef<ElementRef<typeof BaseMessagesList>>(null);
+
+  useKeyboard({
+    Escape: () => {
+      roomChatStore.clearSelectedMessages();
+    },
+  });
 
   useEffect(() => {
     const handler: EventCallback<"MESSAGE_INSERTED"> = async ({ senderIsMe }) => {
@@ -79,8 +85,21 @@ const MessagesList = () => {
     return [];
   }, [queries.messages.data, roomChatStore.temporaryMessages]);
 
+  const handleReachStart = () => {
+    queries.messages.fetchMore({
+      variables: {
+        offset: queries.messages.data!.room.messages.data.length,
+      },
+    });
+  };
+
   return (
-    <BaseMessagesList ref={baseMessagesComp} selectedMessages={roomChatStore.selectedMessages} onSelectedMessagesChange={roomChatStore.setSelectedMessages}>
+    <BaseMessagesList
+      ref={baseMessagesComp}
+      selectedMessages={roomChatStore.selectedMessages}
+      onSelectedMessagesChange={roomChatStore.setSelectedMessages}
+      onReachStart={handleReachStart}
+    >
       {messages}
     </BaseMessagesList>
   );

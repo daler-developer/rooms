@@ -38,12 +38,13 @@ const documents = {
     "\n  subscription UserProfileUpdated($userId: Int!) {\n    userProfileUpdated(userId: $userId) {\n      id\n      firstName\n      lastName\n      profilePictureUrl\n    }\n  }\n": types.UserProfileUpdatedDocument,
     "\n  mutation RoomChatSendMessage($input: SendMessageInput!) {\n    sendMessage(input: $input) {\n      id\n      text\n      senderId\n      roomId\n      isViewedByMe\n      sentAt\n      sender {\n        id\n        email\n        profilePictureUrl\n        isOnline\n      }\n      images {\n        id\n        url\n      }\n      viewsCount\n    }\n  }\n": types.RoomChatSendMessageDocument,
     "\n  mutation ScheduleMessage($input: ScheduleMessage!) {\n    scheduleMessage(input: $input) {\n      id\n      text\n      senderId\n      roomId\n      scheduledAt\n      sender {\n        id\n        email\n        profilePictureUrl\n        isOnline\n      }\n    }\n  }\n": types.ScheduleMessageDocument,
-    "\n  mutation DeleteMessages($roomId: Int!, $messageIds: [Int!]!) {\n    deleteMessages(roomId: $roomId, messageIds: $messageIds)\n  }\n": types.DeleteMessagesDocument,
+    "\n  mutation RoomChatDeleteMessages($roomId: Int!, $messageIds: [Int!]!) {\n    deleteMessages(roomId: $roomId, messageIds: $messageIds)\n  }\n": types.RoomChatDeleteMessagesDocument,
     "\n  mutation RoomChatNotifyTypingStart($roomId: Int!) {\n    notifyTypingStart(roomId: $roomId)\n  }\n": types.RoomChatNotifyTypingStartDocument,
     "\n  mutation RoomChatNotifyTypingStop($roomId: Int!) {\n    notifyTypingStop(roomId: $roomId)\n  }\n": types.RoomChatNotifyTypingStopDocument,
     "\n    query RoomChatGetRoomParticipants($id: Int!) {\n      room(id: $id) {\n        id\n        participants {\n          id\n          firstName\n          lastName\n          profilePictureUrl\n          isOnline\n        }\n      }\n    }\n": types.RoomChatGetRoomParticipantsDocument,
     "\n  subscription RoomChatParticipantLeave($roomId: Int!) {\n    roomParticipantLeave(roomId: $roomId) {\n      id\n      firstName\n      lastName\n    }\n  }\n": types.RoomChatParticipantLeaveDocument,
-    "\n  mutation MarkMessageAsViewedByMe($messageId: Int!) {\n    markMessageAsViewedByMe(messageId: $messageId) {\n      id\n      viewsCount\n      isViewedByMe\n    }\n  }\n": types.MarkMessageAsViewedByMeDocument,
+    "\n  mutation MarkMessageAsViewedByMe($messageId: Int!) {\n    markMessageAsViewed(messageId: $messageId) {\n      id\n      viewsCount\n      isViewedByMe\n    }\n  }\n": types.MarkMessageAsViewedByMeDocument,
+    "\n  mutation RoomChatMarkMessageAsViewed($messageId: Int!) {\n    markMessageAsViewed(messageId: $messageId) {\n      id\n      viewsCount\n      isViewedByMe\n    }\n  }\n": types.RoomChatMarkMessageAsViewedDocument,
     "\n  query RoomChatMe {\n    me {\n      id\n      email\n      firstName\n      lastName\n      profilePictureUrl\n    }\n  }\n": types.RoomChatMeDocument,
     "\n  query RoomChatGetRoom($roomId: Int!, $scheduledMessagesOffset: Int!) {\n    room(id: $roomId) {\n      id\n      name\n      creatorId\n      thumbnailUrl\n      pendingInvitationsCount\n      participantsOnlineCount\n      myScheduledMessagesCount\n      scheduledMessages(offset: $scheduledMessagesOffset) {\n        data {\n          id\n          text\n          senderId\n          roomId\n          scheduledAt\n          sender {\n            id\n            email\n            profilePictureUrl\n            isOnline\n          }\n        }\n        hasMore\n      }\n      participantsTyping {\n        id\n        firstName\n        lastName\n      }\n    }\n  }\n": types.RoomChatGetRoomDocument,
     "\n  query RoomChatGetMessages($roomId: Int!, $offset: Int!) {\n    room(id: $roomId) {\n      id\n      messages(offset: $offset) {\n        data {\n          id\n          text\n          senderId\n          roomId\n          isViewedByMe\n          sentAt\n          sender {\n            id\n            firstName\n            lastName\n            email\n            profilePictureUrl\n            isOnline\n          }\n          images {\n            id\n            url\n          }\n          viewsCount\n        }\n        hasMore\n      }\n    }\n  }\n": types.RoomChatGetMessagesDocument,
@@ -60,6 +61,7 @@ const documents = {
     "\n  subscription RoomChatPendingInvitationsCountChange2($roomId: Int!) {\n    roomPendingInvitationsCountChange(roomId: $roomId) {\n      id\n      pendingInvitationsCount\n    }\n  }\n": types.RoomChatPendingInvitationsCountChange2Document,
     "\n  subscription RoomChatParticipantTypingStart($roomId: Int!) {\n    roomParticipantTypingStart(roomId: $roomId) {\n      id\n      firstName\n      lastName\n    }\n  }\n": types.RoomChatParticipantTypingStartDocument,
     "\n  subscription RoomChatParticipantTypingStop($roomId: Int!) {\n    roomParticipantTypingStop(roomId: $roomId) {\n      id\n    }\n  }\n": types.RoomChatParticipantTypingStopDocument,
+    "\n  subscription RoomChatMessageViewsCountChange($messageId: Int!) {\n    messageViewsCountChange(messageId: $messageId)\n  }\n": types.RoomChatMessageViewsCountChangeDocument,
     "\n  mutation RoomChatLeaveRoom($input: LeaveRoomInput!) {\n    leaveRoom(input: $input)\n  }\n": types.RoomChatLeaveRoomDocument,
     "\n  subscription RoomChatPendingInvitationsCountChange($roomId: Int!) {\n    roomPendingInvitationsCountChange(roomId: $roomId) {\n      id\n      pendingInvitationsCount\n    }\n  }\n": types.RoomChatPendingInvitationsCountChangeDocument,
     "\n    mutation RoomChatExcludeUserFromRoom($roomId: Int!, $userId: Int!) {\n      excludeUserFromRoom(roomId: $roomId, userId: $userId) {\n        id\n        name\n      }\n    }\n": types.RoomChatExcludeUserFromRoomDocument,
@@ -78,6 +80,8 @@ const documents = {
     "\n  subscription HomeUserRejectedInvitation {\n    invitationRejected {\n      userId\n      roomId\n      room {\n        id\n        name\n      }\n      invitedUser {\n        id\n        firstName\n        lastName\n      }\n    }\n  }\n": types.HomeUserRejectedInvitationDocument,
     "\n  subscription HomeUserAcceptedInvitation {\n    invitationAccepted {\n      userId\n      roomId\n      room {\n        id\n        name\n      }\n      invitedUser {\n        id\n        firstName\n        lastName\n      }\n    }\n  }\n": types.HomeUserAcceptedInvitationDocument,
     "\n  mutation SendMessage($input: SendMessageInput!) {\n    sendMessage(input: $input) {\n      id\n      text\n      senderId\n      roomId\n      isViewedByMe\n      sentAt\n      sender {\n        id\n        email\n        profilePictureUrl\n        isOnline\n      }\n      images {\n        id\n        url\n      }\n      viewsCount\n    }\n  }\n": types.SendMessageDocument,
+    "\n  mutation DeleteMessages($roomId: Int!, $messageIds: [Int!]!) {\n    deleteMessages(roomId: $roomId, messageIds: $messageIds)\n  }\n": types.DeleteMessagesDocument,
+    "\n  mutation MarkMessageAsViewedByMeTemp($messageId: Int!) {\n    markMessageAsViewed(messageId: $messageId) {\n      id\n      viewsCount\n      isViewedByMe\n    }\n  }\n": types.MarkMessageAsViewedByMeTempDocument,
     "\n  query GetRoom($roomId: Int!, $scheduledMessagesOffset: Int!) {\n    room(id: $roomId) {\n      id\n      name\n      creatorId\n      thumbnailUrl\n      pendingInvitationsCount\n      participantsOnlineCount\n      myScheduledMessagesCount\n      scheduledMessages(offset: $scheduledMessagesOffset) {\n        data {\n          id\n          text\n          senderId\n          roomId\n          scheduledAt\n          sender {\n            id\n            email\n            profilePictureUrl\n            isOnline\n          }\n        }\n        hasMore\n      }\n      participantsTyping {\n        id\n        firstName\n        lastName\n      }\n    }\n  }\n": types.GetRoomDocument,
     "\n    mutation NotifyMeIsTyping($roomId: Int!, $isTyping: Boolean!) {\n      notifyMeTypingStatusChange(roomId: $roomId, isTyping: $isTyping)\n    }\n": types.NotifyMeIsTypingDocument,
     "\n    subscription UserTypingStatusChange($roomId: Int!) {\n      userTypingStatusChange(roomId: $roomId) {\n        isTyping\n        user {\n          id\n          firstName\n          lastName\n        }\n      }\n    }\n": types.UserTypingStatusChangeDocument,
@@ -205,7 +209,7 @@ export function gql(source: "\n  mutation ScheduleMessage($input: ScheduleMessag
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function gql(source: "\n  mutation DeleteMessages($roomId: Int!, $messageIds: [Int!]!) {\n    deleteMessages(roomId: $roomId, messageIds: $messageIds)\n  }\n"): (typeof documents)["\n  mutation DeleteMessages($roomId: Int!, $messageIds: [Int!]!) {\n    deleteMessages(roomId: $roomId, messageIds: $messageIds)\n  }\n"];
+export function gql(source: "\n  mutation RoomChatDeleteMessages($roomId: Int!, $messageIds: [Int!]!) {\n    deleteMessages(roomId: $roomId, messageIds: $messageIds)\n  }\n"): (typeof documents)["\n  mutation RoomChatDeleteMessages($roomId: Int!, $messageIds: [Int!]!) {\n    deleteMessages(roomId: $roomId, messageIds: $messageIds)\n  }\n"];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
@@ -225,7 +229,11 @@ export function gql(source: "\n  subscription RoomChatParticipantLeave($roomId: 
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function gql(source: "\n  mutation MarkMessageAsViewedByMe($messageId: Int!) {\n    markMessageAsViewedByMe(messageId: $messageId) {\n      id\n      viewsCount\n      isViewedByMe\n    }\n  }\n"): (typeof documents)["\n  mutation MarkMessageAsViewedByMe($messageId: Int!) {\n    markMessageAsViewedByMe(messageId: $messageId) {\n      id\n      viewsCount\n      isViewedByMe\n    }\n  }\n"];
+export function gql(source: "\n  mutation MarkMessageAsViewedByMe($messageId: Int!) {\n    markMessageAsViewed(messageId: $messageId) {\n      id\n      viewsCount\n      isViewedByMe\n    }\n  }\n"): (typeof documents)["\n  mutation MarkMessageAsViewedByMe($messageId: Int!) {\n    markMessageAsViewed(messageId: $messageId) {\n      id\n      viewsCount\n      isViewedByMe\n    }\n  }\n"];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function gql(source: "\n  mutation RoomChatMarkMessageAsViewed($messageId: Int!) {\n    markMessageAsViewed(messageId: $messageId) {\n      id\n      viewsCount\n      isViewedByMe\n    }\n  }\n"): (typeof documents)["\n  mutation RoomChatMarkMessageAsViewed($messageId: Int!) {\n    markMessageAsViewed(messageId: $messageId) {\n      id\n      viewsCount\n      isViewedByMe\n    }\n  }\n"];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
@@ -290,6 +298,10 @@ export function gql(source: "\n  subscription RoomChatParticipantTypingStart($ro
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function gql(source: "\n  subscription RoomChatParticipantTypingStop($roomId: Int!) {\n    roomParticipantTypingStop(roomId: $roomId) {\n      id\n    }\n  }\n"): (typeof documents)["\n  subscription RoomChatParticipantTypingStop($roomId: Int!) {\n    roomParticipantTypingStop(roomId: $roomId) {\n      id\n    }\n  }\n"];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function gql(source: "\n  subscription RoomChatMessageViewsCountChange($messageId: Int!) {\n    messageViewsCountChange(messageId: $messageId)\n  }\n"): (typeof documents)["\n  subscription RoomChatMessageViewsCountChange($messageId: Int!) {\n    messageViewsCountChange(messageId: $messageId)\n  }\n"];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
@@ -362,6 +374,14 @@ export function gql(source: "\n  subscription HomeUserAcceptedInvitation {\n    
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function gql(source: "\n  mutation SendMessage($input: SendMessageInput!) {\n    sendMessage(input: $input) {\n      id\n      text\n      senderId\n      roomId\n      isViewedByMe\n      sentAt\n      sender {\n        id\n        email\n        profilePictureUrl\n        isOnline\n      }\n      images {\n        id\n        url\n      }\n      viewsCount\n    }\n  }\n"): (typeof documents)["\n  mutation SendMessage($input: SendMessageInput!) {\n    sendMessage(input: $input) {\n      id\n      text\n      senderId\n      roomId\n      isViewedByMe\n      sentAt\n      sender {\n        id\n        email\n        profilePictureUrl\n        isOnline\n      }\n      images {\n        id\n        url\n      }\n      viewsCount\n    }\n  }\n"];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function gql(source: "\n  mutation DeleteMessages($roomId: Int!, $messageIds: [Int!]!) {\n    deleteMessages(roomId: $roomId, messageIds: $messageIds)\n  }\n"): (typeof documents)["\n  mutation DeleteMessages($roomId: Int!, $messageIds: [Int!]!) {\n    deleteMessages(roomId: $roomId, messageIds: $messageIds)\n  }\n"];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function gql(source: "\n  mutation MarkMessageAsViewedByMeTemp($messageId: Int!) {\n    markMessageAsViewed(messageId: $messageId) {\n      id\n      viewsCount\n      isViewedByMe\n    }\n  }\n"): (typeof documents)["\n  mutation MarkMessageAsViewedByMeTemp($messageId: Int!) {\n    markMessageAsViewed(messageId: $messageId) {\n      id\n      viewsCount\n      isViewedByMe\n    }\n  }\n"];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
