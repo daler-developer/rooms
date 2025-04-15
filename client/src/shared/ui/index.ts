@@ -21,7 +21,6 @@ import Sidebar from "./components/Sidebar/Sidebar.tsx";
 import IconButton from "./components/IconButton/IconButton.tsx";
 import ClickOutside from "./components/ClickOutside/ClickOutside.tsx";
 import Avatar from "./components/Avatar/Avatar.tsx";
-import AvatarWithActions from "./components/AvatarWithActions/AvatarWithActions.tsx";
 import Portal from "./components/Portal/Portal.tsx";
 import Slider from "./components/Slider/Slider.tsx";
 import Popover from "./components/Popover/Popover.tsx";
@@ -63,7 +62,6 @@ export {
   Sidebar,
   ClickOutside,
   Avatar,
-  AvatarWithActions,
   Portal,
   Slider,
   Popover,

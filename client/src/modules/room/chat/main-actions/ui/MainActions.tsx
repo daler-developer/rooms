@@ -41,11 +41,7 @@ const MainActions = () => {
     <>
       <Dropdown
         placement="bottom-right"
-        trigger={
-          <div>
-            <IconButton Icon={HiMiniEllipsisVertical} color="light" type="button" />
-          </div>
-        }
+        trigger={<IconButton Icon={HiMiniEllipsisVertical} color="light" type="button" />}
         items={[
           {
             label: "Invite",
