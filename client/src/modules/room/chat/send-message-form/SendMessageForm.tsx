@@ -7,7 +7,6 @@ import { useFilePaste } from "@/shared/hooks";
 import { GrSend } from "react-icons/gr";
 import { useForm, FormProvider } from "@/shared/lib/form";
 import { useRoomChatStore } from "../store";
-import ScheduleMessageModal, { ScheduleMessageModalHandle } from "@/widgets/room-chat/ui/ScheduleMessage/ScheduleMessageModal.tsx";
 import useGetRoomQuery from "../gql/useGetRoomQuery.ts";
 import ViewScheduledMessagesButton from "./ViewScheduledMessagesButton.tsx";
 import UploadedImages from "./uploaded-images/UploadedImages.tsx";
@@ -15,6 +14,7 @@ import { FormFields } from "./types.ts";
 import MessageTextInput from "./MessageTextInput.tsx";
 import useHandleSendMessage from "./useHandleSendMessage.ts";
 import useHandleScheduleMessage from "./useHandleScheduleMessage.ts";
+import ScheduleMessageModal, { ScheduleMessageModalHandle } from "./ScheduleMessageModal.tsx";
 
 const validationSchema = yup.object({});
 

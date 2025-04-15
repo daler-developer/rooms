@@ -7,7 +7,7 @@ import { useRoomChatStore } from "../store";
 import { FormFields } from "./types";
 import useNotifyTypingStartMutation from "../gql/useNotifyTypingStartMutation.ts";
 import useNotifyTypingStopMutation from "../gql/useNotifyTypingStopMutation.ts";
-import ScheduleMessageModal, { type ScheduleMessageModalHandle } from "@/widgets/room-chat/ui/ScheduleMessage/ScheduleMessageModal.tsx";
+import ScheduleMessageModal, { type ScheduleMessageModalHandle } from "./ScheduleMessageModal.tsx";
 
 const MessageTextInput = () => {
   const roomId = useRoomId();
