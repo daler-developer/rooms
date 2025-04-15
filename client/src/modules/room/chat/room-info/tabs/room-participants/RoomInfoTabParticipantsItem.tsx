@@ -1,10 +1,10 @@
 import { type RoomChatGetRoomParticipantsQuery } from "@/__generated__/graphql.ts";
+import { useAuth } from "@/modules/auth";
 import { UserCard } from "@/entities/user";
-import { useRoomChatStore } from "../../../context";
+import { useRoomId } from "../../../context";
 import { Button } from "@/shared/ui";
 import { useMemo } from "react";
 import useGetRoomQuery from "../../../gql/useGetRoomQuery.ts";
-import { useAuth } from "@/modules/auth";
 import useExcludeUserFromRoomMutation from "../../gql/useExcludeUserFromRoomMutation.ts";
 
 type Props = {
@@ -12,9 +12,8 @@ type Props = {
 };
 
 const RoomInfoTabParticipantsItem = ({ participant }: Props) => {
+  const roomId = useRoomId();
   const { userId } = useAuth();
-
-  const { roomId } = useRoomChatStore();
 
   const queries = {
     room: useGetRoomQuery(),

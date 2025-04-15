@@ -1,12 +1,7 @@
-import BaseScreen from "../base/BaseScreen";
-import BaseScreenHeader from "../base/BaseScreenHeader";
-import BaseScreenContent from "../base/BaseScreenContent.tsx";
-import BaseScreenFooter from "../base/BaseScreenFooter.tsx";
-import { Skeleton } from "@/shared/ui";
-import BaseMessageSkeletons from "../base/BaseMessageSkeletons";
-import Scroll from "@/shared/ui/components/ScrollV2/Scroll.tsx";
-import { useScrollControl } from "@/shared/ui";
 import { useEffect } from "react";
+import BaseScreen from "../base/BaseScreen.tsx";
+import { Skeleton, Scroll, useScrollControl } from "@/shared/ui";
+import BaseMessageSkeletons from "../base/BaseMessageSkeletons.tsx";
 
 const ScreenSkeletons = () => {
   const scrollControl = useScrollControl();
@@ -18,7 +13,7 @@ const ScreenSkeletons = () => {
   return (
     <BaseScreen
       header={
-        <BaseScreenHeader
+        <BaseScreen.Header
           left={
             <div className="flex items-center gap-2">
               <Skeleton type="circular" size={50} />
@@ -39,13 +34,13 @@ const ScreenSkeletons = () => {
         />
       }
       content={
-        <BaseScreenContent>
+        <BaseScreen.Content>
           <Scroll ref={scrollControl.ref} height="full" showScrollToBottomButton={false}>
             <div className="p-6">
               <BaseMessageSkeletons />
             </div>
           </Scroll>
-        </BaseScreenContent>
+        </BaseScreen.Content>
       }
     />
   );

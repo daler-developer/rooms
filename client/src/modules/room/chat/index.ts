@@ -1,3 +1,3 @@
-import RoomChat from "./ui/RoomChat.tsx";
+import RoomChat from "./RoomChat.tsx";
 
 export { RoomChat };

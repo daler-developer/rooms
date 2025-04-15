@@ -45,7 +45,7 @@ const ScheduledMessage = ({ message, withScheduledAtDivider }: Props) => {
           label: "Delete",
           Icon: MdDeleteOutline,
           async onClick() {
-            await mutations.deleteMessages.mutate(roomId, { messageIds: [message.id] });
+            await mutations.deleteMessages.mutate({ roomId, messageIds: [message.id] });
           },
         },
       ]}
