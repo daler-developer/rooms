@@ -146,9 +146,7 @@ class UserService {
     // }
   }
 
-  async handleUserDisconnect({ userId, sessionId }: { userId: number; sessionId: string }) {
-    console.log("disconnect", userId, sessionId);
-  }
+  async handleUserDisconnect({ userId, sessionId }: { userId: number; sessionId: string }) {}
 
   async fetchRoomParticipants(roomId: number) {
     const participations = await this.userToRoomParticipationRepository.getManyByRoomId(roomId);

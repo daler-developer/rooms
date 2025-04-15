@@ -11,11 +11,19 @@ const useDeleteMessagesMutation = () => {
   return {
     ...mutation,
     async mutate(variables: RoomChatDeleteMessagesMutationVariables) {
-      console.log("variables", variables);
       apolloClient.cache.modify<Room>({
         id: apolloClient.cache.identify({ __typename: "Room", id: variables.roomId }),
         fields: {
           messages(prevMessages, { readField }) {
+            return {
+              ...prevMessages,
+              data: prevMessages.data.filter((message) => {
+                const messageId = readField("id", message);
+                return !variables.messageIds.includes(messageId);
+              }),
+            };
+          },
+          scheduledMessages(prevMessages, { readField }) {
             return {
               ...prevMessages,
               data: prevMessages.data.filter((message) => {

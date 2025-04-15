@@ -8,7 +8,6 @@ const useGetRoomQuery = () => {
   return useQuery(GET_ROOM, {
     variables: {
       roomId,
-      scheduledMessagesOffset: 0,
     },
   });
 };

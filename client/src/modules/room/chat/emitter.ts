@@ -6,6 +6,7 @@ type Events = {
   MESSAGE_INSERTED: {
     senderIsMe: boolean;
   };
+  SCHEDULED_MESSAGE_INSERTED: void;
 };
 
 type EventCallback<K extends keyof Events> = (payload: Events[K]) => void;

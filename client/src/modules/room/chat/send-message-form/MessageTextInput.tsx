@@ -12,9 +12,18 @@ import ScheduleMessageModal, { type ScheduleMessageModalHandle } from "@/widgets
 const MessageTextInput = () => {
   const roomId = useRoomId();
 
-  const { messageTextInputEl, setMessageTextInputEl, tab, hiddenSubmitButton } = useRoomChatStore();
+  const { setMessageTextInputEl, tab, hiddenSubmitButton } = useRoomChatStore();
 
+  const inputEl = useRef<HTMLInputElement>(null!);
   const scheduleMessageModalComp = useRef<ScheduleMessageModalHandle>(null!);
+
+  useEffect(() => {
+    setMessageTextInputEl(inputEl.current);
+
+    return () => {
+      setMessageTextInputEl(null);
+    };
+  }, []);
 
   const form = useFormContext<FormFields>();
 
@@ -69,17 +78,7 @@ const MessageTextInput = () => {
   return (
     <>
       {form.renderField("text", ({ getFieldProps }) => (
-        <Input
-          ref={(el) => {
-            if (el !== messageTextInputEl) {
-              setMessageTextInputEl(el);
-            }
-          }}
-          className="flex-grow"
-          placeholder="Message text"
-          {...getFieldProps()}
-          onKeyDown={handleKeyDown}
-        />
+        <Input ref={inputEl} className="flex-grow" placeholder="Message text" {...getFieldProps()} onKeyDown={handleKeyDown} />
       ))}
 
       <ScheduleMessageModal ref={scheduleMessageModalComp} />

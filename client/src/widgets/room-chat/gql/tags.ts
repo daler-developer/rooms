@@ -94,7 +94,7 @@ export const GET_ROOM = gql(`
       thumbnailUrl
       pendingInvitationsCount
       participantsOnlineCount
-      myScheduledMessagesCount
+      scheduledMessagesCount
       scheduledMessages(offset: $scheduledMessagesOffset) {
         data {
           id
@@ -153,7 +153,7 @@ export const GET_MESSAGES = gql(`
 `);
 
 export const GET_SCHEDULED_MESSAGES = gql(`
-  query RoomChatGetScheduledMessages($roomId: Int!, $offset: Int!) {
+  query RoomChatGetScheduledMessagesTemp($roomId: Int!, $offset: Int!) {
     room(id: $roomId) {
       id
       scheduledMessages(offset: $offset) {

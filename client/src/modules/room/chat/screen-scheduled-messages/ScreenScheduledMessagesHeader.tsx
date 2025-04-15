@@ -3,23 +3,36 @@ import { MdOutlineArrowBack } from "react-icons/md";
 import { useRoomId } from "../context";
 import { useRoomChatStore } from "../store";
 import BaseScreen from "../base/BaseScreen";
-import useDeleteMessagesMutation from "../../gql/useDeleteMessagesMutation";
+import useDeleteMessagesMutation from "../gql/useDeleteMessagesMutation";
+import useSendScheduledMessagesNowMutation from "../gql/useSendScheduledMessagesNowMutation";
 
 const ScreenScheduledMessagesHeader = () => {
-  const { setTab, selectedScheduledMessages, clearScheduledSelectedMessages } = useRoomChatStore();
+  const { setTab, selectedScheduledMessages, setSelectedScheduledMessages } = useRoomChatStore();
+
+  const mutations = {
+    deleteMessages: useDeleteMessagesMutation(),
+    sendScheduledMessagesNow: useSendScheduledMessagesNowMutation(),
+  };
 
   const roomId = useRoomId();
 
   const handleDelete = async () => {
-    // deleteMessages({
-    //   roomId,
-    //   messageIds: selectedScheduledMessages,
-    // });
-    clearScheduledSelectedMessages();
+    mutations.deleteMessages.mutate({
+      roomId,
+      messageIds: selectedScheduledMessages,
+    });
+    setSelectedScheduledMessages([]);
   };
 
   const handleCancel = () => {
-    clearScheduledSelectedMessages();
+    setSelectedScheduledMessages([]);
+  };
+
+  const handleSendNow = () => {
+    mutations.sendScheduledMessagesNow.mutate(roomId, {
+      messageIds: selectedScheduledMessages,
+    });
+    setSelectedScheduledMessages([]);
   };
 
   if (selectedScheduledMessages.length > 0) {
@@ -32,6 +45,9 @@ const ScreenScheduledMessagesHeader = () => {
         }
         right={
           <div className="flex items-center gap-2">
+            <Button type="button" color="default" onClick={handleSendNow}>
+              Send now
+            </Button>
             <Button type="button" color="red" onClick={handleDelete}>
               Delete
             </Button>
@@ -49,7 +65,7 @@ const ScreenScheduledMessagesHeader = () => {
       left={
         <div className="flex items-center gap-2">
           <IconButton
-            type={"button"}
+            type="button"
             Icon={MdOutlineArrowBack}
             color="light"
             onClick={() => {

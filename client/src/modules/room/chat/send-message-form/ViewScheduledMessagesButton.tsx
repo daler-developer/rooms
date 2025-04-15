@@ -16,7 +16,7 @@ const ViewScheduledMessagesButton = () => {
       Icon={CiCalendar}
       color="light"
       withBadge
-      badgeContent={queries.room.data!.room.myScheduledMessagesCount}
+      badgeContent={queries.room.data!.room.scheduledMessagesCount}
       onClick={() => {
         setTab("scheduled-messages");
       }}

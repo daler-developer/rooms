@@ -1,15 +1,19 @@
+import { useApolloClient } from "@apollo/client";
 import { useCallback } from "react";
-import { flushSync } from "react-dom";
 import { v4 as uuid } from "uuid";
 import { useCustomMutation } from "@/shared/lib/graphql";
+import { Room } from "@/__generated__/graphql";
 import { SCHEDULE_MESSAGE_MUTATION } from "../gql/tags";
 import useGetRoomQuery from "../gql/useGetRoomQuery";
 import { FormFields } from "./types";
-import { useRoomChatStore, TemporaryMessage, TemporaryScheduledMessage } from "../store";
+import { useRoomChatStore, TemporaryScheduledMessage } from "../store";
 import { useRoomId } from "../context";
+import { useRoomChatEmitter } from "../emitter";
 
 const useHandleSendMessage = () => {
   const roomId = useRoomId();
+  const emitter = useRoomChatEmitter();
+  const apolloClient = useApolloClient();
 
   const { addTemporaryScheduledMessage, removeTemporaryScheduledMessage } = useRoomChatStore();
 
@@ -24,47 +28,49 @@ const useHandleSendMessage = () => {
   return useCallback(
     (values: FormFields) => {
       const temporaryScheduledMessage: TemporaryScheduledMessage = {
-        temporaryId: uuid(),
+        id: uuid(),
         text: values.text,
         scheduledAt: values.scheduleAt,
-        isTemporary: true,
+        imageUrls: values.images.map((image) => image.imageUrl!),
       };
 
-      flushSync(() => {
-        addTemporaryScheduledMessage(temporaryScheduledMessage);
+      addTemporaryScheduledMessage(temporaryScheduledMessage);
+
+      emitter.emit("SCHEDULED_MESSAGE_INSERTED");
+
+      apolloClient.cache.modify<Room>({
+        id: apolloClient.cache.identify({ __typename: "Room", id: roomId }),
+        fields: {
+          scheduledMessagesCount(prevCount) {
+            return prevCount + 1;
+          },
+        },
       });
-
-      // emitter.emit("SCHEDULED_MESSAGE_INSERTED");
-
-      // apolloClient.cache.modify({
-      //   id: apolloClient.cache.identify({ __typename: "Room", id: roomId }),
-      //   fields: {
-      //     myScheduledMessagesCount(prevCount: number) {
-      //       return prevCount + 1;
-      //     },
-      //   },
-      // });
 
       mutations.scheduleMessage.mutate({
         variables: {
           input: {
             roomId,
             text: values.text,
-            scheduleAt: values.scheduleAt,
+            scheduleAt: values.scheduleAt!,
             imageUrls: [],
           },
         },
         onCompleted() {
-          removeTemporaryScheduledMessage(temporaryScheduledMessage.temporaryId);
+          removeTemporaryScheduledMessage(temporaryScheduledMessage.id);
         },
         update(cache, { data }) {
-          cache.modify({
-            id: cache.identify({ __typename: "Room", id: roomId }),
+          if (!data) return;
+
+          const newMessage = data.scheduleMessage;
+
+          cache.modify<Room>({
+            id: cache.identify(queries.room.data!.room),
             fields: {
-              scheduledMessages(prevData) {
+              scheduledMessages(prevData, { toReference }) {
                 return {
-                  ...prevData,
-                  data: [...prevData.data, data!.scheduleMessage],
+                  data: [toReference(newMessage), ...prevData.data],
+                  hasMore: prevData.hasMore,
                 };
               },
             },

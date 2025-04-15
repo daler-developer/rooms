@@ -19,7 +19,7 @@ import useHandleScheduleMessage from "./useHandleScheduleMessage.ts";
 const validationSchema = yup.object({});
 
 const SendMessageForm = () => {
-  const { tab, setHiddenSubmitButton } = useRoomChatStore();
+  const { tab, setHiddenSubmitButton, messageTextInputEl } = useRoomChatStore();
 
   const hiddenSubmitBtn = useRef<HTMLInputElement>(null!);
 
@@ -49,6 +49,7 @@ const SendMessageForm = () => {
         handleSendMessage(values);
       }
 
+      messageTextInputEl!.focus();
       form.reset();
     },
   });
@@ -80,7 +81,7 @@ const SendMessageForm = () => {
     hiddenSubmitBtn.current.click();
   };
 
-  const viewerHasScheduledMessages = true || queries.room.data!.room.myScheduledMessagesCount > 0;
+  const viewerHasScheduledMessages = queries.room.data!.room.scheduledMessagesCount > 0;
 
   const handleSendClick = async () => {
     if (tab === "scheduled-messages") {

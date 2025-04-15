@@ -131,7 +131,6 @@ const start = async () => {
         // userService.updateUserOnlineStatus({ userId, sessionId, isOnline: true });
       },
       onDisconnect(ctx) {
-        console.log("exit");
         const authService = iocContainer.get<AuthService>(TYPES.AuthService);
         const userService = iocContainer.get<UserService>(TYPES.UserService);
 
@@ -166,7 +165,6 @@ const start = async () => {
       },
     ],
     formatError(error) {
-      console.log("e", error);
       return {
         message: error.message,
         code: error.extensions.code,

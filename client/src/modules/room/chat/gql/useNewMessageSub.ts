@@ -1,47 +1,40 @@
-import { useEffect } from "react";
+import { useSubscription } from "@apollo/client";
+import { Room } from "@/__generated__/graphql.ts";
 import { NEW_MESSAGE_SUB } from "./tags.ts";
-import useGetMessagesQuery from "./useGetMessagesQuery.ts";
 import { useRoomChatEmitter } from "../emitter.ts";
+import { useRoomId } from "../context";
 
 const useNewMessageSub = () => {
-  const queries = {
-    messages: useGetMessagesQuery(),
-  };
+  const roomId = useRoomId();
 
   const emitter = useRoomChatEmitter();
 
-  useEffect(() => {
-    if (queries.messages.data) {
-      const unsubscribe = queries.messages.subscribeToMore({
-        document: NEW_MESSAGE_SUB,
-        variables: {
-          skipFromCurrentSession: true,
-        },
-        updateQuery(prevData, { subscriptionData }) {
-          if (!subscriptionData.data) return prevData;
+  return useSubscription(NEW_MESSAGE_SUB, {
+    variables: {
+      skipFromCurrentSession: true,
+    },
+    onData({ data, client }) {
+      if (!data.data) return;
 
-          emitter.emit("MESSAGE_INSERTED", {
-            senderIsMe: false,
-          });
+      const newMessage = data.data.newMessage.message;
 
-          return {
-            ...prevData,
-            room: {
-              ...prevData.room,
-              messages: {
-                ...prevData.room.messages,
-                data: [...prevData.room.messages.data, subscriptionData.data.newMessage.message],
-              },
-            },
-          };
-        },
+      emitter.emit("MESSAGE_INSERTED", {
+        senderIsMe: false,
       });
 
-      return () => {
-        unsubscribe();
-      };
-    }
-  }, [queries.messages]);
+      client.cache.modify<Room>({
+        id: client.cache.identify({ __typename: "Room", id: roomId }),
+        fields: {
+          messages(prevMessages, { toReference }) {
+            return {
+              ...prevMessages,
+              data: [...prevMessages.data, toReference(newMessage)],
+            };
+          },
+        },
+      });
+    },
+  });
 };
 
 export default useNewMessageSub;

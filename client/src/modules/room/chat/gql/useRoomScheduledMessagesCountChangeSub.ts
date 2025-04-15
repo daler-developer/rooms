@@ -1,17 +1,22 @@
 import { useSubscription } from "@apollo/client";
-import { Room, RoomChatScheduledMessagesCountChangeSubscriptionVariables } from "@/__generated__/graphql.ts";
+import { Room } from "@/__generated__/graphql.ts";
 import { ROOM_SCHEDULED_MESSAGES_COUNT_CHANGE_SUB } from "./tags.ts";
+import { useRoomId } from "../context";
 
-const useMessageViewsCountChangeSub = (variables: RoomChatScheduledMessagesCountChangeSubscriptionVariables) => {
+const useMessageViewsCountChangeSub = () => {
+  const roomId = useRoomId();
+
   useSubscription(ROOM_SCHEDULED_MESSAGES_COUNT_CHANGE_SUB, {
-    variables,
+    variables: {
+      roomId,
+    },
     onData({ data, client }) {
       if (!data.data) return;
 
       client.cache.modify<Room>({
-        id: client.cache.identify({ __typename: "Room", id: variables.roomId }),
+        id: client.cache.identify({ __typename: "Room", id: roomId }),
         fields: {
-          myScheduledMessagesCount() {
+          scheduledMessagesCount() {
             return data.data!.roomScheduledMessagesCountChange;
           },
         },

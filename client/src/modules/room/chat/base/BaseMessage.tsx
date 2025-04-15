@@ -1,11 +1,12 @@
 import { Avatar, Badge, ContextMenu, MouseDownMove, ListGroup, useContextMenuControl } from "@/shared/ui";
 import clsx from "clsx";
 import { IconType } from "react-icons";
-import { ReactNode, useEffect, useRef } from "react";
+import { ReactNode, useEffect, useMemo, useRef } from "react";
 import { HiOutlineCheckCircle } from "react-icons/hi2";
 import BaseMessageSentAt from "./BaseMessageSentAt";
 import BaseMessageViewsCount from "./BaseMessageViewsCount";
 import BaseMessageDivider from "./BaseMessageDivider";
+import BaseMessageScheduledAt from "./BaseMessageScheduledAt.tsx";
 import { useBaseMessagesContext } from "./baseMessagesContext.tsx";
 import { FaRegCircleCheck } from "react-icons/fa6";
 import { useLatest } from "@/shared/hooks";
@@ -112,40 +113,56 @@ const BaseMessage = ({
     "left-[5px] bottom-full": !senderIsMe,
   });
 
+  const items = useMemo(() => {
+    const list: ReactNode[] = [];
+
+    if (selectable) {
+      list.push(
+        <ListGroup.Item
+          key="Select"
+          Icon={FaRegCircleCheck}
+          onClick={() => {
+            baseMessagesContext.handleSelect(id);
+            contextMenuContext.close();
+          }}
+        >
+          Select
+        </ListGroup.Item>,
+      );
+    }
+
+    if (contextMenuActions) {
+      contextMenuActions.forEach((action) => {
+        list.push(
+          <ListGroup.Item
+            key={action.label}
+            Icon={action.Icon}
+            onClick={() => {
+              contextMenuContext.close();
+              action.onClick();
+            }}
+          >
+            {action.label}
+          </ListGroup.Item>,
+        );
+      });
+    }
+
+    return list;
+  }, [id, contextMenuActions, selectable]);
+
   return (
     <div>
       {divider}
 
       <ContextMenu
         ref={contextMenuContext.ref}
-        enabled={!baseMessagesContext.hasSelectedMessages}
+        enabled={!baseMessagesContext.hasSelectedMessages && items.length > 0}
         placement="bottom-left"
         placementFallback="bottom-right"
         content={
           <div>
-            <ListGroup>
-              <ListGroup.Item
-                Icon={FaRegCircleCheck}
-                onClick={() => {
-                  baseMessagesContext.handleSelect(id);
-                  contextMenuContext.close();
-                }}
-              >
-                Select
-              </ListGroup.Item>
-              {contextMenuActions.map((action) => (
-                <ListGroup.Item
-                  key={action.label}
-                  Icon={action.Icon}
-                  onClick={() => {
-                    contextMenuContext.close();
-                    action.onClick();
-                  }}
-                >
-                  {action.label}
-                </ListGroup.Item>
-              ))}
-            </ListGroup>
+            <ListGroup>{items}</ListGroup>
           </div>
         }
       >
@@ -205,6 +222,7 @@ const BaseMessage = ({
 };
 
 BaseMessage.SentAt = BaseMessageSentAt;
+BaseMessage.ScheduledAt = BaseMessageScheduledAt;
 BaseMessage.ViewsCount = BaseMessageViewsCount;
 BaseMessage.Divider = BaseMessageDivider;
 

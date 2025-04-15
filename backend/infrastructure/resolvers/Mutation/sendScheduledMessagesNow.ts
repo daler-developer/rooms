@@ -10,7 +10,9 @@ const validationSchema = yup.object({
 type Args = InferType<typeof validationSchema>;
 
 const resolver = async (_, args: Args, { messageService }: CustomContext) => {
-  return messageService.sendScheduledMessagesNow(args.messageIds);
+  await messageService.sendScheduledMessagesNow(args.messageIds);
+
+  return true;
 };
 
 export default composeResolvers(authRequired, checkBlockedStatus, withValidation(validationSchema))(resolver);

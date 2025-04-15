@@ -10,10 +10,10 @@ export type TemporaryMessage = {
 };
 
 export type TemporaryScheduledMessage = {
-  temporaryId: string;
+  id: string;
   text: Flatten<GetRoomQuery["room"]["scheduledMessages"]["data"]>["text"];
   scheduledAt: Flatten<GetRoomQuery["room"]["scheduledMessages"]["data"]>["scheduledAt"];
-  isTemporary: true;
+  imageUrls: string[];
 };
 
 type Tab = "main" | "scheduled-messages";
@@ -52,6 +52,8 @@ type RoomChatState = {
   removeSelectedMessages: (messageIds: number[]) => void;
 
   selectedScheduledMessages: number[];
+  setSelectedScheduledMessages: (list: Array<number | string>) => void;
+
   clearScheduledSelectedMessages: () => void;
   addSelectedScheduledMessage: (messageId: number) => void;
   removeSelectedScheduledMessages: (messageIds: number[]) => void;
@@ -69,131 +71,6 @@ type RoomChatState = {
   setTab: (to: Tab) => void;
 };
 
-// const createRoomChatStore = (initialValues: Pick<RoomChatState, "roomId">) => {
-//   return create<RoomChatState>((set) => ({
-//     temporaryScheduledMessages: [],
-//     addTemporaryScheduledMessage(m) {
-//       set((state) => ({
-//         temporaryScheduledMessages: [...state.temporaryScheduledMessages, m],
-//       }));
-//     },
-//     removeTemporaryScheduledMessage(temporaryId) {
-//       set((state) => ({
-//         temporaryScheduledMessages: state.temporaryScheduledMessages.filter((m) => m.temporaryId !== temporaryId),
-//       }));
-//     },
-//     clearTemporaryScheduledMessages() {
-//       set({
-//         temporaryScheduledMessages: [],
-//       });
-//     },
-//
-//     roomId: initialValues.roomId,
-//
-//     temporaryMessages: [],
-//     selectedMessages: [],
-//     messagesListEl: null,
-//     messagesListScrollHandler: null,
-//
-//     tab: "main",
-//     setTab(to) {
-//       set({
-//         tab: to,
-//       });
-//     },
-//
-//     messagesListScrollableEl: null,
-//     setMessagesListScrollableEl(to) {
-//       set(() => ({
-//         messagesListScrollableEl: to,
-//       }));
-//     },
-//
-//     messagesOffset: 0,
-//     setMessagesOffset(to) {
-//       set(() => ({
-//         messagesOffset: to,
-//       }));
-//     },
-//
-//     scheduledMessagesOffset: 0,
-//     setScheduledMessagesOffset(to) {
-//       set(() => ({
-//         scheduledMessagesOffset: to,
-//       }));
-//     },
-//
-//     addTemporaryMessage(temporaryMessage) {
-//       set((state) => ({
-//         temporaryMessages: [...state.temporaryMessages, temporaryMessage],
-//       }));
-//     },
-//     removeTemporaryMessage(temporaryId) {
-//       set((state) => ({
-//         temporaryMessages: state.temporaryMessages.filter((m) => m.temporaryId !== temporaryId),
-//       }));
-//     },
-//     setMessagesListEl(el) {
-//       set({
-//         messagesListEl: el,
-//       });
-//     },
-//     setMessagesListScrollHandler(val) {
-//       set({
-//         messagesListScrollHandler: val,
-//       });
-//     },
-//
-//     setRoomId: (roomId) => set({ roomId }),
-//
-//     clearSelectedMessages() {
-//       set({
-//         selectedMessages: [],
-//       });
-//     },
-//     addSelectedMessage(messageId) {
-//       set((state) => {
-//         return {
-//           selectedMessages: [...state.selectedMessages, messageId],
-//         };
-//       });
-//     },
-//     removeSelectedMessage(messageId) {
-//       set((state) => {
-//         return {
-//           selectedMessages: state.selectedMessages.filter((id) => id !== messageId),
-//         };
-//       });
-//     },
-//     removeSelectedMessages(messageIds) {
-//       set((state) => {
-//         return {
-//           selectedMessages: state.selectedMessages.filter((id) => !messageIds.includes(id)),
-//         };
-//       });
-//     },
-//
-//     selectedScheduledMessages: [],
-//     clearScheduledSelectedMessages() {
-//       set({
-//         selectedScheduledMessages: [],
-//       });
-//     },
-//     addSelectedScheduledMessage(messageId) {
-//       set((state) => ({
-//         selectedScheduledMessages: [...state.selectedScheduledMessages, messageId],
-//       }));
-//     },
-//     removeSelectedScheduledMessages(messageIds) {
-//       set((state) => ({
-//         selectedScheduledMessages: state.selectedScheduledMessages.filter((_messageId) => !messageIds.includes(_messageId)),
-//       }));
-//     },
-//   }));
-// };
-//
-// export default createRoomChatStore;
-
 const { useStore: useRoomChatStore, withStore: withRoomChatStore } = createZustandStoreFactory<RoomChatState>((set) => ({
   hiddenSubmitButton: null,
   setHiddenSubmitButton(to) {
@@ -208,9 +85,9 @@ const { useStore: useRoomChatStore, withStore: withRoomChatStore } = createZusta
       temporaryScheduledMessages: [...state.temporaryScheduledMessages, m],
     }));
   },
-  removeTemporaryScheduledMessage(temporaryId) {
+  removeTemporaryScheduledMessage(id) {
     set((state) => ({
-      temporaryScheduledMessages: state.temporaryScheduledMessages.filter((m) => m.temporaryId !== temporaryId),
+      temporaryScheduledMessages: state.temporaryScheduledMessages.filter((m) => m.id !== id),
     }));
   },
   clearTemporaryScheduledMessages() {
@@ -319,6 +196,12 @@ const { useStore: useRoomChatStore, withStore: withRoomChatStore } = createZusta
   },
 
   selectedScheduledMessages: [],
+  setSelectedScheduledMessages(list) {
+    set({
+      selectedScheduledMessages: list,
+    });
+  },
+
   clearScheduledSelectedMessages() {
     set({
       selectedScheduledMessages: [],

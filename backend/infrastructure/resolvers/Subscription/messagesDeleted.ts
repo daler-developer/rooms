@@ -9,7 +9,6 @@ export default {
     },
   ),
   resolve(payload) {
-    // console.log("payload", payload);
     return {
       messageIds: payload.messageIds,
     };

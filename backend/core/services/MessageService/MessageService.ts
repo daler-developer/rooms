@@ -125,13 +125,10 @@ export class MessageService {
 
     pubsub.publish("ROOM_SCHEDULED_MESSAGES_COUNT_CHANGE", {
       roomId,
+      userId: senderId,
       count: scheduledMessagesCount.count + 1,
     });
-    pubsub.publish("NEW_MESSAGE", {
-      newMessage: {
-        message,
-      },
-    });
+    pubsub.publish("NEW_SCHEDULED_MESSAGE", message);
 
     await this.scheduledMessagesCountRepository.updateOneByPk(
       { userId: senderId, roomId },
@@ -179,9 +176,10 @@ export class MessageService {
 
   async sendScheduledMessagesNow(messageIds: number[]) {
     for (const messageId of messageIds) {
+      console.log("messageId", messageId);
       let message = await this.messageRepository.getOneById(messageId);
 
-      message = await this.messageRepository.updateOneById(message.id, { sentAt: message.scheduledAt });
+      message = await this.messageRepository.updateOneById(message.id, { sentAt: new Date().toISOString() });
 
       pubsub.publish("NEW_MESSAGE", {
         newMessage: {
@@ -189,8 +187,6 @@ export class MessageService {
         },
       });
     }
-
-    return true;
   }
 
   async markMessageAsViewed({ messageId, userId }: { messageId: number; userId: number }) {

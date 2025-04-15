@@ -87,7 +87,7 @@ type Room {
     pendingInvitationsCount: Int!
     pendingInvitations: [Invitation!]!
     participantsOnlineCount: Int!
-    myScheduledMessagesCount: Int!
+    scheduledMessagesCount: Int!
     lastMessage: Message
     unreadMessagesCount: Int!
     thumbnailUrl: String

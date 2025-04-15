@@ -25,7 +25,7 @@ export const SEND_MESSAGE_MUTATION = gql(`
 `);
 
 export const SCHEDULE_MESSAGE_MUTATION = gql(`
-  mutation ScheduleMessage($input: ScheduleMessage!) {
+  mutation RoomChatScheduleMessage($input: ScheduleMessage!) {
     scheduleMessage(input: $input) {
       id
       text
@@ -37,6 +37,10 @@ export const SCHEDULE_MESSAGE_MUTATION = gql(`
         email
         profilePictureUrl
         isOnline
+      }
+      images {
+        id
+        url
       }
     }
   }
@@ -118,7 +122,7 @@ export const GET_ME = gql(`
 `);
 
 export const GET_ROOM = gql(`
-  query RoomChatGetRoom($roomId: Int!, $scheduledMessagesOffset: Int!) {
+  query RoomChatGetRoom($roomId: Int!) {
     room(id: $roomId) {
       id
       name
@@ -126,23 +130,7 @@ export const GET_ROOM = gql(`
       thumbnailUrl
       pendingInvitationsCount
       participantsOnlineCount
-      myScheduledMessagesCount
-      scheduledMessages(offset: $scheduledMessagesOffset) {
-        data {
-          id
-          text
-          senderId
-          roomId
-          scheduledAt
-          sender {
-            id
-            email
-            profilePictureUrl
-            isOnline
-          }
-        }
-        hasMore
-      }
+      scheduledMessagesCount
       participantsTyping {
         id
         firstName
@@ -200,6 +188,10 @@ export const GET_SCHEDULED_MESSAGES = gql(`
             email
             profilePictureUrl
             isOnline
+          }
+          images {
+            id
+            url
           }
         }
         hasMore
