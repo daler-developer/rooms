@@ -283,6 +283,7 @@ type Mutation {
     notifyMeOnlineStatusChange(status: String!): User!
     excludeUserFromRoom(roomId: Int!, userId: Int!): Room!
     deleteMessages(roomId: Int!, messageIds: [Int!]!): Boolean!
+    deleteScheduledMessages(messageIds: [Int!]!): Boolean!
     sendScheduledMessagesNow(messageIds: [Int!]!): Boolean!
     notifyTypingStart(roomId: Int!): Boolean!
     notifyTypingStop(roomId: Int!): Boolean!
@@ -306,15 +307,18 @@ type Subscription {
     roomParticipantsCountChange(roomId: Int!): Room!
     roomParticipantsOnlineCountChange(roomId: Int!): Room!
     roomScheduledMessagesCountChange(roomId: Int!): Int!
+    roomLastMessageChange(roomId: Int!): Message
     roomParticipantTypingStart(roomId: Int!): User!
     roomParticipantTypingStop(roomId: Int!): User!
     newMessage(skipFromCurrentSession: Boolean!): NewMessageEvent!
+    newScheduledMessage(skipFromCurrentSession: Boolean!): [Message!]!
     newRoom: Room!
     userTypingStatusChange(roomId: Int!): UserTypingStatusChangeEvent!
     messageViewed(messageId: Int!): MessageViewedEvent!
     messageViewsCountChange(messageId: Int!): Int!
     roomPendingInvitationsCountChange(roomId: Int!): Room!
     messagesDeleted(roomId: Int!): MessagesDeletedEvent!
+    scheduledMessagesDeleted(roomId: Int!): [Int!]!
     roomCreated(skipFromCurrentSession: Boolean!): Room!
     userProfileUpdated(userId: Int!): User!
 }

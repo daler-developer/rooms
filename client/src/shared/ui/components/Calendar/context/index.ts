@@ -1,10 +1,12 @@
 import { createContext, useContext } from "react";
-import createCalendarStore from "../store/index.ts";
+import { type Props } from "../Calendar.tsx";
 
-const CalendarStoreContext = createContext<ReturnType<typeof createCalendarStore>>(null!);
+type ContextValue = Props;
 
-const useCalendarStore = () => {
-  return useContext(CalendarStoreContext);
+const CalendarContext = createContext<ContextValue>(null!);
+
+const useCalendarContext = () => {
+  return useContext(CalendarContext);
 };
 
-export { CalendarStoreContext, useCalendarStore };
+export { CalendarContext, useCalendarContext };

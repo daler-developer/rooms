@@ -11,7 +11,7 @@ const validationSchema = yup.object({
 type Args = InferType<typeof validationSchema>;
 
 const resolver = async (_, args: Args, { messageService }: CustomContext) => {
-  await messageService.deleteMessages(args.roomId, args.messageIds);
+  await messageService.deleteMessages(args.messageIds);
 
   return true;
 };

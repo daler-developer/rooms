@@ -1,6 +1,6 @@
 import { ElementRef, forwardRef, useImperativeHandle, useMemo, useRef, useState } from "react";
 import { Button, Calendar, Modal, TimeInput, type Time } from "@/shared/ui";
-import dayjs from "dayjs";
+import dayjs, { Dayjs } from "dayjs";
 
 export type ScheduleMessageModalHandle = {
   open: () => Promise<string>;
@@ -8,7 +8,7 @@ export type ScheduleMessageModalHandle = {
 
 const ScheduleMessageModal = forwardRef<ScheduleMessageModalHandle>((_, ref) => {
   const [showModal, setShowModal] = useState(false);
-  const [date, setDate] = useState(dayjs());
+  const [date, setDate] = useState<Dayjs>(() => dayjs());
   const [time, setTime] = useState<Time>({
     hours: 12,
     minutes: 34,
@@ -27,7 +27,6 @@ const ScheduleMessageModal = forwardRef<ScheduleMessageModalHandle>((_, ref) => 
       const currentTimePlus10MinutesForward = dayjs().add(10, "minutes");
 
       calendar.current.setValue(currentTimePlus10MinutesForward);
-
       timeInput.current.setValue({
         hours: currentTimePlus10MinutesForward.hour(),
         minutes: currentTimePlus10MinutesForward.minute(),
@@ -64,7 +63,7 @@ const ScheduleMessageModal = forwardRef<ScheduleMessageModalHandle>((_, ref) => 
   return (
     <Modal size="sm" title="Schedule message" isOpen={showModal} onClose={handleClose}>
       <div>
-        <Calendar ref={calendar} value={date} onChange={setDate} />
+        <Calendar ref={calendar} minDate={dayjs()} value={date} onChange={setDate} />
 
         <div className="mt-4 flex justify-center">
           <TimeInput ref={timeInput} value={time} onChange={setTime} />

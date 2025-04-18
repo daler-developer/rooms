@@ -1,9 +1,9 @@
-import { useState, useMemo, useRef, forwardRef, useImperativeHandle } from "react";
+import { useMemo, forwardRef, useImperativeHandle } from "react";
 import dayjs, { Dayjs } from "dayjs";
 import { MdKeyboardArrowLeft, MdKeyboardArrowRight } from "react-icons/md";
 import Cell from "./Cell";
-import createCalendarStore from "./store";
-import { CalendarStoreContext, useCalendarStore } from "./context";
+import { withCalendarStore, useCalendarStore } from "./store.ts";
+import { CalendarContext } from "./context";
 
 const monthLabelMap: any = {
   0: "Jan",
@@ -22,19 +22,19 @@ const monthLabelMap: any = {
 
 const allDaysOfTheWeek = ["Mon", "Tue", "Wed", "Sur", "Fr", "Sat", "Sun"];
 
-type Props = {
+export type Props = {
   value: Dayjs | null;
-  onChange?: (to: Dayjs) => void;
+  onChange: (to: Dayjs) => void;
+  minDate?: Dayjs;
 };
 
 export type CalendarHandle = {
   setValue: (v: Dayjs) => void;
 };
 
-const Calendar = forwardRef<CalendarHandle, Props>(({ onChange }: Props, ref) => {
-  const page = useCalendarStore().use.page();
-  const setPage = useCalendarStore().use.setPage();
-  const setDate = useCalendarStore().use.setDate();
+const Calendar = forwardRef<CalendarHandle, Props>((props: Props, ref) => {
+  const { onChange } = props;
+  const { page, setPage } = useCalendarStore();
 
   const handlePrevMonth = () => {
     const result = dayjs().year(page.year).month(page.month).subtract(1, "month");
@@ -71,68 +71,69 @@ const Calendar = forwardRef<CalendarHandle, Props>(({ onChange }: Props, ref) =>
   useImperativeHandle(ref, () => ({
     setValue(value) {
       onChange?.(value);
-      setDate(value);
       setPage(value.year(), value.month());
     },
   }));
 
   return (
-    <div>
-      <div className="flex items-center justify-between p-[10px]">
-        <div className="font-bold text-[22px]">
-          {page.year} {monthLabelMap[page.month]}
-        </div>
-
-        <div className="flex items-center gap-x-[5px]">
-          <MdKeyboardArrowLeft className="cursor-pointer text-[40px]" onClick={handlePrevMonth} />
-          <MdKeyboardArrowRight className="cursor-pointer text-[40px]" onClick={handleNextMonth} />
-        </div>
-      </div>
-
-      <div
-        className="grid gap-[7px]"
-        style={{
-          gridTemplateColumns: "repeat(7, 1fr)",
-          gridTemplateRows: "auto",
-          justifyItems: "center",
-        }}
-      >
-        {allDaysOfTheWeek.map((dayOfTheWeek) => (
-          <div key={dayOfTheWeek} className="flex items-center justify-center w-[40px] h-[40px] text-[18px] font-medium select-none">
-            {dayOfTheWeek}
+    <CalendarContext.Provider value={props}>
+      <div>
+        <div className="flex items-center justify-between p-[10px]">
+          <div className="font-bold text-[22px]">
+            {page.year} {monthLabelMap[page.month]}
           </div>
-        ))}
-        {cells.map((targetDate) => (
-          <Cell key={targetDate.toString()} date={targetDate} onClick={() => onChange?.(targetDate)} />
-        ))}
+
+          <div className="flex items-center gap-x-[5px]">
+            <MdKeyboardArrowLeft className="cursor-pointer text-[40px]" onClick={handlePrevMonth} />
+            <MdKeyboardArrowRight className="cursor-pointer text-[40px]" onClick={handleNextMonth} />
+          </div>
+        </div>
+
+        <div
+          className="grid gap-[7px]"
+          style={{
+            gridTemplateColumns: "repeat(7, 1fr)",
+            gridTemplateRows: "auto",
+            justifyItems: "center",
+          }}
+        >
+          {allDaysOfTheWeek.map((dayOfTheWeek) => (
+            <div key={dayOfTheWeek} className="flex items-center justify-center w-[40px] h-[40px] text-[18px] font-medium select-none">
+              {dayOfTheWeek}
+            </div>
+          ))}
+          {cells.map((targetDate) => (
+            <Cell key={targetDate.toString()} date={targetDate} />
+          ))}
+        </div>
       </div>
-    </div>
+    </CalendarContext.Provider>
   );
 });
 
-const CalendarWrapper = forwardRef<CalendarHandle, Props>((props, ref) => {
-  const calendarStore = useRef<ReturnType<typeof createCalendarStore>>(null);
+// const CalendarWrapper = forwardRef<CalendarHandle, Props>((props, ref) => {
+//   const calendarStore = useRef<ReturnType<typeof createCalendarStore>>(null);
+//
+//   if (calendarStore.current === null) {
+//     calendarStore.current = createCalendarStore({
+//       date: props.value,
+//       page: props.value
+//         ? {
+//             year: props.value.year(),
+//             month: props.value.month(),
+//           }
+//         : {
+//             year: dayjs().year(),
+//             month: dayjs().month(),
+//           },
+//     });
+//   }
+//
+//   return (
+//     <CalendarStoreContext.Provider value={calendarStore.current!}>
+//       <Calendar ref={ref} {...props} />
+//     </CalendarStoreContext.Provider>
+//   );
+// });
 
-  if (calendarStore.current === null) {
-    calendarStore.current = createCalendarStore({
-      date: props.value,
-      page: props.value
-        ? {
-            year: props.value.year(),
-            month: props.value.month(),
-          }
-        : {
-            year: dayjs().year(),
-            month: dayjs().month(),
-          },
-    });
-  }
-
-  return (
-    <CalendarStoreContext.Provider value={calendarStore.current!}>
-      <Calendar ref={ref} {...props} />
-    </CalendarStoreContext.Provider>
-  );
-});
-
-export default CalendarWrapper;
+export default withCalendarStore(Calendar);

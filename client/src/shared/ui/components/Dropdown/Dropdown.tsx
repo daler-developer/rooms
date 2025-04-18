@@ -2,6 +2,7 @@ import { ReactElement, cloneElement, ComponentProps } from "react";
 import clsx from "clsx";
 import useFloating, { type OpenTrigger, type TooltipPlacement } from "../../hooks/useFloating.ts";
 import Button from "../Button/Button.tsx";
+import ListGroup from "../ListGroup/ListGroup.tsx";
 import DropdownItem from "./DropdownItem.tsx";
 import { Portal } from "@/shared/ui";
 
@@ -9,10 +10,6 @@ type DropdownCommonProps = {
   items: ComponentProps<typeof DropdownItem>[];
   placement: TooltipPlacement;
   openTrigger?: OpenTrigger;
-  header?: {
-    title: string;
-    subTitle: string;
-  };
   isActive?: boolean;
 };
 
@@ -26,7 +23,7 @@ type DropdownWithDefaultTriggerProps = DropdownCommonProps & {
 
 type Props = DropdownWithCustomTriggerProps | DropdownWithDefaultTriggerProps;
 
-const Dropdown = ({ label, items, header, trigger, openTrigger = "click", placement = "top-right", isActive = true }: Props) => {
+const Dropdown = ({ label, items, trigger, openTrigger = "click", placement = "top-right", isActive = true }: Props) => {
   const { referenceRef, floatingRef, floatingStyles, close } = useFloating({
     placement,
     width: 200,
@@ -35,11 +32,6 @@ const Dropdown = ({ label, items, header, trigger, openTrigger = "click", placem
     isActive,
   });
 
-  const dropdownMenuClasses = clsx(
-    "z-10 bg-white border border-gray-200 divide-y divide-gray-100 rounded-md shadow w-44 dark:bg-gray-700 dark:divide-gray-600",
-  );
-
-  const withHeader = Boolean(header);
   const withCustomTrigger = Boolean(trigger);
 
   const renderTrigger = () => {
@@ -48,7 +40,7 @@ const Dropdown = ({ label, items, header, trigger, openTrigger = "click", placem
         ref: referenceRef,
       });
     }
-
+    // divide-y divide-gray-100 rounded-md shadow w-44 dark:bg-gray-700 dark:divide-gray-600 border border-gray-200
     return (
       <Button type="button" color="default" ref={referenceRef}>
         {label}
@@ -61,21 +53,29 @@ const Dropdown = ({ label, items, header, trigger, openTrigger = "click", placem
       {renderTrigger()}
 
       <Portal>
-        <div ref={floatingRef} style={floatingStyles} className={dropdownMenuClasses}>
-          {withHeader && (
-            <div className="px-4 py-3 text-sm text-gray-900 dark:text-white">
-              <div>{header!.title}</div>
-              <div className="font-medium truncate">{header!.subTitle}</div>
-            </div>
-          )}
-
-          <ul className="py-2 text-sm text-gray-700 dark:text-gray-200">
+        <div ref={floatingRef} style={floatingStyles} className={clsx("z-10 shadow-lg rounded-lg")}>
+          <ListGroup>
             {items.map((item, i) => (
-              <li key={i} onClick={() => close()}>
-                <DropdownItem {...item} />
-              </li>
+              <ListGroup.Item
+                key={i}
+                onClick={() => {
+                  close();
+                  item.onClick?.();
+                }}
+                Icon={item.Icon}
+              >
+                {item.label}
+              </ListGroup.Item>
             ))}
-          </ul>
+          </ListGroup>
+
+          {/*<ul className="py-2 text-sm text-gray-700 dark:text-gray-200">*/}
+          {/*  {items.map((item, i) => (*/}
+          {/*    <li key={i} onClick={() => close()}>*/}
+          {/*      <DropdownItem {...item} />*/}
+          {/*    </li>*/}
+          {/*  ))}*/}
+          {/*</ul>*/}
         </div>
       </Portal>
     </>

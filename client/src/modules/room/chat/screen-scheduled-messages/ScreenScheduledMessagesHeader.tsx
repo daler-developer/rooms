@@ -3,23 +3,24 @@ import { MdOutlineArrowBack } from "react-icons/md";
 import { useRoomId } from "../context";
 import { useRoomChatStore } from "../store";
 import BaseScreen from "../base/BaseScreen";
-import useDeleteMessagesMutation from "../gql/useDeleteMessagesMutation";
+import useDeleteScheduledMessagesMutation from "../gql/useDeleteScheduledMessagesMutation.ts";
 import useSendScheduledMessagesNowMutation from "../gql/useSendScheduledMessagesNowMutation";
 
 const ScreenScheduledMessagesHeader = () => {
+  const roomId = useRoomId();
   const { setTab, selectedScheduledMessages, setSelectedScheduledMessages } = useRoomChatStore();
 
   const mutations = {
-    deleteMessages: useDeleteMessagesMutation(),
+    deleteScheduledMessages: useDeleteScheduledMessagesMutation(),
     sendScheduledMessagesNow: useSendScheduledMessagesNowMutation(),
   };
 
-  const roomId = useRoomId();
-
   const handleDelete = async () => {
-    mutations.deleteMessages.mutate({
+    mutations.deleteScheduledMessages.mutate({
       roomId,
-      messageIds: selectedScheduledMessages,
+      variables: {
+        messageIds: selectedScheduledMessages,
+      },
     });
     setSelectedScheduledMessages([]);
   };

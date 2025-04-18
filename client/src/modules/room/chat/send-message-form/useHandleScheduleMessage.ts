@@ -53,7 +53,7 @@ const useHandleSendMessage = () => {
             roomId,
             text: values.text,
             scheduleAt: values.scheduleAt!,
-            imageUrls: [],
+            imageUrls: values.images.map((image) => image.imageUrl!),
           },
         },
         onCompleted() {

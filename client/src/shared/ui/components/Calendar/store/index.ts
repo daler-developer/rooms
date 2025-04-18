@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { createSelectorFunctions } from "auto-zustand-selectors-hook";
 import dayjs, { Dayjs } from "dayjs";
+import { createZustandStoreFactory } from "@/shared/lib/zustand";
 
 type CalendarStore = {
   date: Dayjs | null;

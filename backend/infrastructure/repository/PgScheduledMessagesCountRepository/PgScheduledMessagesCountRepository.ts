@@ -35,10 +35,13 @@ export class PgScheduledMessagesCountRepository implements ScheduledMessagesCoun
       roomId: number;
     },
     data: Partial<Pick<ScheduledMessagesCount, "count">>,
-  ): Promise<void> {
-    await db
+  ): Promise<ScheduledMessagesCount> {
+    const [count] = await db
       .update(scheduledMessagesCount)
       .set(data)
-      .where(and(eq(scheduledMessagesCount.userId, userId), eq(scheduledMessagesCount.roomId, roomId)));
+      .where(and(eq(scheduledMessagesCount.userId, userId), eq(scheduledMessagesCount.roomId, roomId)))
+      .returning();
+
+    return count;
   }
 }

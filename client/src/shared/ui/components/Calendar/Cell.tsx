@@ -1,23 +1,22 @@
 import clsx from "clsx";
 import dayjs, { Dayjs } from "dayjs";
 import { useMemo } from "react";
-import { useCalendarStore } from "./context";
+import { useCalendarStore } from "./store.ts";
+import { useCalendarContext } from "./context";
 
 type Props = {
   date: Dayjs;
-  onClick: () => void;
 };
 
-const Cell = ({ date, onClick }: Props) => {
-  const selectedDate = useCalendarStore().use.date();
-  const setSelectedDate = useCalendarStore().use.setDate();
-
-  const page = useCalendarStore().use.page();
-  const setPage = useCalendarStore().use.setPage();
+const Cell = ({ date }: Props) => {
+  const { page, setPage } = useCalendarStore();
+  const { value, onChange, minDate } = useCalendarContext();
 
   const isSelected = useMemo(() => {
-    return Boolean(selectedDate) && selectedDate.isSame(date, "year") && selectedDate.isSame(date, "month") && selectedDate.isSame(date, "day");
-  }, [selectedDate, date]);
+    if (!value) return false;
+
+    return Boolean(value) && value.isSame(date, "year") && value.isSame(date, "month") && value.isSame(date, "day");
+  }, [value, date]);
 
   const isToday = useMemo(() => {
     const today = dayjs();
@@ -33,14 +32,23 @@ const Cell = ({ date, onClick }: Props) => {
     return date.month() > page.month;
   }, [date, page.month]);
 
+  const disabled = useMemo(() => {
+    if (minDate && minDate.isAfter(date, "date")) {
+      return true;
+    }
+
+    return false;
+  }, [minDate, value]);
+
   const handleClick = () => {
-    setSelectedDate(date);
+    onChange(date);
     setPage(date.year(), date.month());
-    onClick();
   };
 
   return (
-    <div
+    <button
+      disabled={disabled}
+      type="button"
       onClick={handleClick}
       className={clsx("flex items-center justify-center cursor-pointer text-[20px] w-[40px] h-[40px] rounded-sm select-none", {
         "hover:bg-slate-100": !isSelected && !isPrevMonth && !isNextMonth,
@@ -51,7 +59,7 @@ const Cell = ({ date, onClick }: Props) => {
       })}
     >
       {date.date()}
-    </div>
+    </button>
   );
 };
 

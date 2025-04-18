@@ -52,6 +52,12 @@ export const DELETE_MESSAGES = gql(`
   }
 `);
 
+export const DELETE_SCHEDULED_MESSAGES = gql(`
+  mutation RoomChatDeleteScheduledMessages($messageIds: [Int!]!) {
+    deleteScheduledMessages(messageIds: $messageIds)
+  }
+`);
+
 export const NOTIFY_TYPING_START = gql(`
   mutation RoomChatNotifyTypingStart($roomId: Int!) {
     notifyTypingStart(roomId: $roomId)

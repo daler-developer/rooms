@@ -6,7 +6,7 @@ import { Avatar, Badge } from "@/shared/ui";
 import { useEffect } from "react";
 import { emitter } from "@/global/event-emitter";
 import { EventCallback } from "@/global/event-emitter/emitter.ts";
-import useNewMessageSub from "../../gql/useNewMessageSub.ts";
+import useRoomLastMessageChangeSub from "../../gql/useRoomLastMessageChangeSub.ts";
 import useRoomParticipantLeaveSub from "../../gql/useRoomParticipantLeaveSub.ts";
 
 type Props = {
@@ -16,7 +16,7 @@ type Props = {
 const RoomsListItem = ({ room }: Props) => {
   const apolloClient = useApolloClient();
 
-  useNewMessageSub({ room });
+  useRoomLastMessageChangeSub({ roomId: room.id });
   useRoomParticipantLeaveSub({ roomId: room.id });
 
   useEffect(() => {

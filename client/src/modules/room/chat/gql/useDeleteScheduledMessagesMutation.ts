@@ -1,20 +1,20 @@
 import { useApolloClient } from "@apollo/client";
 import { useCustomMutation } from "@/shared/lib/graphql";
-import { Room, RoomChatDeleteMessagesMutationVariables } from "@/__generated__/graphql.ts";
-import { DELETE_MESSAGES } from "./tags.ts";
+import { Room, RoomChatDeleteScheduledMessagesMutationVariables } from "@/__generated__/graphql.ts";
+import { DELETE_SCHEDULED_MESSAGES } from "./tags.ts";
 
-const useDeleteMessagesMutation = () => {
+const useDeleteScheduledMessagesMutation = () => {
   const apolloClient = useApolloClient();
 
-  const mutation = useCustomMutation(DELETE_MESSAGES);
+  const mutation = useCustomMutation(DELETE_SCHEDULED_MESSAGES);
 
   return {
     ...mutation,
-    async mutate(variables: RoomChatDeleteMessagesMutationVariables) {
+    async mutate({ roomId, variables }: { roomId: number; variables: RoomChatDeleteScheduledMessagesMutationVariables }) {
       apolloClient.cache.modify<Room>({
-        id: apolloClient.cache.identify({ __typename: "Room", id: variables.roomId }),
+        id: apolloClient.cache.identify({ __typename: "Room", id: roomId }),
         fields: {
-          messages(prevMessages, { readField }) {
+          scheduledMessages(prevMessages, { readField }) {
             return {
               ...prevMessages,
               data: prevMessages.data.filter((message) => {
@@ -30,4 +30,4 @@ const useDeleteMessagesMutation = () => {
   };
 };
 
-export default useDeleteMessagesMutation;
+export default useDeleteScheduledMessagesMutation;

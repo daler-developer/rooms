@@ -90,7 +90,7 @@ const Modal = ({ isOpen, onClose, actions, children, title, size = "md", withClo
   const showFooter = Boolean(actions?.length);
 
   const modalClasses = classnames("relative p-4 w-full max-h-full", {
-    "max-w-xl": size === "sm",
+    "max-w-md": size === "sm",
     "max-w-2xl": size === "md",
     "max-w-3xl": size === "lg",
   });

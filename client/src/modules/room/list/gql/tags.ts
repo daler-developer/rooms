@@ -49,6 +49,20 @@ export const ME_IS_EXCLUDED_FROM_ROOM = gql(`
     }
 `);
 
+export const ROOM_LAST_MESSAGE_CHANGE_SUB = gql(`
+  subscription RoomsListLastMessageChange($roomId: Int!) {
+    roomLastMessageChange(roomId: $roomId) {
+      id
+      text
+      sender {
+        id
+        firstName
+        lastName
+      }
+    }
+  }
+`);
+
 export const NEW_MESSAGE_SUB = gql(`
   subscription RoomsListNewMessageSub($skipFromCurrentSession: Boolean!) {
     newMessage(skipFromCurrentSession: $skipFromCurrentSession) {

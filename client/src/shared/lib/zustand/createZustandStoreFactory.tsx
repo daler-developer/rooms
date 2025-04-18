@@ -1,5 +1,5 @@
 import { create, StateCreator } from "zustand";
-import { createContext, createElement, ReactNode, useContext, useRef, ComponentType } from "react";
+import { createContext, createElement, ReactNode, useContext, useRef, ComponentType, forwardRef, ElementRef, ComponentProps } from "react";
 
 const createZustandStoreFactory = <TState,>(createStoreOptions: StateCreator<TState>) => {
   const createStore = () => {
@@ -25,14 +25,14 @@ const createZustandStoreFactory = <TState,>(createStoreOptions: StateCreator<TSt
     return createElement(Context.Provider, { children, value: storeRef.current });
   };
 
-  const withStore = <TProps extends object>(WrappedComponent: ComponentType<TProps>) => {
-    return (props: TProps) => {
+  const withStore = <TComponent extends ComponentType<any>>(WrappedComponent: TComponent) => {
+    return forwardRef<ElementRef<TComponent>, ComponentProps<TComponent>>((props, ref) => {
       return (
         <Provider>
-          <WrappedComponent {...props} />
+          <WrappedComponent ref={ref} {...props} />
         </Provider>
       );
-    };
+    });
   };
 
   const useStore = () => {
@@ -40,7 +40,6 @@ const createZustandStoreFactory = <TState,>(createStoreOptions: StateCreator<TSt
   };
 
   return {
-    Provider,
     useStore,
     withStore,
   };

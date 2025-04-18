@@ -4,8 +4,8 @@ import { useListGroupContext } from "./listGroupContext.ts";
 import { useListGroupItemContext } from "./listGroupItemContext.ts";
 
 type Props = {
-  Icon: IconType;
   children: string;
+  Icon?: IconType;
   onClick?: () => void;
 };
 
@@ -27,7 +27,7 @@ const ListGroupItem = ({ Icon, children, onClick }: Props) => {
 
   return (
     <button type="button" className={rootClasses} onClick={onClick}>
-      <Icon className="text-[18px]" />
+      {/*<div className="w-[20px]">{Icon && <Icon className="text-[18px]" />}</div>*/}
       {children}
     </button>
   );

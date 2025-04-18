@@ -1,5 +1,6 @@
 import Spinner from "../Spinner/Spinner.tsx";
 import clsx from "clsx";
+import { IconType } from "react-icons";
 
 type Props = {
   label: string;
@@ -7,6 +8,7 @@ type Props = {
   color?: "default" | "danger";
   isLoading?: boolean;
   to?: string;
+  Icon?: IconType;
 };
 
 const DropdownItem = ({ label, onClick, color, isLoading, to }: Props) => {

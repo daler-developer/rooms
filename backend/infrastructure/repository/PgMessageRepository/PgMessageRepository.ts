@@ -27,6 +27,10 @@ export class PgMessageRepository implements MessageRepository {
     return query;
   }
 
+  async getManyByIds(ids: number[]): Promise<Message[]> {
+    return db.select().from(messages).where(inArray(messages.id, ids));
+  }
+
   async getOneById(id: number): Promise<Message> | null {
     const [message] = await db.select().from(messages).where(eq(messages.id, id));
 

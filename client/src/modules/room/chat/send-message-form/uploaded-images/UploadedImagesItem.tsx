@@ -1,6 +1,4 @@
 import { useLayoutEffect } from "react";
-import { supabaseClient } from "@/shared/lib/superbase";
-import { v4 as uuid } from "uuid";
 import { HiX } from "react-icons/hi";
 import { IconButton, Spinner } from "@/shared/ui";
 import { useFormContext } from "@/shared/lib/form";
@@ -37,7 +35,11 @@ const UploadedImagesItem = ({ imageKey }: Props) => {
       form.setValue(`images.${imageIndex}.imageUrl`, publicUrl);
     };
 
-    uploadFile();
+    const alreadyLoaded = Boolean(image.imageUrl);
+
+    if (!alreadyLoaded) {
+      uploadFile();
+    }
 
     return () => {
       ignore = true;
