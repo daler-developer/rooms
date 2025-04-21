@@ -205,11 +205,6 @@ type UserTypingStatusChangeEvent {
     user: User!
 }
 
-type MessageViewedEvent {
-    viewer: User!
-    message: Message!
-}
-
 type MessagesDeletedEvent {
     messageIds: [Int!]!
 }
@@ -310,11 +305,10 @@ type Subscription {
     roomLastMessageChange(roomId: Int!): Message
     roomParticipantTypingStart(roomId: Int!): User!
     roomParticipantTypingStop(roomId: Int!): User!
-    newMessage(skipFromCurrentSession: Boolean!): NewMessageEvent!
+    newMessage(skipFromCurrentSession: Boolean!): Message!
     newScheduledMessage(skipFromCurrentSession: Boolean!): [Message!]!
     newRoom: Room!
     userTypingStatusChange(roomId: Int!): UserTypingStatusChangeEvent!
-    messageViewed(messageId: Int!): MessageViewedEvent!
     messageViewsCountChange(messageId: Int!): Int!
     roomPendingInvitationsCountChange(roomId: Int!): Room!
     messagesDeleted(roomId: Int!): MessagesDeletedEvent!

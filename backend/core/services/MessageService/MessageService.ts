@@ -82,12 +82,7 @@ export class MessageService {
 
     const room = await this.roomRepository.getOneById(roomId);
 
-    pubsub.publish("NEW_MESSAGE", {
-      newMessage: {
-        message,
-        room,
-      },
-    });
+    pubsub.publish("NEW_MESSAGE", message);
     pubsub.publish("ROOM_LAST_MESSAGE_CHANGE", {
       roomId: room.id,
       message,
@@ -120,11 +115,11 @@ export class MessageService {
 
       message = await this.messageRepository.updateOneById(message.id, { sentAt: new Date().toISOString() });
 
-      pubsub.publish("NEW_MESSAGE", {
-        newMessage: {
-          message,
-        },
+      pubsub.publish("ROOM_LAST_MESSAGE_CHANGE", {
+        roomId: message.roomId,
+        message,
       });
+      pubsub.publish("NEW_MESSAGE", message);
       pubsub.publish("SCHEDULED_MESSAGES_DELETED", {
         roomId: message.roomId,
         messageIds: [message.id],
@@ -145,9 +140,15 @@ export class MessageService {
           count: updatedCount,
         },
       );
+    }, 5000);
+  }
 
-      // await redisClient.hIncrBy(`rooms:${roomId}:scheduled_messages`, String(senderId), -1);
-    }, 2000);
+  async sendScheduledMessagesAtScheduledAt() {
+    const messages = await this.messageRepository.getMany({ isSent: false });
+
+    for (const message of messages) {
+      this.sendSavedMessageAtScheduledAt(message.id);
+    }
   }
 
   async scheduleMessage({
@@ -184,8 +185,6 @@ export class MessageService {
         count: scheduledMessagesCount.count + 1,
       },
     );
-
-    await redisClient.hIncrBy(`rooms:${roomId}:scheduled_messages`, String(senderId), 1);
 
     for (const imageUrl of imageUrls) {
       await this.messageImageRepository.addOne({ url: imageUrl, messageId: message.id });
@@ -228,11 +227,7 @@ export class MessageService {
         messageIds: messages.map((message) => message.id),
       });
       for (const message of messages) {
-        pubsub.publish("NEW_MESSAGE", {
-          newMessage: {
-            message,
-          },
-        });
+        pubsub.publish("NEW_MESSAGE", message);
       }
       const room = await this.roomRepository.getOneById(roomId);
       await this.roomRepository.updateOneById(roomId, {
@@ -245,46 +240,6 @@ export class MessageService {
         },
       );
     }
-    // for (const message of allMessages) {
-    //   await this.messageRepository.updateOneById(message.id, { sentAt: new Date().toISOString() });
-    // }
-
-    // for (const messageId of messageIds) {
-    //   let message = await this.messageRepository.getOneById(messageId);
-    //
-    //   message = await this.messageRepository.updateOneById(message.id, { sentAt: new Date().toISOString() });
-    //
-    //   const room = await this.roomRepository.getOneById(message.roomId);
-    //
-    //   await this.roomRepository.updateOneById(message.roomId, {
-    //     messagesCount: room.messagesCount + 1,
-    //   });
-    //
-    //   let scheduledMessagesCount = await this.scheduledMessagesCountRepository.getOneByPk({ roomId: message.roomId, userId });
-    //
-    //   scheduledMessagesCount = await this.scheduledMessagesCountRepository.updateOneByPk(
-    //     { roomId: message.roomId, userId },
-    //     {
-    //       count: scheduledMessagesCount.count - 1,
-    //     },
-    //   );
-    //
-    //   pubsub.publish("ROOM_SCHEDULED_MESSAGES_COUNT_CHANGE", {
-    //     roomId: message.roomId,
-    //     userId,
-    //     count: scheduledMessagesCount.count,
-    //   });
-    //   pubsub.publish("SCHEDULED_MESSAGES_DELETED", {
-    //     userId,
-    //     roomId: message.roomId,
-    //     messageIds: [message.id],
-    //   });
-    //   pubsub.publish("NEW_MESSAGE", {
-    //     newMessage: {
-    //       message,
-    //     },
-    //   });
-    // }
   }
 
   async markMessageAsViewed({ messageId, userId }: { messageId: number; userId: number }) {
@@ -297,7 +252,9 @@ export class MessageService {
     }
 
     const user = await this.userRepository.getById(userId);
-    await this.messageRepository.incrementViewsCount(messageId);
+    await this.messageRepository.updateOneById(messageId, {
+      viewsCount: message.viewsCount + 1,
+    });
 
     await this.messageViewRepository.addOne({
       userId,
@@ -306,12 +263,6 @@ export class MessageService {
 
     message = await this.messageRepository.getOneById(messageId);
 
-    pubsub.publish("MESSAGE_VIEWED", {
-      messageViewed: {
-        viewer: user,
-        message,
-      },
-    });
     pubsub.publish("MESSAGE_VIEWS_COUNT_CHANGE", {
       messageId,
       count: message.viewsCount,
@@ -344,21 +295,22 @@ export class MessageService {
 
   async deleteMessages(messageIds: number[]) {
     const messages = await this.messageRepository.getManyByIds(messageIds);
-    const grouped = messages.reduce<Record<number, Message[]>>((accum, message) => {
-      if (!accum[message.roomId]) {
-        accum[message.roomId] = [];
+    type RoomId = number;
+    const grouped = messages.reduce<Map<RoomId, Message[]>>((accum, message) => {
+      if (!accum.has(message.roomId)) {
+        accum.set(message.roomId, []);
       }
-      accum[message.roomId].push(message);
+      accum.get(message.roomId).push(message);
       return accum;
-    }, {});
-    for (let [roomId, messages] of Object.entries(grouped)) {
+    }, new Map());
+    for (let [roomId, messages] of grouped.entries()) {
       const messageIds = messages.map((message) => message.id);
       pubsub.publish("MESSAGES_DELETED", {
-        roomId: Number(roomId),
+        roomId,
         messageIds,
       });
-      const room = await this.roomRepository.getOneById(Number(roomId));
-      await this.roomRepository.updateOneById(Number(roomId), {
+      const room = await this.roomRepository.getOneById(roomId);
+      await this.roomRepository.updateOneById(roomId, {
         messagesCount: room.messagesCount - messageIds.length,
       });
       for (const messageId of messageIds) {
@@ -366,6 +318,11 @@ export class MessageService {
           isDeleted: true,
         });
       }
+      const newLastMessage = await this.fetchRoomLastMessage(roomId);
+      pubsub.publish("ROOM_LAST_MESSAGE_CHANGE", {
+        roomId,
+        message: newLastMessage,
+      });
     }
   }
 

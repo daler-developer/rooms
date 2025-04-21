@@ -176,14 +176,9 @@ const start = async () => {
   await server.start();
   await client.connect();
 
-  // const [message] = await db.select().from(messages).where(eq(messages.id, 277));
+  const messageService = iocContainer.get<MessageService>(TYPES.MessageService);
 
-  // await db
-  //   .update(messages)
-  //   .set({
-  //     scheduledAt: new Date().toISOString(),
-  //   })
-  //   .where(eq(messages.id, 277));
+  messageService.sendScheduledMessagesAtScheduledAt();
 
   app.use(
     "/graphql",

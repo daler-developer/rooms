@@ -8,10 +8,10 @@ export default {
   subscribe: withFilter(
     () => pubsub.asyncIterator(["NEW_MESSAGE"]),
     async (payload, variables, ctx: CustomContext) => {
-      const participants = await ctx.userService.fetchRoomParticipants(payload.newMessage.message.roomId);
+      const participants = await ctx.userService.fetchRoomParticipants(payload.roomId);
 
       const isParticipant = Boolean(participants.find((p) => p.id === ctx.userId));
-      const isFromSameSession = ctx.sessionId === payload.newMessage.message.sessionId;
+      const isFromSameSession = ctx.sessionId === payload.sessionId;
 
       if (isParticipant) {
         if (variables.skipFromCurrentSession) {
@@ -24,4 +24,7 @@ export default {
       return false;
     },
   ),
+  resolve(payload) {
+    return payload;
+  },
 };

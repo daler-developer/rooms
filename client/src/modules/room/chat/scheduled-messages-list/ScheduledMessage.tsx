@@ -3,7 +3,7 @@ import { LuSend } from "react-icons/lu";
 import { type RoomChatGetScheduledMessagesQuery } from "@/__generated__/graphql.ts";
 import BaseMessage from "../base/BaseMessage.tsx";
 import useSendScheduledMessagesNowMutation from "../gql/useSendScheduledMessagesNowMutation.ts";
-import useDeleteMessagesMutation from "../gql/useDeleteMessagesMutation.ts";
+import useDeleteScheduledMessagesMutation from "../gql/useDeleteScheduledMessagesMutation.ts";
 import useGetMeQuery from "../gql/useGetMeQuery.ts";
 import dayjs from "dayjs";
 import { useMemo } from "react";
@@ -22,7 +22,7 @@ const ScheduledMessage = ({ message, withScheduledAtDivider }: Props) => {
   };
   const mutations = {
     sendScheduledMessagesNow: useSendScheduledMessagesNowMutation(),
-    deleteMessages: useDeleteMessagesMutation(),
+    deleteScheduledMessages: useDeleteScheduledMessagesMutation(),
   };
 
   const formattedScheduledAt = useMemo(() => {
@@ -45,7 +45,7 @@ const ScheduledMessage = ({ message, withScheduledAtDivider }: Props) => {
           label: "Delete",
           Icon: MdDeleteOutline,
           async onClick() {
-            await mutations.deleteMessages.mutate({ roomId, messageIds: [message.id] });
+            await mutations.deleteScheduledMessages.mutate({ roomId, variables: { messageIds: [message.id] } });
           },
         },
       ]}

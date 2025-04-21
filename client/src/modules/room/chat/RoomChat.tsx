@@ -11,6 +11,7 @@ import useRoomParticipantLeaveSub from "./gql/useRoomParticipantLeaveSub.ts";
 import useRoomParticipantTypingStartSub from "./gql/useRoomParticipantTypingStartSub.ts";
 import useRoomParticipantTypingStopSub from "./gql/useRoomParticipantTypingStopSub.ts";
 import useMessagesDeletedSub from "./gql/useMessagesDeletedSub.ts";
+import useScheduledMessagesDeletedSub from "./gql/useScheduledMessagesDeletedSub.ts";
 import useNewMessageSub from "./gql/useNewMessageSub.ts";
 import useRoomScheduledMessagesCountChangeSub from "./gql/useRoomScheduledMessagesCountChangeSub.ts";
 import ScreenScheduledMessages from "./screen-scheduled-messages/ScreenScheduledMessages.tsx";
@@ -37,6 +38,7 @@ const RoomChat = (_: Props) => {
   useRoomParticipantTypingStopSub();
   useNewMessageSub();
   useMessagesDeletedSub();
+  useScheduledMessagesDeletedSub();
   useRoomScheduledMessagesCountChangeSub();
 
   const queries = {

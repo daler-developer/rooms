@@ -16,7 +16,7 @@ const useNewMessageSub = () => {
     onData({ data, client }) {
       if (!data.data) return;
 
-      const newMessage = data.data.newMessage.message;
+      const newMessage = data.data.newMessage;
 
       emitter.emit("MESSAGE_INSERTED", {
         senderIsMe: false,

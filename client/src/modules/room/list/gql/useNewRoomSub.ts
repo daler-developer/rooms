@@ -5,7 +5,6 @@ import { Query } from "@/__generated__/graphql.ts";
 const useNewRoomSub = () => {
   return useSubscription(NEW_ROOM_SUB, {
     onData({ data, client }) {
-      console.log("data", data);
       if (!data.data) {
         return;
       }

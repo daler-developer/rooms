@@ -6,7 +6,7 @@ import db from "../../db";
 import { messages } from "../../entities/Message";
 import { eq, desc, sql, inArray, isNotNull, ne, and, isNull } from "drizzle-orm";
 import { users } from "../../entities/User";
-import { number } from "yup";
+import { boolean, number } from "yup";
 
 @injectable()
 export class PgMessageRepository implements MessageRepository {
@@ -23,6 +23,23 @@ export class PgMessageRepository implements MessageRepository {
 
     // @ts-ignore
     query = query.where(and(...conditions)).limit(limit);
+
+    return query;
+  }
+
+  async getMany({ isSent }: { isSent: boolean }): Promise<Message[]> {
+    let query = db.select().from(messages).orderBy(desc(messages.createdAt));
+
+    const conditions = [eq(messages.isDeleted, false)];
+
+    if (isSent) {
+      conditions.push(isNotNull(messages.sentAt));
+    } else {
+      conditions.push(isNull(messages.sentAt));
+    }
+
+    // @ts-ignore
+    query = query.where(and(...conditions));
 
     return query;
   }
@@ -53,20 +70,11 @@ export class PgMessageRepository implements MessageRepository {
     return message;
   }
 
-  async incrementViewsCount(messageId: number) {
-    await db
-      .update(messages)
-      .set({
-        viewsCount: sql`${messages.viewsCount} + 1`,
-      })
-      .where(eq(messages.id, messageId));
-  }
-
   async deleteManyByIds(messageIds: number[]): Promise<void> {
     await db.delete(messages).where(inArray(messages.id, messageIds));
   }
 
-  async updateOneById(messageId: number, data: Partial<Pick<Message, "text" | "scheduledAt" | "isDeleted">>): Promise<Message> {
+  async updateOneById(messageId: number, data: Partial<Pick<Message, "text" | "scheduledAt" | "isDeleted" | "viewsCount">>): Promise<Message> {
     const [message] = await db.update(messages).set(data).where(eq(messages.id, messageId)).returning();
 
     return message;

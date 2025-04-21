@@ -95,16 +95,6 @@ export const ROOM_PARTICIPANT_LEAVE_SUB = gql(`
   }
 `);
 
-export const MARK_MESSAGE_AS_VIEWS_BY_ME = gql(`
-  mutation MarkMessageAsViewedByMe($messageId: Int!) {
-    markMessageAsViewed(messageId: $messageId) {
-      id
-      viewsCount
-      isViewedByMe
-    }
-  }
-`);
-
 export const MARK_MESSAGE_AS_VIEWED = gql(`
   mutation RoomChatMarkMessageAsViewed($messageId: Int!) {
     markMessageAsViewed(messageId: $messageId) {
@@ -206,19 +196,6 @@ export const GET_SCHEDULED_MESSAGES = gql(`
   }
 `);
 
-export const GET_MESSAGE_VIEWERS = gql(`
-    query GetMessageViewers($messageId: Int!) {
-      message(id: $messageId) {
-        id
-        viewers {
-          id
-          email
-          profilePictureUrl
-        }
-      }
-    }
-`);
-
 export const EXCLUDE_USER_FROM_ROOM = gql(`
     mutation RoomChatExcludeFrom($roomId: Int!, $userId: Int!) {
       excludeUserFromRoom(roomId: $roomId, userId: $userId) {
@@ -246,43 +223,25 @@ export const ME_IS_EXCLUDED_FROM_ROOM = gql(`
 export const NEW_MESSAGE_SUB = gql(`
   subscription RoomChatNewMessage($skipFromCurrentSession: Boolean!) {
     newMessage(skipFromCurrentSession: $skipFromCurrentSession) {
-      message {
+      id
+      text
+      senderId
+      roomId
+      isViewedByMe
+      sentAt
+      sender {
         id
-        text
-        senderId
-        roomId
-        isViewedByMe
-        sentAt
-        sender {
-          id
-          firstName
-          lastName
-          email
-          profilePictureUrl
-          isOnline
-        }
-        images {
-          id
-          url
-        }
-        viewsCount
-      }
-    }
-  }
-`);
-
-export const MESSAGE_VIEWED_SUB = gql(`
-  subscription MessageViewedSub($messageId: Int!) {
-    messageViewed(messageId: $messageId) {
-      viewer {
-        id
+        firstName
+        lastName
         email
         profilePictureUrl
+        isOnline
       }
-      message {
+      images {
         id
-        viewsCount
+        url
       }
+      viewsCount
     }
   }
 `);
@@ -301,6 +260,12 @@ export const MESSAGES_DELETED = gql(`
     messagesDeleted(roomId: $roomId) {
       messageIds
     }
+  }
+`);
+
+export const SCHEDULED_MESSAGES_DELETED = gql(`
+  subscription RoomChatScheduledMessagesDeleted($roomId: Int!) {
+    scheduledMessagesDeleted(roomId: $roomId)
   }
 `);
 

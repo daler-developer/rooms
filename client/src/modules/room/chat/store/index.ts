@@ -1,4 +1,3 @@
-import { GetRoomQuery } from "@/__generated__/graphql.ts";
 import { ScrollHandle } from "@/shared/ui";
 import { createZustandStoreFactory } from "@/shared/lib/zustand";
 
@@ -11,8 +10,8 @@ export type TemporaryMessage = {
 
 export type TemporaryScheduledMessage = {
   id: string;
-  text: Flatten<GetRoomQuery["room"]["scheduledMessages"]["data"]>["text"];
-  scheduledAt: Flatten<GetRoomQuery["room"]["scheduledMessages"]["data"]>["scheduledAt"];
+  text: string;
+  scheduledAt: string;
   imageUrls: string[];
 };
 
