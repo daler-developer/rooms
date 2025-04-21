@@ -2,6 +2,7 @@ import * as yup from "yup";
 import { InferType } from "yup";
 import { CustomContext } from "../../types";
 import { withValidation, composeResolvers } from "../../lib/graphql/resolver-wrappers";
+import { Resolvers } from "../../../__generated__/resolvers-types";
 import { IncorrectPasswordGraphQLError, MeIsBlockedGraphQLError, UserNotFoundGraphQLError } from "../../lib/graphql/errors";
 import { CreateMessageDto } from "../../../core/repositories/MessageRepository/dto/CreateMessageDto";
 

@@ -140,7 +140,7 @@ export class MessageService {
           count: updatedCount,
         },
       );
-    }, 5000);
+    }, delay);
   }
 
   async sendScheduledMessagesAtScheduledAt() {

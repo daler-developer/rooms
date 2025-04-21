@@ -1,12 +1,15 @@
 import { ElementRef, forwardRef, useImperativeHandle, useMemo, useRef, useState } from "react";
 import { Button, Calendar, Modal, TimeInput, type Time } from "@/shared/ui";
 import dayjs, { Dayjs } from "dayjs";
+import { useFormContext } from "@/shared/lib/form";
+import { FormFields } from "./types";
 
 export type ScheduleMessageModalHandle = {
   open: () => Promise<string>;
 };
 
 const ScheduleMessageModal = forwardRef<ScheduleMessageModalHandle>((_, ref) => {
+  const form = useFormContext<FormFields>();
   const [showModal, setShowModal] = useState(false);
   const [date, setDate] = useState<Dayjs>(() => dayjs());
   const [time, setTime] = useState<Time>({

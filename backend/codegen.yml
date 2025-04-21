@@ -1,0 +1,9 @@
+schema: "./infrastructure/schema.graphql"
+generates:
+  ./__generated__/resolvers-types.ts:
+    plugins:
+      - "typescript"
+      - "typescript-resolvers"
+    config:
+      useIndexSignature: false
+      contextType: "../infrastructure/types#CustomContext"
