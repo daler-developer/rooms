@@ -18,6 +18,10 @@ const useNewMessageSub = () => {
 
       const newMessage = data.data.newMessage;
 
+      if (newMessage.roomId !== roomId) {
+        return;
+      }
+
       emitter.emit("MESSAGE_INSERTED", {
         senderIsMe: false,
       });

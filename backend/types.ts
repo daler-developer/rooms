@@ -7,6 +7,7 @@ const TYPES = {
   MessageImageRepository: Symbol.for("MessageImageRepository"),
   MessageViewRepository: Symbol.for("MessageViewRepository"),
   ScheduledMessagesCountRepository: Symbol.for("ScheduledMessagesCountRepository"),
+  UserRoomNewMessagesCountRepository: Symbol.for("UserRoomNewMessagesCountRepository"),
 
   UserService: Symbol.for("UserService"),
   AuthService: Symbol.for("AuthService"),

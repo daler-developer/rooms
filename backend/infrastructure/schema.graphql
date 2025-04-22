@@ -89,7 +89,7 @@ type Room {
     participantsOnlineCount: Int!
     scheduledMessagesCount: Int!
     lastMessage: Message
-    unreadMessagesCount: Int!
+    newMessagesCount: Int!
     thumbnailUrl: String
     invitedUsers: [User!]!
 }
@@ -302,6 +302,7 @@ type Subscription {
     roomParticipantsCountChange(roomId: Int!): Room!
     roomParticipantsOnlineCountChange(roomId: Int!): Room!
     roomScheduledMessagesCountChange(roomId: Int!): Int!
+    roomNewMessagesCountChange(roomId: Int!): Int!
     roomLastMessageChange(roomId: Int!): Message
     roomParticipantTypingStart(roomId: Int!): User!
     roomParticipantTypingStop(roomId: Int!): User!

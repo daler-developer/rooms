@@ -6,6 +6,7 @@ import { UserToRoomParticipationRepository } from "../../repositories/UserToRoom
 import pubsub from "../../../infrastructure/pubsub";
 import { RoomRepository } from "../../repositories/RoomRepository/RoomRepository";
 import { ScheduledMessagesCountRepository } from "../../repositories/ScheduledMessagesCountRepository/ScheduledMessagesCountRepository";
+import { UserRoomNewMessagesCountRepository } from "../../repositories/UserRoomNewMessagesCountRepository/UserRoomNewMessagesCountRepository";
 
 @injectable()
 class InvitationService {
@@ -15,6 +16,7 @@ class InvitationService {
     @inject(TYPES.UserToRoomParticipationRepository) private userToRoomParticipationRepository: UserToRoomParticipationRepository,
     @inject(TYPES.RoomRepository) private roomRepository: RoomRepository,
     @inject(TYPES.ScheduledMessagesCountRepository) private scheduledMessagesCountRepository: ScheduledMessagesCountRepository,
+    @inject(TYPES.UserRoomNewMessagesCountRepository) private userRoomNewMessagesCountRepository: UserRoomNewMessagesCountRepository,
   ) {}
 
   async fetchPendingInvitationsToRoom(roomId: number) {
@@ -41,6 +43,11 @@ class InvitationService {
 
   async acceptInvitation(userId: number, roomId: number) {
     const invitation = await this.invitationRepository.getOneByPk(userId, roomId);
+    await this.userRoomNewMessagesCountRepository.addOne({
+      userId,
+      roomId,
+      count: 0,
+    });
     let user = await this.userRepository.getById(userId);
     let room = await this.roomRepository.getOneById(roomId);
 

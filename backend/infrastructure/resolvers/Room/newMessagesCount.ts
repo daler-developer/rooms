@@ -11,7 +11,7 @@ type Args = InferType<typeof validationSchema>;
 type Parent = Room;
 
 const resolver = async (parent: Parent, args: Args, { roomService, userId }: CustomContext) => {
-  return await roomService.fetchRoomUnreadMessagesByUserCount({ roomId: parent.id, userId });
+  return await roomService.fetchRoomNewMessagesCount({ roomId: parent.id, userId });
 };
 
 export default composeResolvers(authRequired, checkBlockedStatus, withValidation(validationSchema))(resolver);

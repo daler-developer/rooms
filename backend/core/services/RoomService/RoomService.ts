@@ -9,6 +9,7 @@ import { UserToRoomParticipationRepository } from "../../repositories/UserToRoom
 import { AddOneInvitationDto } from "../../repositories/InvitationRepository/dto/AddOneInvitationDto";
 import redisClient from "../../../infrastructure/db/redisClient";
 import { ScheduledMessagesCountRepository } from "../../repositories/ScheduledMessagesCountRepository/ScheduledMessagesCountRepository";
+import { UserRoomNewMessagesCountRepository } from "../../repositories/UserRoomNewMessagesCountRepository/UserRoomNewMessagesCountRepository";
 
 @injectable()
 export class RoomService {
@@ -18,10 +19,16 @@ export class RoomService {
     @inject(TYPES.InvitationRepository) private invitationRepository: InvitationRepository,
     @inject(TYPES.UserToRoomParticipationRepository) private userToRoomParticipationRepository: UserToRoomParticipationRepository,
     @inject(TYPES.ScheduledMessagesCountRepository) private scheduledMessagesCountRepository: ScheduledMessagesCountRepository,
+    @inject(TYPES.UserRoomNewMessagesCountRepository) private userRoomNewMessagesCountRepository: UserRoomNewMessagesCountRepository,
   ) {}
 
   async createRoom(dto: CreateRoomDto & { invitedUsersIds: number[] }) {
     const room = await this.roomRepository.addOne(dto);
+    await this.userRoomNewMessagesCountRepository.addOne({
+      roomId: room.id,
+      userId: dto.creatorId,
+      count: 0,
+    });
 
     pubsub.publish("NEW_ROOM", room);
 
@@ -94,6 +101,10 @@ export class RoomService {
     room = await this.roomRepository.updateOneById(roomId, {
       participantsCount: room.participantsCount - 1,
     });
+    await this.userRoomNewMessagesCountRepository.deleteOneByPk({
+      roomId: room.id,
+      userId,
+    });
 
     pubsub.publish("ROOM_PARTICIPANT_LEFT", {
       room,
@@ -123,6 +134,10 @@ export class RoomService {
     await this.roomRepository.updateOneById(roomId, {
       participantsCount: room.participantsCount - 1,
     });
+    await this.userRoomNewMessagesCountRepository.deleteOneByPk({
+      userId,
+      roomId,
+    });
 
     await this.userToRoomParticipationRepository.deleteOneByPk(userId, roomId);
 
@@ -137,10 +152,9 @@ export class RoomService {
     return updatedRoom;
   }
 
-  async fetchRoomUnreadMessagesByUserCount({ roomId, userId }: { roomId: number; userId: number }) {
-    const count = await redisClient.hGet(`rooms:${roomId}:unread_messages`, String(userId));
-
-    return count || 0;
+  async fetchRoomNewMessagesCount({ roomId, userId }: { roomId: number; userId: number }) {
+    const count = await this.userRoomNewMessagesCountRepository.getOneByPk({ roomId, userId });
+    return count.count;
   }
 
   async fetchRoomParticipantsTyping(roomId: number) {

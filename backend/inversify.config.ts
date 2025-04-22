@@ -1,5 +1,6 @@
 import { Container } from "inversify";
 import { UserRepository } from "./core/repositories/UserRepository/UserRepository";
+import { UserRoomNewMessagesCountRepository } from "./core/repositories/UserRoomNewMessagesCountRepository/UserRoomNewMessagesCountRepository";
 import { RoomRepository } from "./core/repositories/RoomRepository/RoomRepository";
 import PgUserRepository from "./infrastructure/repository/PgUserRepository/PgUserRepository";
 import { PgRoomRepository } from "./infrastructure/repository/PgRoomRepository/PgRoomRepository";
@@ -21,6 +22,7 @@ import { MessageImageService } from "./core/services/MessageImageService/Message
 import { PgMessageViewRepository } from "./infrastructure/repository/PgMessageViewRepository/PgMessageViewRepository";
 import { MessageViewRepository } from "./core/repositories/MessageViewRepository/MessageViewRepository";
 import { PgScheduledMessagesCountRepository } from "./infrastructure/repository/PgScheduledMessagesCountRepository/PgScheduledMessagesCountRepository";
+import { PgUserRoomNewMessagesCountRepository } from "./infrastructure/repository/PgUserRoomNewMessagesCountRepository/PgUserRoomNewMessagesCountRepository";
 import { ScheduledMessagesCountRepository } from "./core/repositories/ScheduledMessagesCountRepository/ScheduledMessagesCountRepository";
 
 const iocContainer = new Container();
@@ -33,6 +35,7 @@ iocContainer.bind<MessageRepository>(TYPES.MessageRepository).to(PgMessageReposi
 iocContainer.bind<MessageImageRepository>(TYPES.MessageImageRepository).to(PgMessageImageRepository);
 iocContainer.bind<MessageViewRepository>(TYPES.MessageViewRepository).to(PgMessageViewRepository);
 iocContainer.bind<ScheduledMessagesCountRepository>(TYPES.ScheduledMessagesCountRepository).to(PgScheduledMessagesCountRepository);
+iocContainer.bind<UserRoomNewMessagesCountRepository>(TYPES.UserRoomNewMessagesCountRepository).to(PgUserRoomNewMessagesCountRepository);
 
 iocContainer.bind<UserService>(TYPES.UserService).to(UserService);
 iocContainer.bind<AuthService>(TYPES.AuthService).to(AuthService);

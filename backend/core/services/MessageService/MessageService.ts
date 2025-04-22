@@ -13,6 +13,7 @@ import { Message } from "../../entities/Message";
 import redisClient from "../../../infrastructure/db/redisClient";
 import { UserToRoomParticipationRepository } from "../../repositories/UserToRoomParticipationRepository/UserToRoomParticipationRepository";
 import { InvitationRepository } from "../../repositories/InvitationRepository/InvitationRepository";
+import { UserRoomNewMessagesCountRepository } from "../../repositories/UserRoomNewMessagesCountRepository/UserRoomNewMessagesCountRepository";
 
 @injectable()
 export class MessageService {
@@ -25,6 +26,7 @@ export class MessageService {
     @inject(TYPES.ScheduledMessagesCountRepository) private scheduledMessagesCountRepository: ScheduledMessagesCountRepository,
     @inject(TYPES.UserToRoomParticipationRepository) private userToRoomParticipationRepository: UserToRoomParticipationRepository,
     @inject(TYPES.InvitationRepository) private invitationRepository: InvitationRepository,
+    @inject(TYPES.UserRoomNewMessagesCountRepository) private userRoomNewMessagesCountRepository: UserRoomNewMessagesCountRepository,
   ) {}
 
   async fetchInvitedUsers(roomId: number) {
@@ -76,7 +78,18 @@ export class MessageService {
       const isSender = senderId === participantsId;
 
       if (!isSender) {
-        await redisClient.hIncrBy(`rooms:${roomId}:unread_messages`, String(participantsId), 1);
+        let userRoomNewMessagesCount = await this.userRoomNewMessagesCountRepository.getOneByPk({ userId: participantsId, roomId });
+        userRoomNewMessagesCount = await this.userRoomNewMessagesCountRepository.updateOneByPk(
+          { userId: participantsId, roomId },
+          {
+            count: userRoomNewMessagesCount.count + 1,
+          },
+        );
+        pubsub.publish("ROOM_NEW_MESSAGES_COUNT_CHANGE", {
+          roomId,
+          userId: participantsId,
+          count: userRoomNewMessagesCount.count,
+        });
       }
     }
 
@@ -251,9 +264,22 @@ export class MessageService {
       return await this.messageRepository.getOneById(messageId);
     }
 
-    const user = await this.userRepository.getById(userId);
     await this.messageRepository.updateOneById(messageId, {
       viewsCount: message.viewsCount + 1,
+    });
+
+    let newMessagesCount = await this.userRoomNewMessagesCountRepository.getOneByPk({ userId, roomId: message.roomId });
+    newMessagesCount = await this.userRoomNewMessagesCountRepository.updateOneByPk(
+      { userId, roomId: message.roomId },
+      {
+        count: newMessagesCount.count - 1,
+      },
+    );
+
+    pubsub.publish("ROOM_NEW_MESSAGES_COUNT_CHANGE", {
+      roomId: message.roomId,
+      userId,
+      count: newMessagesCount.count,
     });
 
     await this.messageViewRepository.addOne({

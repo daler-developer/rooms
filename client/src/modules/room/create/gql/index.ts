@@ -23,7 +23,7 @@ const CREATE_ROOM = gql(`
       name
       thumbnailUrl
       participantsCount
-      unreadMessagesCount
+      newMessagesCount
       lastMessage {
         id
         text

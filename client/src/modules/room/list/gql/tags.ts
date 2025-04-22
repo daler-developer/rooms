@@ -7,7 +7,7 @@ export const ROOMS_LIST = gql(`
       name
       thumbnailUrl
       participantsCount
-      unreadMessagesCount
+      newMessagesCount
       lastMessage {
         id
         text
@@ -60,7 +60,7 @@ export const NEW_ROOM_SUB = gql(`
       name
       thumbnailUrl
       participantsCount
-      unreadMessagesCount
+      newMessagesCount
       lastMessage {
         id
         text
@@ -71,5 +71,11 @@ export const NEW_ROOM_SUB = gql(`
         }
       }
     }
+  }
+`);
+
+export const NEW_MESSAGES_COUNT_CHANGE_SUB = gql(`
+  subscription RoomsListNewMessagesCountChange($roomId: Int!) {
+    roomNewMessagesCountChange(roomId: $roomId)
   }
 `);
