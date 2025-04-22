@@ -102,7 +102,6 @@ class InvitationService {
     pubsub.publish("USER_REJECTED_INVITATION", invitation);
     pubsub.publish("USER_INVITATIONS_COUNT_UPDATED", user);
     pubsub.publish("ROOM_PENDING_INVITATIONS_COUNT_CHANGE", room);
-
     pubsub.publish("ROOM_PENDING_INVITATIONS_COUNT_CHANGE", {
       roomPendingInvitationsCountChange: updatedRoom,
     });

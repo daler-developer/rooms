@@ -258,8 +258,6 @@ export class MessageService {
   async markMessageAsViewed({ messageId, userId }: { messageId: number; userId: number }) {
     let message = await this.messageRepository.getOneById(messageId);
 
-    await redisClient.hIncrBy(`rooms:${message.roomId}:unread_messages`, String(userId), -1);
-
     if (Boolean(await this.messageViewRepository.getOneByPk({ messageId, userId }))) {
       return await this.messageRepository.getOneById(messageId);
     }
@@ -268,19 +266,25 @@ export class MessageService {
       viewsCount: message.viewsCount + 1,
     });
 
-    let newMessagesCount = await this.userRoomNewMessagesCountRepository.getOneByPk({ userId, roomId: message.roomId });
-    newMessagesCount = await this.userRoomNewMessagesCountRepository.updateOneByPk(
-      { userId, roomId: message.roomId },
-      {
-        count: newMessagesCount.count - 1,
-      },
-    );
+    const userRoomParticipation = await this.userToRoomParticipationRepository.getOneByPk({ roomId: message.roomId, userId });
 
-    pubsub.publish("ROOM_NEW_MESSAGES_COUNT_CHANGE", {
-      roomId: message.roomId,
-      userId,
-      count: newMessagesCount.count,
-    });
+    const isMessageSentAfterUserJoined = new Date(message.sentAt!).getTime() > new Date(userRoomParticipation.createdAt).getTime();
+
+    if (isMessageSentAfterUserJoined) {
+      let newMessagesCount = await this.userRoomNewMessagesCountRepository.getOneByPk({ userId, roomId: message.roomId });
+      newMessagesCount = await this.userRoomNewMessagesCountRepository.updateOneByPk(
+        { userId, roomId: message.roomId },
+        {
+          count: newMessagesCount.count - 1,
+        },
+      );
+
+      pubsub.publish("ROOM_NEW_MESSAGES_COUNT_CHANGE", {
+        roomId: message.roomId,
+        userId,
+        count: newMessagesCount.count,
+      });
+    }
 
     await this.messageViewRepository.addOne({
       userId,

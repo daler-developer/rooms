@@ -14,6 +14,7 @@ const userRoomNewMessagesCount = pgTable(
       .notNull()
       .references(() => rooms.id),
     count: integer("count").default(0),
+    createdAt: timestamp("created_at", { mode: "string" }).defaultNow(),
   },
   (t) => ({
     pk: primaryKey({ columns: [t.userId, t.roomId] }),

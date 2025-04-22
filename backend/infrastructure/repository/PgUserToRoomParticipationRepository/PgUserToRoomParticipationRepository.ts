@@ -11,6 +11,12 @@ import { UserToRoomParticipation } from "../../../core/entities/UserToRoomPartic
 import { rooms } from "../../entities/Room";
 import { users } from "../../entities/User";
 
+(async () => {
+  const list = await db.select().from(usersToRooms);
+
+  console.log("list", list);
+})();
+
 @injectable()
 export class PgUserToRoomParticipationRepository implements UserToRoomParticipationRepository {
   async addOne({ roomId, userId }: UserToRoomParticipationAddOneDto): Promise<void> {
@@ -31,6 +37,14 @@ export class PgUserToRoomParticipationRepository implements UserToRoomParticipat
 
   async deleteOneByPk(userId: number, roomId: number): Promise<void> {
     await db.delete(usersToRooms).where(and(eq(usersToRooms.userId, userId), eq(usersToRooms.roomId, roomId)));
+  }
+
+  async getOneByPk(pk: Pick<UserToRoomParticipation, "userId" | "roomId">): Promise<UserToRoomParticipation | null> {
+    const [entity] = await db
+      .select()
+      .from(usersToRooms)
+      .where(and(eq(usersToRooms.userId, pk.userId), eq(usersToRooms.roomId, pk.roomId)));
+    return entity;
   }
 
   async getManyByRoomId(roomId: number): Promise<UserToRoomParticipation[]> {

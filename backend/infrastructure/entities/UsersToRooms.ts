@@ -13,7 +13,7 @@ const usersToRooms = pgTable(
     roomId: integer("room_id")
       .notNull()
       .references(() => rooms.id),
-    createdAt: timestamp("created_at", { mode: "string" }).defaultNow(),
+    createdAt: timestamp("created_at", { mode: "string", withTimezone: true }).defaultNow(),
   },
   (t) => ({
     pk: primaryKey({ columns: [t.userId, t.roomId] }),
