@@ -119,8 +119,6 @@ export class MessageService {
     const currentTime = Date.now();
     const delay = targetTime - currentTime;
 
-    console.log("delay", delay);
-
     setTimeout(async () => {
       message = await this.messageRepository.getOneById(message.id);
 
@@ -129,6 +127,27 @@ export class MessageService {
       }
 
       message = await this.messageRepository.updateOneById(message.id, { sentAt: new Date().toISOString() });
+
+      const participantsIds = (await this.userToRoomParticipationRepository.getManyByRoomId(message.roomId)).map((p) => p.userId);
+
+      for (const participantsId of participantsIds) {
+        const isSender = message.senderId === participantsId;
+
+        if (!isSender) {
+          let userRoomNewMessagesCount = await this.userRoomNewMessagesCountRepository.getOneByPk({ userId: participantsId, roomId: message.roomId });
+          userRoomNewMessagesCount = await this.userRoomNewMessagesCountRepository.updateOneByPk(
+            { userId: participantsId, roomId: message.roomId },
+            {
+              count: userRoomNewMessagesCount.count + 1,
+            },
+          );
+          pubsub.publish("ROOM_NEW_MESSAGES_COUNT_CHANGE", {
+            roomId: message.roomId,
+            userId: participantsId,
+            count: userRoomNewMessagesCount.count,
+          });
+        }
+      }
 
       pubsub.publish("ROOM_LAST_MESSAGE_CHANGE", {
         roomId: message.roomId,
