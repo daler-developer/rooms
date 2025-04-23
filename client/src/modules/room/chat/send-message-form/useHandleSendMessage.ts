@@ -8,6 +8,7 @@ import { FormFields } from "./types";
 import { useRoomChatStore, TemporaryMessage } from "../store";
 import { useRoomChatEmitter } from "../emitter";
 import { useRoomId } from "../context";
+import useNotifyTypingStopMutation from "../gql/useNotifyTypingStopMutation";
 
 const useHandleSendMessage = () => {
   const roomId = useRoomId();
@@ -21,11 +22,18 @@ const useHandleSendMessage = () => {
   };
 
   const mutations = {
+    notifyTypingStop: useNotifyTypingStopMutation(),
     sendMessage: useCustomMutation(SEND_MESSAGE_MUTATION),
   };
 
   return useCallback(
     (values: FormFields) => {
+      mutations.notifyTypingStop.mutate({
+        variables: {
+          roomId,
+        },
+      });
+
       const temporaryMessage: TemporaryMessage = {
         id: uuid(),
         text: values.text,

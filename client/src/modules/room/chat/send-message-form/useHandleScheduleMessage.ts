@@ -9,6 +9,7 @@ import { FormFields } from "./types";
 import { useRoomChatStore, TemporaryScheduledMessage } from "../store";
 import { useRoomId } from "../context";
 import { useRoomChatEmitter } from "../emitter";
+import useNotifyTypingStopMutation from "../gql/useNotifyTypingStopMutation";
 
 const useHandleSendMessage = () => {
   const roomId = useRoomId();
@@ -22,15 +23,22 @@ const useHandleSendMessage = () => {
   };
 
   const mutations = {
+    notifyTypingStop: useNotifyTypingStopMutation(),
     scheduleMessage: useCustomMutation(SCHEDULE_MESSAGE_MUTATION),
   };
 
   return useCallback(
     (values: FormFields) => {
+      mutations.notifyTypingStop.mutate({
+        variables: {
+          roomId,
+        },
+      });
+
       const temporaryScheduledMessage: TemporaryScheduledMessage = {
         id: uuid(),
         text: values.text,
-        scheduledAt: values.scheduleAt,
+        scheduledAt: values.scheduleAt!,
         imageUrls: values.images.map((image) => image.imageUrl!),
       };
 

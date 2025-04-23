@@ -119,6 +119,8 @@ export class MessageService {
     const currentTime = Date.now();
     const delay = targetTime - currentTime;
 
+    console.log("delay", delay);
+
     setTimeout(async () => {
       message = await this.messageRepository.getOneById(message.id);
 
@@ -203,7 +205,7 @@ export class MessageService {
       await this.messageImageRepository.addOne({ url: imageUrl, messageId: message.id });
     }
 
-    // await this.sendSavedMessageAtScheduledAt(message.id);
+    await this.sendSavedMessageAtScheduledAt(message.id);
 
     return message;
   }

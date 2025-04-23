@@ -28,7 +28,7 @@ import db from "./infrastructure/db";
 import { messages } from "./infrastructure/entities/Message";
 import { eq } from "drizzle-orm";
 
-setMaxListeners(1000);
+// setMaxListeners(1000);
 
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -61,7 +61,7 @@ const start = async () => {
 
   const wsServer = new WebSocketServer({
     server: httpServer,
-    path: "/graphql",
+    path: "/subscriptions",
   });
 
   const typeDefs = gql(
@@ -116,6 +116,7 @@ const start = async () => {
         return result;
       },
       onConnect(ctx) {
+        console.log("connect");
         const authService = iocContainer.get<AuthService>(TYPES.AuthService);
         const userService = iocContainer.get<UserService>(TYPES.UserService);
 
@@ -131,6 +132,7 @@ const start = async () => {
         // userService.updateUserOnlineStatus({ userId, sessionId, isOnline: true });
       },
       onDisconnect(ctx) {
+        console.log("disconnect");
         const authService = iocContainer.get<AuthService>(TYPES.AuthService);
         const userService = iocContainer.get<UserService>(TYPES.UserService);
 
@@ -147,8 +149,8 @@ const start = async () => {
     wsServer,
   );
 
-  // app.use(cors());
-  // app.use(express.json());
+  app.use(cors());
+  app.use(express.json());
 
   const server = new ApolloServer<CustomContext>({
     schema,

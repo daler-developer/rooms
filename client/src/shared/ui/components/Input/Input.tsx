@@ -109,12 +109,12 @@ const Input = forwardRef<HTMLInputElement, Props>(
             className={inputClasses}
             placeholder={placeholder}
             value={value}
+            autoComplete="off"
+            disabled={disabled}
             onChange={onChange}
             onFocus={onFocus}
             onBlur={onBlur}
             onKeyDown={onKeyDown}
-            autoComplete="off"
-            disabled={disabled}
           />
           {withAfterIcon && <AfterIcon className={afterIconClasses} />}
         </div>

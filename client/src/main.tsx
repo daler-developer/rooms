@@ -33,7 +33,7 @@ const authLink = setContext((_, { headers: defaultHeaders }) => {
 
 const wsLink = new GraphQLWsLink(
   createClient({
-    url: "ws://localhost:5003/graphql",
+    url: "ws://localhost:5003/subscriptions",
     connectionParams: () => {
       return {
         authToken: localStorage.getItem("token")!,

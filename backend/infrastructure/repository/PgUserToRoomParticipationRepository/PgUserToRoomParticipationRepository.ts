@@ -11,12 +11,6 @@ import { UserToRoomParticipation } from "../../../core/entities/UserToRoomPartic
 import { rooms } from "../../entities/Room";
 import { users } from "../../entities/User";
 
-(async () => {
-  const list = await db.select().from(usersToRooms);
-
-  console.log("list", list);
-})();
-
 @injectable()
 export class PgUserToRoomParticipationRepository implements UserToRoomParticipationRepository {
   async addOne({ roomId, userId }: UserToRoomParticipationAddOneDto): Promise<void> {
