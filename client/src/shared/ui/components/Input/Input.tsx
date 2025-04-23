@@ -1,5 +1,6 @@
-import { ComponentProps, forwardRef, ForwardedRef, useId, ReactElement, useImperativeHandle, useRef } from "react";
+import { ComponentProps, forwardRef, useId, ReactElement } from "react";
 import clsx from "clsx";
+import { IconType } from "react-icons";
 
 type Props = {
   label?: string;
@@ -16,14 +17,10 @@ type Props = {
   disabled?: boolean;
   success?: boolean;
   Icon?: ReactElement;
-  BeforeIcon?: ReactElement;
-  AfterIcon?: ReactElement;
+  BeforeIcon?: IconType;
+  AfterIcon?: IconType;
   className?: ComponentProps<"div">["className"];
   errors?: string[];
-};
-
-type InputHandle = {
-  focus: () => void;
 };
 
 const Input = forwardRef<HTMLInputElement, Props>(
@@ -50,17 +47,6 @@ const Input = forwardRef<HTMLInputElement, Props>(
     ref,
   ) => {
     const id = useId();
-    //
-    // const inputEl = useRef<HTMLInputElement>(null!);
-    //
-    // useImperativeHandle(ref, () => ({
-    //   focus() {
-    //     inputEl.current.focus();
-    //   },
-    // }));
-
-    const withBeforeIcon = Boolean(BeforeIcon);
-    const withAfterIcon = Boolean(AfterIcon);
 
     const hasErrors = errors && errors.length > 0;
 
@@ -101,7 +87,7 @@ const Input = forwardRef<HTMLInputElement, Props>(
         )}
 
         <div className={inputContainerClasses} onClick={onClick} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
-          {withBeforeIcon && <BeforeIcon className={beforeIconClasses} />}
+          {BeforeIcon && <BeforeIcon className={beforeIconClasses} />}
           <input
             ref={ref}
             id={id}
@@ -116,7 +102,7 @@ const Input = forwardRef<HTMLInputElement, Props>(
             onBlur={onBlur}
             onKeyDown={onKeyDown}
           />
-          {withAfterIcon && <AfterIcon className={afterIconClasses} />}
+          {AfterIcon && <AfterIcon className={afterIconClasses} />}
         </div>
 
         {hasErrors && errors.length > 0 && (

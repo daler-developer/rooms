@@ -1,4 +1,4 @@
-import { ComponentType, ReactElement, JSX, ReactNode } from "react";
+import { ComponentType, JSX, ReactNode } from "react";
 import { User } from "@/__generated__/graphql.ts";
 import { Avatar, Badge } from "@/shared/ui";
 
