@@ -50,12 +50,14 @@ const Cell = ({ date }: Props) => {
       disabled={disabled}
       type="button"
       onClick={handleClick}
-      className={clsx("flex items-center justify-center cursor-pointer text-[20px] w-[40px] h-[40px] rounded-sm select-none", {
-        "hover:bg-slate-100": !isSelected && !isPrevMonth && !isNextMonth,
-        "hover:bg-gray-50": !isSelected && (isPrevMonth || isNextMonth),
-        "text-gray-300": isNextMonth || isPrevMonth,
+      className={clsx("flex items-center justify-center text-[20px] w-[40px] h-[40px] rounded-sm select-none", {
+        "hover:bg-slate-100": !disabled && !isSelected && !isPrevMonth && !isNextMonth,
+        "hover:bg-gray-50": !disabled && !isSelected && (isPrevMonth || isNextMonth),
+        "text-gray-400": !disabled && (isNextMonth || isPrevMonth),
         "bg-blue-100": isSelected && !isNextMonth && !isNextMonth,
+        "text-gray-200": disabled,
         "border border-blue-500": isToday && !isSelected,
+        "cursor-pointer": !disabled,
       })}
     >
       {date.date()}

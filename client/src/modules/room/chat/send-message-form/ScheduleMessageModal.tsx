@@ -1,15 +1,13 @@
 import { ElementRef, forwardRef, useImperativeHandle, useMemo, useRef, useState } from "react";
 import { Button, Calendar, Modal, TimeInput, type Time } from "@/shared/ui";
 import dayjs, { Dayjs } from "dayjs";
-import { useFormContext } from "@/shared/lib/form";
-import { FormFields } from "./types";
+import cn from "@/shared/lib/classnames";
 
 export type ScheduleMessageModalHandle = {
   open: () => Promise<string>;
 };
 
 const ScheduleMessageModal = forwardRef<ScheduleMessageModalHandle>((_, ref) => {
-  const form = useFormContext<FormFields>();
   const [showModal, setShowModal] = useState(false);
   const [date, setDate] = useState<Dayjs>(() => dayjs());
   const [time, setTime] = useState<Time>({
@@ -63,6 +61,12 @@ const ScheduleMessageModal = forwardRef<ScheduleMessageModalHandle>((_, ref) => 
     promiseResolveFunc.current(result);
   };
 
+  const isValid = useMemo(() => {
+    const now = dayjs();
+    const dateSelected = date.hour(time.hours).minute(time.minutes);
+    return dateSelected.isAfter(now);
+  }, [date, time]);
+
   return (
     <Modal size="sm" title="Schedule message" isOpen={showModal} onClose={handleClose}>
       <div>
@@ -72,8 +76,16 @@ const ScheduleMessageModal = forwardRef<ScheduleMessageModalHandle>((_, ref) => 
           <TimeInput ref={timeInput} value={time} onChange={setTime} />
         </div>
 
-        <div className="mt-4">
-          <Button fullWidth type="button" size="lg" onClick={handleSend}>
+        <p
+          className={cn("mt-2 text-sm font-medium text-red-600 text-center", {
+            invisible: isValid,
+          })}
+        >
+          Select date and time greater than now
+        </p>
+
+        <div className="mt-2">
+          <Button disabled={!isValid} className="mt-10" fullWidth type="button" size="lg" onClick={handleSend}>
             {isSelectedToday && `Send today at ${formattedTime}`}
             {!isSelectedToday && `Send on ${formattedDate} at ${formattedTime}`}
           </Button>
