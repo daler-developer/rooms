@@ -32,7 +32,10 @@ const MessagesList = () => {
       }
 
       if (!senderIsMe && baseMessagesComp.current.isScrolledToBottom) {
-        baseMessagesComp.current?.scrollToBottom();
+        // TODO: this timeout is needed to wait for DOM fully updated
+        setTimeout(() => {
+          baseMessagesComp.current?.scrollToBottom();
+        }, 0);
       }
     };
 
