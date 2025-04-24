@@ -1,7 +1,7 @@
 import { useSearchParams } from "react-router-dom";
 import { useMemo } from "react";
 
-const useCustomSearchParam = <TValue, TDefault = undefined>(key: string, transformer: (value: string) => TValue, defaultValue?: TDefault) => {
+const useCustomSearchParam = <TValue, TDefault>(key: string, transformer: (value: string) => TValue, defaultValue?: TDefault) => {
   const [searchParams, setSearchParams] = useSearchParams();
 
   const value = useMemo(() => {

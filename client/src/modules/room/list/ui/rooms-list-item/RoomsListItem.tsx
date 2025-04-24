@@ -10,21 +10,21 @@ import useRoomNewMessagesCountChangeSub from "../../gql/useRoomNewMessagesCountC
 
 type Props = {
   room: Flatten<RoomsListQuery["rooms"]>;
+  isSelected: boolean;
+  onClick: () => void;
 };
 
-const RoomsListItem = ({ room }: Props) => {
+const RoomsListItem = ({ room, isSelected, onClick }: Props) => {
   useRoomLastMessageChangeSub({ roomId: room.id });
   useRoomParticipantLeaveSub({ roomId: room.id });
   useRoomNewMessagesCountChangeSub({ roomId: room.id });
 
   return (
-    <NavLink
-      to={buildRoutePath.HOME({ roomId: room.id })}
-      className={({ isActive }) =>
-        cn("w-full flex items-center gap-2 border-gray-200 p-1 cursor-pointer [&:not(:last-child)]:border-b-[0.5px]", {
-          "border-4 border-blue-500": isActive && false,
-        })
-      }
+    <div
+      className={cn("w-full flex items-center gap-2 border-gray-200 p-1 cursor-pointer [&:not(:last-child)]:border-b-[0.5px]", {
+        "bg-blue-50": isSelected,
+      })}
+      onClick={onClick}
     >
       <div className="shrink-0">
         <Avatar alt={room.name} size="md" src={room.thumbnailUrl} />
@@ -36,7 +36,7 @@ const RoomsListItem = ({ room }: Props) => {
       <div className="shrink-0 pr-1">
         <Badge badgeColor="blue" badgeContent={room.newMessagesCount} />
       </div>
-    </NavLink>
+    </div>
   );
 };
 

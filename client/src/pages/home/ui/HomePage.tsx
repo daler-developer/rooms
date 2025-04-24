@@ -5,9 +5,32 @@ import { HiOutlineChat } from "react-icons/hi";
 import useNewInvitationSub from "../gql/useNewInvitationSub.ts";
 import useUserRejectedInvitationSub from "../gql/useUserRejectedInvitationSub.ts";
 import useUserAcceptedInvitationSub from "../gql/useUserAcceptedInvitationSub.ts";
+import useRoomIdSearchParam from "../useRoomIdSearchParam.ts";
+import { Avatar, Button } from "@/shared/ui";
+import { useState } from "react";
+
+// const HomePage = () => {
+//   const [show, setShow] = useState(true);
+//
+//   return (
+//     <div className="p-10">
+//       <div className="mb-10">
+//         <Button
+//           type="button"
+//           onClick={() => {
+//             setShow((prev) => !prev);
+//           }}
+//         >
+//           Show/Hide
+//         </Button>
+//       </div>
+//       {show && <Avatar size="xl" alt="Room" />}
+//     </div>
+//   );
+// };
 
 const HomePage = () => {
-  const { value: roomId, remove: removeRoomId } = useCustomSearchParam<number>("roomId", Number);
+  const { roomId, removeRoomId } = useRoomIdSearchParam();
 
   useNewInvitationSub();
   useUserRejectedInvitationSub();
@@ -20,8 +43,8 @@ const HomePage = () => {
         <div className="h-screen">
           {roomId ? (
             <RoomChat
-              key={roomId!}
-              roomId={roomId!}
+              key={roomId}
+              roomId={roomId}
               onClose={() => {
                 removeRoomId();
               }}

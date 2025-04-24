@@ -6,8 +6,10 @@ import { HiMiniEllipsisVertical } from "react-icons/hi2";
 import { useLogout } from "@/modules/auth";
 import useHomePageStore from "@/pages/home/store.ts";
 import { InvitationsButton } from "@/modules/invitation/invitations-button";
+import useRoomIdSearchParam from "../../useRoomIdSearchParam.ts";
 
 const MainTab = () => {
+  const { roomId, setRoomId } = useRoomIdSearchParam();
   const logout = useLogout();
 
   const sidebarTab = useHomePageStore.use.sidebarTab();
@@ -50,7 +52,12 @@ const MainTab = () => {
       }
     >
       <div className="h-full">
-        <RoomsList />
+        <RoomsList
+          selectedRoomId={roomId}
+          onSelectedRoomIdChange={(newRoomId) => {
+            setRoomId(newRoomId);
+          }}
+        />
       </div>
     </BaseTab>
   );

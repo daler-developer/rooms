@@ -7,7 +7,12 @@ import useGetRoomsQuery from "../gql/useGetRoomsQuery.ts";
 import RoomsListSkeletons from "./RoomsListSkeletons.tsx";
 import { CreateRoomButton } from "@/modules/room/create";
 
-const RoomsList = () => {
+type Props = {
+  selectedRoomId: number | null;
+  onSelectedRoomIdChange: (selectedRoomId: number) => void;
+};
+
+const RoomsList = ({ selectedRoomId, onSelectedRoomIdChange }: Props) => {
   const [search, setSearch] = useState("");
 
   const queries = {
@@ -72,7 +77,14 @@ const RoomsList = () => {
             {filteredRooms.length > 0 ? (
               <Scroll height="full" className="mt-2 flex flex-col px-1">
                 {filteredRooms.map((room) => (
-                  <RoomsListItem key={room.id} room={room} />
+                  <RoomsListItem
+                    key={room.id}
+                    room={room}
+                    isSelected={selectedRoomId === room.id}
+                    onClick={() => {
+                      onSelectedRoomIdChange(room.id);
+                    }}
+                  />
                 ))}
               </Scroll>
             ) : (
