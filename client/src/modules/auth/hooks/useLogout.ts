@@ -1,7 +1,9 @@
+import { buildRoutePath } from "@/shared/lib/router";
+
 const useLogout = () => {
   return () => {
     localStorage.removeItem("token");
-    location.href = "/login";
+    location.href = buildRoutePath.LOGIN();
   };
 };
 

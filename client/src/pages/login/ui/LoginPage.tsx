@@ -1,9 +1,10 @@
 import { LoginForm } from "@/modules/auth";
+import { buildRoutePath } from "@/shared/lib/router";
 
 const LoginPage = () => {
   const handleSuccess = () => {
     window.location.reload();
-    window.location.href = "/home";
+    window.location.href = buildRoutePath.HOME();
   };
 
   return (

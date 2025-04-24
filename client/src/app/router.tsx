@@ -1,4 +1,5 @@
 import { createBrowserRouter } from "react-router-dom";
+import { ROUTE_PATH } from "@/shared/lib/router";
 import ProtectedRoute from "./ProtectedRoute.tsx";
 
 import { LoginPage } from "@/pages/login";
@@ -7,15 +8,15 @@ import { Register } from "@/pages/register";
 
 const router = createBrowserRouter([
   {
-    path: "/login",
+    path: ROUTE_PATH.LOGIN,
     element: <LoginPage />,
   },
   {
-    path: "/register",
+    path: ROUTE_PATH.REGISTER,
     element: <Register />,
   },
   {
-    path: "/home",
+    path: ROUTE_PATH.HOME,
     element: (
       <ProtectedRoute>
         <HomePage />

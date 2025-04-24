@@ -1,4 +1,6 @@
-import { Link } from "react-router-dom";
+import { NavLink } from "react-router-dom";
+import cn from "@/shared/lib/classnames";
+import { buildRoutePath } from "@/shared/lib/router";
 import { RoomsListQuery } from "@/__generated__/graphql.ts";
 import RoomsListItemLastMessage from "./RoomsListItemLastMessage.tsx";
 import { Avatar, Badge } from "@/shared/ui";
@@ -16,7 +18,14 @@ const RoomsListItem = ({ room }: Props) => {
   useRoomNewMessagesCountChangeSub({ roomId: room.id });
 
   return (
-    <Link to={`/home?roomId=${room.id}`} className="w-full flex items-center gap-2 border-gray-200 p-1 cursor-pointer [&:not(:last-child)]:border-b-[0.5px]">
+    <NavLink
+      to={buildRoutePath.HOME({ roomId: room.id })}
+      className={({ isActive }) =>
+        cn("w-full flex items-center gap-2 border-gray-200 p-1 cursor-pointer [&:not(:last-child)]:border-b-[0.5px]", {
+          "border-4 border-blue-500": isActive && false,
+        })
+      }
+    >
       <div className="shrink-0">
         <Avatar alt={room.name} size="md" src={room.thumbnailUrl} />
       </div>
@@ -27,7 +36,7 @@ const RoomsListItem = ({ room }: Props) => {
       <div className="shrink-0 pr-1">
         <Badge badgeColor="blue" badgeContent={room.newMessagesCount} />
       </div>
-    </Link>
+    </NavLink>
   );
 };
 
