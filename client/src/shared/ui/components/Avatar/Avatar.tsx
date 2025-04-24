@@ -28,6 +28,10 @@ const Avatar = forwardRef<HTMLDivElement, Props>(({ src, className, size = "lg",
       setIsLoading(false);
     }
 
+    if (!src) {
+      setHasError(true);
+    }
+
     img.onload = () => {
       setIsLoading(false);
     };
