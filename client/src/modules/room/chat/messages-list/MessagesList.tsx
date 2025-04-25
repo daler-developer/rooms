@@ -102,6 +102,7 @@ const MessagesList = () => {
       selectedMessages={roomChatStore.selectedMessages}
       onSelectedMessagesChange={roomChatStore.setSelectedMessages}
       onReachStart={handleReachStart}
+      noDataMessage="No messages"
     >
       {messages}
     </BaseMessagesList>

@@ -81,6 +81,7 @@ const ScheduledMessagesList = () => {
       ref={baseMessagesComp}
       selectedMessages={roomChatStore.selectedScheduledMessages}
       onSelectedMessagesChange={roomChatStore.setSelectedScheduledMessages}
+      noDataMessage="No scheduled messages"
     >
       {messages}
     </BaseMessagesList>

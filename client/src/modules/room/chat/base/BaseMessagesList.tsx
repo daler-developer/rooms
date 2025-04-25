@@ -7,6 +7,7 @@ type Props = {
   selectedMessages: Array<number | string>;
   onSelectedMessagesChange: (selectedMessages: Array<number | string>) => void;
   onReachStart?: () => void;
+  noDataMessage: string;
 };
 
 type BaseMessagesListHandle = {
@@ -14,73 +15,75 @@ type BaseMessagesListHandle = {
   isScrolledToBottom: boolean;
 };
 
-const BaseMessagesList = forwardRef<BaseMessagesListHandle, Props>(({ children, onReachStart, selectedMessages, onSelectedMessagesChange }, ref) => {
-  const scrollControl = useScrollControl();
+const BaseMessagesList = forwardRef<BaseMessagesListHandle, Props>(
+  ({ children, onReachStart, selectedMessages, onSelectedMessagesChange, noDataMessage }, ref) => {
+    const scrollControl = useScrollControl();
 
-  useEffect(() => {
-    scrollControl.scrollToBottom();
-  }, []);
-
-  const wrapperEl = useRef<HTMLDivElement>(null!);
-
-  useImperativeHandle(ref, () => ({
-    scrollToBottom() {
+    useEffect(() => {
       scrollControl.scrollToBottom();
-    },
-    isScrolledToBottom: scrollControl.isScrolledToBottom,
-  }));
+    }, []);
 
-  const showNoData = Children.count(children) === 0;
-  const showData = Children.count(children) > 0;
+    const wrapperEl = useRef<HTMLDivElement>(null!);
 
-  const getSelectHandler = (messageId: number | string) => {
-    return () => {
-      onSelectedMessagesChange?.([...selectedMessages, messageId]);
+    useImperativeHandle(ref, () => ({
+      scrollToBottom() {
+        scrollControl.scrollToBottom();
+      },
+      isScrolledToBottom: scrollControl.isScrolledToBottom,
+    }));
+
+    const showNoData = Children.count(children) === 0;
+    const showData = Children.count(children) > 0;
+
+    const getSelectHandler = (messageId: number | string) => {
+      return () => {
+        onSelectedMessagesChange?.([...selectedMessages, messageId]);
+      };
     };
-  };
 
-  const getDeselectHandler = (messageId: number | string) => {
-    return () => {
-      onSelectedMessagesChange?.(selectedMessages.filter((id) => id !== messageId));
+    const getDeselectHandler = (messageId: number | string) => {
+      return () => {
+        onSelectedMessagesChange?.(selectedMessages.filter((id) => id !== messageId));
+      };
     };
-  };
 
-  return (
-    <BaseMessagesContext.Provider
-      value={{
-        hasSelectedMessages: selectedMessages.length > 0,
-        getSelectHandler,
-        getDeselectHandler,
-        handleSelect(messageId) {
-          onSelectedMessagesChange?.([...selectedMessages, messageId]);
-        },
-        handleDeselect(messageId) {
-          onSelectedMessagesChange?.(selectedMessages.filter((id) => id !== messageId));
-        },
-        selectedMessages,
-      }}
-    >
-      {showNoData && (
-        <div className="h-full flex items-center justify-center">
-          <Empty title="No messages" />
-        </div>
-      )}
-
-      {showData && (
-        <Scroll
-          ref={scrollControl.ref}
-          height="full"
-          onScrollToTop={() => {
-            onReachStart?.();
-          }}
-        >
-          <div ref={wrapperEl} className="flex flex-col gap-6 pt-8 pb-8">
-            {children}
+    return (
+      <BaseMessagesContext.Provider
+        value={{
+          hasSelectedMessages: selectedMessages.length > 0,
+          getSelectHandler,
+          getDeselectHandler,
+          handleSelect(messageId) {
+            onSelectedMessagesChange?.([...selectedMessages, messageId]);
+          },
+          handleDeselect(messageId) {
+            onSelectedMessagesChange?.(selectedMessages.filter((id) => id !== messageId));
+          },
+          selectedMessages,
+        }}
+      >
+        {showNoData && (
+          <div className="h-full flex items-center justify-center">
+            <Empty title={noDataMessage} />
           </div>
-        </Scroll>
-      )}
-    </BaseMessagesContext.Provider>
-  );
-});
+        )}
+
+        {showData && (
+          <Scroll
+            ref={scrollControl.ref}
+            height="full"
+            onScrollToTop={() => {
+              onReachStart?.();
+            }}
+          >
+            <div ref={wrapperEl} className="flex flex-col gap-6 pt-8 pb-8">
+              {children}
+            </div>
+          </Scroll>
+        )}
+      </BaseMessagesContext.Provider>
+    );
+  },
+);
 
 export default BaseMessagesList;
