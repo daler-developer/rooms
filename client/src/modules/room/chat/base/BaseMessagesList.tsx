@@ -1,5 +1,5 @@
-import { forwardRef, useImperativeHandle, ReactNode, useEffect, useRef } from "react";
-import { Scroll, useScrollControl } from "@/shared/ui";
+import { forwardRef, useImperativeHandle, ReactNode, useEffect, useRef, useMemo, Children } from "react";
+import { Empty, Scroll, useScrollControl } from "@/shared/ui";
 import { BaseMessagesContext } from "./baseMessagesContext";
 
 type Props = {
@@ -30,6 +30,9 @@ const BaseMessagesList = forwardRef<BaseMessagesListHandle, Props>(({ children, 
     isScrolledToBottom: scrollControl.isScrolledToBottom,
   }));
 
+  const showNoData = Children.count(children) === 0;
+  const showData = Children.count(children) > 0;
+
   const getSelectHandler = (messageId: number | string) => {
     return () => {
       onSelectedMessagesChange?.([...selectedMessages, messageId]);
@@ -57,7 +60,13 @@ const BaseMessagesList = forwardRef<BaseMessagesListHandle, Props>(({ children, 
         selectedMessages,
       }}
     >
-      <div className="h-full">
+      {showNoData && (
+        <div className="h-full flex items-center justify-center">
+          <Empty title="No messages" />
+        </div>
+      )}
+
+      {showData && (
         <Scroll
           ref={scrollControl.ref}
           height="full"
@@ -69,7 +78,7 @@ const BaseMessagesList = forwardRef<BaseMessagesListHandle, Props>(({ children, 
             {children}
           </div>
         </Scroll>
-      </div>
+      )}
     </BaseMessagesContext.Provider>
   );
 });

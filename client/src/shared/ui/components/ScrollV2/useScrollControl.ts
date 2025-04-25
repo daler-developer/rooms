@@ -7,7 +7,7 @@ const useScrollControl = () => {
   const ref = useRef<ElementRef<typeof Scroll>>(null!);
 
   const scrollToBottom = useCallback(() => {
-    ref.current.scrollToBottom();
+    ref.current?.scrollToBottom();
   }, []);
 
   const refCallback = useCallback((el: any | null) => {
