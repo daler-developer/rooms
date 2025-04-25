@@ -9,7 +9,7 @@ import BaseMessageDivider from "./BaseMessageDivider";
 import BaseMessageScheduledAt from "./BaseMessageScheduledAt.tsx";
 import { useBaseMessagesContext } from "./baseMessagesContext.tsx";
 import { FaRegCircleCheck } from "react-icons/fa6";
-import { useLatest } from "@/shared/hooks";
+import { useLatest, usePreciseClick } from "@/shared/hooks";
 
 export type Props = {
   id: number | string;
@@ -78,7 +78,7 @@ const BaseMessage = ({
     };
   }, []);
 
-  const handleClick = () => {
+  const wrapperEl = usePreciseClick(() => {
     if (selectable && isSelected) {
       baseMessagesContext.handleDeselect(id);
     }
@@ -86,7 +86,7 @@ const BaseMessage = ({
     if (selectable && !isSelected && baseMessagesContext.hasSelectedMessages) {
       baseMessagesContext.handleSelect(id);
     }
-  };
+  });
 
   const messageElClasses = clsx("flex items-start select-none", {
     "ml-auto gap-2": senderIsMe,
@@ -147,7 +147,7 @@ const BaseMessage = ({
   }, [id, contextMenuActions, selectable]);
 
   return (
-    <div>
+    <div ref={wrapperEl}>
       {divider}
 
       <ContextMenu
@@ -168,7 +168,7 @@ const BaseMessage = ({
             }
           }}
         >
-          <div className={containerElClasses} onClick={handleClick}>
+          <div className={containerElClasses}>
             <HiOutlineCheckCircle className={checkIconClasses} />
             <div ref={rootElRef} className={messageElClasses}>
               <div className={messageBodyClasses}>

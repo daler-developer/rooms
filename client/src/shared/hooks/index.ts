@@ -12,6 +12,7 @@ import useForceUpdate from "./useForceUpdate.ts";
 import useFilePaste from "./useFilePaste.ts";
 import useLatest from "./useLatest.ts";
 import useWaitForDomUpdate from "./useWaitForDomUpdate.ts";
+import usePreciseClick from "./usePreciseClick.ts";
 
 export {
   useTypedDispatch,
@@ -28,4 +29,5 @@ export {
   useFilePaste,
   useLatest,
   useWaitForDomUpdate,
+  usePreciseClick,
 };
