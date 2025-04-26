@@ -1,12 +1,10 @@
-import { and, count, desc, eq } from "drizzle-orm";
+import { and, desc, eq } from "drizzle-orm";
 import { injectable } from "inversify";
-
 import { InvitationRepository } from "../../../core/repositories/InvitationRepository/InvitationRepository";
 import db from "../../db";
 import { usersToRoomsInvite } from "../../entities/UsersToRoomsInvite";
 import { AddOneInvitationDto } from "../../../core/repositories/InvitationRepository/dto/AddOneInvitationDto";
 import { Invitation } from "../../../core/entities/Invitation";
-import { number } from "yup";
 
 @injectable()
 export class PgInvitationRepository implements InvitationRepository {
@@ -25,17 +23,6 @@ export class PgInvitationRepository implements InvitationRepository {
 
   async getManyByUserId(userId: number) {
     return db.select().from(usersToRoomsInvite).where(eq(usersToRoomsInvite.userId, userId)).orderBy(desc(usersToRoomsInvite.createdAt));
-  }
-
-  async getManyByUserIdCount(userId: number, { limit, offset }: { limit: number; offset: number }) {
-    const [{ count: result }] = await db
-      .select({ count: count() })
-      .from(usersToRoomsInvite)
-      .where(eq(usersToRoomsInvite.userId, userId))
-      .offset(offset)
-      .limit(limit);
-
-    return result;
   }
 
   async getOneByRoomId(roomId: number) {

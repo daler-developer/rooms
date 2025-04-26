@@ -33,7 +33,7 @@ class InvitationService {
     const invitation = await this.invitationRepository.getOneByRoomId(roomId);
 
     if (invitation) {
-      const invitor = await this.userRepository.getById(invitation.userId);
+      const invitor = await this.userRepository.getOneById(invitation.userId);
 
       return invitor;
     }
@@ -48,7 +48,7 @@ class InvitationService {
       roomId,
       count: 0,
     });
-    let user = await this.userRepository.getById(userId);
+    let user = await this.userRepository.getOneById(userId);
     let room = await this.roomRepository.getOneById(roomId);
 
     await this.userToRoomParticipationRepository.addOne({ userId, roomId });
@@ -84,7 +84,7 @@ class InvitationService {
 
   async rejectInvitation(userId: number, roomId: number) {
     const invitation = await this.invitationRepository.getOneByPk(userId, roomId);
-    let user = await this.userRepository.getById(userId);
+    let user = await this.userRepository.getOneById(userId);
     let room = await this.roomRepository.getOneById(roomId);
 
     await this.invitationRepository.deleteOne(userId, roomId);

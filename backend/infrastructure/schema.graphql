@@ -12,14 +12,6 @@ input LoginInput {
     password: String!
 }
 
-input BlockUserInput {
-    userId: Int!
-}
-
-input UnblockUserInput {
-    userId: Int!
-}
-
 input EditMyEmailInput {
     newEmail: String!
 }
@@ -228,10 +220,6 @@ input TestInput {
     bar: Int!
 }
 
-type TestResult {
-    result: String
-}
-
 type StartSessionResult {
     sessionToken: String!
 }
@@ -259,8 +247,6 @@ type Mutation {
     startSession: StartSessionResult!
     register(input: RegisterInput!): RegisterResult!
     login(input: LoginInput!): LoginResult!
-    blockUser(input: BlockUserInput!): User!
-    unblockUser(input: UnblockUserInput!): User!
     editEmail(input: EditMyEmailInput!): User!
     editFirstName(input: EditFirstNameInput!): User!
     editLastName(input: EditLastNameInput!): User!
@@ -282,7 +268,6 @@ type Mutation {
     sendScheduledMessagesNow(messageIds: [Int!]!): Boolean!
     notifyTypingStart(roomId: Int!): Boolean!
     notifyTypingStop(roomId: Int!): Boolean!
-    test(input: TestInput!): TestResult!
 }
 
 type Subscription {

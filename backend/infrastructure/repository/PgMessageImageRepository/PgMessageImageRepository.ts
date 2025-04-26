@@ -23,8 +23,6 @@ export class PgMessageImageRepository implements MessageImageRepository {
   }
 
   async getManyByMessageId(messageId: number): Promise<MessageImage[]> {
-    const result = await db.select().from(messageImages).where(eq(messageImages.messageId, messageId));
-
-    return result;
+    return db.select().from(messageImages).where(eq(messageImages.messageId, messageId));
   }
 }

@@ -9,6 +9,7 @@ const useGetRoomQuery = () => {
     variables: {
       roomId,
     },
+    // fetchPolicy: "cache-and-network",
   });
 };
 

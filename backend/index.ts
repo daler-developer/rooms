@@ -116,7 +116,6 @@ const start = async () => {
         return result;
       },
       onConnect(ctx) {
-        console.log("connect");
         const authService = iocContainer.get<AuthService>(TYPES.AuthService);
         const userService = iocContainer.get<UserService>(TYPES.UserService);
 
@@ -128,11 +127,12 @@ const start = async () => {
 
         userService.handleUserConnect({ userId, sessionId });
 
+        console.log("connect");
         return true;
         // userService.updateUserOnlineStatus({ userId, sessionId, isOnline: true });
       },
-      onDisconnect(ctx) {
-        console.log("disconnect");
+      onClose(ctx) {
+        // console.log("close");
         // const authService = iocContainer.get<AuthService>(TYPES.AuthService);
         // const userService = iocContainer.get<UserService>(TYPES.UserService);
         //

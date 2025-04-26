@@ -75,7 +75,7 @@ export class RoomService {
     pubsub.publish("ROOM_PENDING_INVITATIONS_COUNT_CHANGE", room);
 
     for (const invitedUserId of invitedUsersIds) {
-      let invitedUser = await this.userRepository.getById(invitedUserId);
+      let invitedUser = await this.userRepository.getOneById(invitedUserId);
 
       const invitation = await this.invitationRepository.addOne({
         userId: invitedUserId,
@@ -93,7 +93,7 @@ export class RoomService {
   }
 
   async leaveRoom({ userId, roomId }: { userId: number; roomId: number }) {
-    const user = await this.userRepository.getById(userId);
+    const user = await this.userRepository.getOneById(userId);
     let room = await this.roomRepository.getOneById(roomId);
 
     await this.userToRoomParticipationRepository.deleteOneByPk(userId, roomId);
@@ -141,7 +141,7 @@ export class RoomService {
 
     await this.userToRoomParticipationRepository.deleteOneByPk(userId, roomId);
 
-    const updatedUser = await this.userRepository.getById(userId);
+    const updatedUser = await this.userRepository.getOneById(userId);
     const updatedRoom = await this.roomRepository.getOneById(roomId);
 
     pubsub.publish("USER_EXCLUDED_FROM_ROOM", {

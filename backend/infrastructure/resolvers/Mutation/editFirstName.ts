@@ -14,7 +14,7 @@ type Args = InferType<typeof validationSchema>;
 const sleep = () => new Promise((resolve) => setTimeout(resolve, 500));
 
 const resolver = async (_, args: Args, { userId, userService }: CustomContext) => {
-  await sleep();
+  // await sleep();
   return await userService.editFirstName({ userId, newFirstName: args.input.newFirstName });
 };
 

@@ -14,7 +14,7 @@ type Args = {
 const sleep = () => new Promise((res) => setTimeout(res, 3000));
 
 const resolver = async (_, { input }: Args, { userService, userId }: CustomContext) => {
-  await sleep();
+  // await sleep();
   return await userService.editProfilePicture({ userId, newProfilePictureUrl: input.profilePictureUrl });
 };
 

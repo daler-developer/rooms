@@ -11,6 +11,7 @@ const useGetScheduledMessagesQuery = () => {
       offset: 0,
     },
     notifyOnNetworkStatusChange: true,
+    // fetchPolicy: "cache-and-network",
   });
 };
 

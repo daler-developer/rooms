@@ -116,7 +116,7 @@ const { useStore: useRoomChatStore, withStore: withRoomChatStore } = createZusta
   messagesListEl: null,
   messagesListScrollHandler: null,
 
-  tab: "scheduled-messages",
+  tab: "main",
   setTab(to) {
     set({
       tab: to,

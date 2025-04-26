@@ -7,7 +7,6 @@ import { eq } from "drizzle-orm";
 import pubsub from "../../../infrastructure/pubsub";
 import usersOnlineStatusChange from "../../../infrastructure/resolvers/Subscription/usersOnlineStatusChange";
 import redisClient from "../../../infrastructure/db/redisClient";
-import { UserToRoomRepository } from "../../repositories/UserToRoomRepository/UserToRoomRepository";
 import { UserToRoomParticipationRepository } from "../../repositories/UserToRoomParticipationRepository/UserToRoomParticipationRepository";
 import { AddUserDto } from "../../repositories/UserRepository/dto/AddUserDto";
 import { IncorrectPasswordGraphQLError, MeIsBlockedGraphQLError, UserNotFoundGraphQLError } from "../../../infrastructure/lib/graphql/errors";
@@ -58,33 +57,21 @@ class UserService {
   }
 
   async getUserById(id: number) {
-    return await this.userRepository.getById(id);
+    return await this.userRepository.getOneById(id);
   }
 
   async fetchUserById(id: number) {
-    return await this.userRepository.getById(id);
-  }
-
-  async blockUser(userId: number) {
-    await this.userRepository.setIsBlocked(userId, true);
-
-    return await this.getUserById(userId);
-  }
-
-  async unblockUser(userId: number) {
-    await this.userRepository.setIsBlocked(userId, false);
-
-    return await this.getUserById(userId);
+    return await this.userRepository.getOneById(id);
   }
 
   async resetPassword({ userId, newPassword }: { userId: number; newPassword: string }) {
-    await this.userRepository.updatePassword(userId, newPassword);
-
-    return await this.getUserById(userId);
+    return await this.userRepository.updateOneById(userId, {
+      password: newPassword,
+    });
   }
 
   async getUserPasswordLength(userId: number) {
-    const user = await this.userRepository.getById(userId);
+    const user = await this.userRepository.getOneById(userId);
 
     return user.password.length;
   }
@@ -108,7 +95,7 @@ class UserService {
   async handleUserConnect({ userId, sessionId }: { userId: number; sessionId: string }) {
     await redisClient.sAdd(`user:${String(userId)}:active_sessions`, sessionId);
 
-    const user = await this.userRepository.getById(userId);
+    const user = await this.userRepository.getOneById(userId);
 
     pubsub.publish("USER_ONLINE_STATUS_CHANGE", {
       usersOnlineStatusChange: user,
@@ -156,7 +143,7 @@ class UserService {
   }
 
   async notifyUserTypingStatusChange({ userId, sessionId, isTyping, roomId }: { userId: number; sessionId: string; isTyping: boolean; roomId: number }) {
-    const user = await this.userRepository.getById(userId);
+    const user = await this.userRepository.getOneById(userId);
 
     if (isTyping) {
       await redisClient.sAdd(`rooms:${roomId}:participants:${userId}:currently_typing_session_ids`, sessionId);

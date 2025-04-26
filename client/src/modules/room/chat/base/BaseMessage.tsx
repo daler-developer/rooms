@@ -97,7 +97,10 @@ const BaseMessage = ({
     "bg-black bg-opacity-[0.2]": isSelected || contextMenuContext.state.isOpen,
   });
 
-  const messageBodyClasses = clsx("relative min-w-[150px] rounded-lg");
+  const messageBodyClasses = clsx("relative min-w-[150px] max-w-[500px] rounded-lg", {
+    "bg-indigo-500": senderIsMe,
+    "bg-white": !senderIsMe,
+  });
 
   const checkIconClasses = clsx("text-[35px]", {
     invisible: !isSelected,
@@ -172,37 +175,43 @@ const BaseMessage = ({
             <HiOutlineCheckCircle className={checkIconClasses} />
             <div ref={rootElRef} className={messageElClasses}>
               <div className={messageBodyClasses}>
-                {imageUrls.length > 0 && (
-                  <div className="flex flex-col items-start">
-                    {imageUrls.map((imageUrl) => (
-                      <div className="max-w-[400px]" key={imageUrl}>
-                        <img className="w-full h-full" src={imageUrl} alt="message-image" />
-                      </div>
-                    ))}
-                  </div>
-                )}
-                <div
-                  className={clsx("py-[2px] px-[6px] text-[14px] pb-[300px]", {
-                    "flex flex-col bg-indigo-500 text-white": senderIsMe,
-                    "flex flex-col bg-white": !senderIsMe,
-                  })}
-                >
-                  <span>{text}</span>
-                  <div className="mt-2 flex items-center justify-between">
-                    <div
-                      className={clsx({
-                        "text-white": senderIsMe,
-                      })}
-                    >
-                      {bottomLeft}
+                <div className={clsx("rounded-lg overflow-hidden")}>
+                  {imageUrls.length > 0 && (
+                    <div className="flex flex-col items-start">
+                      {imageUrls.map((imageUrl) => (
+                        <div key={imageUrl}>
+                          <img className="w-full h-full" src={imageUrl} alt="message-image" />
+                        </div>
+                      ))}
                     </div>
+                  )}
+                  <div
+                    className={clsx("flex flex-col  py-[2px] px-[6px] text-[14px]", {
+                      "text-white": senderIsMe,
+                      "text-black": !senderIsMe,
+                    })}
+                  >
+                    <span>{text}</span>
+                    {/*<span>*/}
+                    {/*  some long text some long text some long text some long text some long text some long text some long text some long text some long text*/}
+                    {/*  some long text some long text some long text some long text some long text some long text some long text some long text some long text*/}
+                    {/*</span>*/}
+                    <div className="mt-2 flex items-center justify-between">
+                      <div
+                        className={clsx({
+                          "text-white": senderIsMe,
+                        })}
+                      >
+                        {bottomLeft}
+                      </div>
 
-                    <div
-                      className={clsx({
-                        "text-white": senderIsMe,
-                      })}
-                    >
-                      {bottomRight}
+                      <div
+                        className={clsx({
+                          "text-white": senderIsMe,
+                        })}
+                      >
+                        {bottomRight}
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -211,6 +220,7 @@ const BaseMessage = ({
                   {senderFirstName} {senderLastName}
                 </div>
               </div>
+
               <Avatar size="sm" src={senderProfilePictureUrl} badgeContent={<Badge size="sm" badgeColor={senderIsOnline ? "green" : "gray"} />} />
             </div>
           </div>

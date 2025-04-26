@@ -17,7 +17,7 @@ type Args = InferType<typeof validationSchema>;
 const sleep = () => new Promise((res) => setTimeout(res, 1000));
 
 const resolver = async (_, { input }: Args, { userService, userId }: CustomContext) => {
-  await sleep();
+  // await sleep();
   const me = await userService.fetchUserById(userId);
 
   if (me.password !== input.oldPassword) {
