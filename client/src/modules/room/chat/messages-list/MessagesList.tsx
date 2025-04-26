@@ -88,7 +88,11 @@ const MessagesList = () => {
     return [];
   }, [queries.messages.data, roomChatStore.temporaryMessages]);
 
-  const handleReachStart = () => {
+  const handleMore = () => {
+    if (!queries.messages.data!.room.messages.hasMore) {
+      return;
+    }
+
     queries.messages.fetchMore({
       variables: {
         offset: queries.messages.data!.room.messages.data.length,
@@ -101,8 +105,8 @@ const MessagesList = () => {
       ref={baseMessagesComp}
       selectedMessages={roomChatStore.selectedMessages}
       onSelectedMessagesChange={roomChatStore.setSelectedMessages}
-      onReachStart={handleReachStart}
       noDataMessage="No messages"
+      onMore={handleMore}
     >
       {messages}
     </BaseMessagesList>

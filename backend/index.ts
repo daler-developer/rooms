@@ -28,7 +28,7 @@ import db from "./infrastructure/db";
 import { messages } from "./infrastructure/entities/Message";
 import { eq } from "drizzle-orm";
 
-// setMaxListeners(1000);
+setMaxListeners(1000);
 
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -133,16 +133,16 @@ const start = async () => {
       },
       onDisconnect(ctx) {
         console.log("disconnect");
-        const authService = iocContainer.get<AuthService>(TYPES.AuthService);
-        const userService = iocContainer.get<UserService>(TYPES.UserService);
-
-        const authToken = ctx.connectionParams.authToken;
-        const sessionToken = ctx.connectionParams.sessionToken;
-
-        const { userId } = authService.decodeAuthToken(authToken);
-        const { sessionId } = authService.decodeSessionToken(sessionToken);
-
-        userService.handleUserDisconnect({ userId, sessionId });
+        // const authService = iocContainer.get<AuthService>(TYPES.AuthService);
+        // const userService = iocContainer.get<UserService>(TYPES.UserService);
+        //
+        // const authToken = ctx.connectionParams.authToken;
+        // const sessionToken = ctx.connectionParams.sessionToken;
+        //
+        // const { userId } = authService.decodeAuthToken(authToken);
+        // const { sessionId } = authService.decodeSessionToken(sessionToken);
+        //
+        // userService.handleUserDisconnect({ userId, sessionId });
         // userService.updateUserOnlineStatus({ userId, sessionId, isOnline: false });
       },
     },

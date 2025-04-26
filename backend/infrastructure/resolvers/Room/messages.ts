@@ -12,15 +12,11 @@ type Args = InferType<typeof validationSchema>;
 
 type Parent = Room;
 
-const sleep = () => new Promise((resolve) => setTimeout(resolve, 500));
+const sleep = () => new Promise((resolve) => setTimeout(resolve, 300));
 
 const resolver = async (parent: Parent, args: Args, { messageService }: CustomContext) => {
-  const result = await messageService.fetchMessagesByRoomId(parent.id, { offset: args.offset });
-
-  return {
-    data: result.data,
-    hasMore: result.hasMore,
-  };
+  await sleep();
+  return messageService.fetchMessagesByRoomId(parent.id, { offset: args.offset });
 };
 
 export default composeResolvers(authRequired, checkBlockedStatus, withValidation(validationSchema))(resolver);

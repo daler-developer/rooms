@@ -14,13 +14,8 @@ type Parent = Room;
 
 const sleep = () => new Promise((resolve) => setTimeout(resolve, 1000));
 
-const resolver = async (parent: Parent, args: Args, { messageService }: CustomContext) => {
-  const { data, hasMore } = await messageService.fetchScheduledMessages(parent.id, { offset: args.offset });
-
-  return {
-    data,
-    hasMore,
-  };
+const resolver = async (parent: Parent, args: Args, { messageService, userId }: CustomContext) => {
+  return await messageService.fetchScheduledMessages({ roomId: parent.id, offset: args.offset, userId });
 };
 
 export default composeResolvers(authRequired, checkBlockedStatus, withValidation(validationSchema))(resolver);

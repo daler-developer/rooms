@@ -18,6 +18,18 @@ const ScheduledMessagesList = () => {
     scheduledMessage: useGetScheduledMessagesQuery(),
   };
 
+  const handleMore = () => {
+    if (!queries.scheduledMessage.data!.room.scheduledMessages.hasMore) {
+      return;
+    }
+
+    queries.scheduledMessage.fetchMore({
+      variables: {
+        offset: queries.scheduledMessage.data!.room.scheduledMessages.data.length,
+      },
+    });
+  };
+
   useEffect(() => {
     const handler: EventCallback<"SCHEDULED_MESSAGE_INSERTED"> = () => {
       baseMessagesComp.current.scrollToBottom();
@@ -82,6 +94,7 @@ const ScheduledMessagesList = () => {
       selectedMessages={roomChatStore.selectedScheduledMessages}
       onSelectedMessagesChange={roomChatStore.setSelectedScheduledMessages}
       noDataMessage="No scheduled messages"
+      onMore={handleMore}
     >
       {messages}
     </BaseMessagesList>

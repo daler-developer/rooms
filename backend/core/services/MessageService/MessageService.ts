@@ -49,10 +49,11 @@ export class MessageService {
     };
   }
 
-  async fetchScheduledMessages(roomId: number, { offset }: { offset: number }) {
+  async fetchScheduledMessages({ roomId, userId, offset }: { offset: number; roomId: number; userId: number }) {
     const data = await this.messageRepository.getManyByRoomId(roomId, { offset, isSent: false });
+    const { count: totalScheduledMessagesCount } = await this.scheduledMessagesCountRepository.getOneByPk({ userId, roomId });
 
-    const hasMore = true;
+    const hasMore = offset + data.length < totalScheduledMessagesCount;
 
     return {
       data,
@@ -113,6 +114,7 @@ export class MessageService {
   }
 
   async sendSavedMessageAtScheduledAt(messageId: number) {
+    return;
     let message = await this.messageRepository.getOneById(messageId);
 
     const targetTime = new Date(message.scheduledAt).getTime();

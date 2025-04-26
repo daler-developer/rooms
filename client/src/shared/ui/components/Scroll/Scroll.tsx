@@ -1,18 +1,9 @@
-import {
-  CSSProperties,
-  forwardRef,
-  ReactNode,
-  Ref,
-  RefObject,
-  UIEventHandler,
-  useEffect,
-  useImperativeHandle,
-  useLayoutEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import { CSSProperties, forwardRef, ReactNode, UIEvent, useEffect, useImperativeHandle, useMemo, useRef, useState } from "react";
 import cls from "@/shared/lib/classnames";
+import { usePrevValue } from "@/shared/hooks";
+import { MdOutlineArrowDownward } from "react-icons/md";
+import { IconButton } from "@/shared/ui";
+import ScrollHint from "./ScrollHint";
 
 type Props = {
   children: ReactNode;
@@ -20,58 +11,80 @@ type Props = {
   onScrollToBottom?: () => void;
   onScrollToRight?: () => void;
   onScrollToTop?: () => void;
+  onScrollToTopWithThreshold?: () => void;
   onScrollToLeft?: () => void;
-  height?: number | "full";
+  height?: number | string;
   scrollToBottomOnMount?: boolean;
-  onReachTopThreshold?: () => void;
   topThreshold?: number;
+  showScrollToBottomButton?: boolean;
+  maxHeight?: number;
+  onReachBottomThreshold?: () => void;
+  bottomThreshold?: number;
+  onReachTopThreshold?: Array<{
+    threshold: number;
+    handler: () => void;
+  }>;
 };
 
 export type ScrollHandle = {
   scrollToBottom: () => void;
-  scrollableEl: HTMLElement;
+  isScrolledToBottom: () => boolean;
+  subscribeToIsScrolledToBottomChanged: (handler: (to: boolean) => void) => () => void;
 };
-
-const OVERLAY_SIZE = 20;
 
 const Scroll = forwardRef<ScrollHandle, Props>(
   (
     {
       children,
-      height,
+      height = "auto",
       className,
       onScrollToBottom,
       onScrollToRight,
       onScrollToTop,
+      onScrollToTopWithThreshold,
       onScrollToLeft,
-      scrollToBottomOnMount = false,
       onReachTopThreshold,
-      topThreshold,
+      showScrollToBottomButton = false,
+      onReachBottomThreshold,
+      bottomThreshold = 100,
     },
     ref,
   ) => {
-    const [scrollPosition, setScrollPosition] = useState({
-      top: 0,
-      left: 0,
-    });
-    const [scrollableElSize, setScrollableElSize] = useState({
-      width: 0,
-      height: 0,
-    });
+    const [scrollTop, setScrollTop] = useState(0);
+    const [scrollLeft, setScrollLeft] = useState(0);
+    const [clientWidth, setClientWidth] = useState(0);
+    const [clientHeight, setClientHeight] = useState(0);
+    const [scrollHeight, setScrollHeight] = useState(0);
+    const [scrollWidth, setScrollWidth] = useState(0);
 
-    const scrollableEl = useRef<HTMLElement>(null!);
+    const prevScrollTop = usePrevValue(scrollTop);
+
+    const isLastScrollToBottom = useMemo(() => {
+      if (prevScrollTop === null) {
+        return false;
+      }
+
+      return prevScrollTop < scrollTop;
+    }, [prevScrollTop, scrollTop]);
+
+    const scrollableEl = useRef<HTMLDivElement>(null!);
     const containerEl = useRef<HTMLDivElement>(null!);
 
+    const scrollToBottom = () => {
+      scrollableEl.current.scrollTo({
+        top: scrollableEl.current.scrollHeight,
+        behavior: "instant",
+      });
+    };
+
     useEffect(() => {
-      const containerElCopy = containerEl.current;
+      const containerElCopy = scrollableEl.current;
 
       const resizeObserver = new ResizeObserver((entries) => {
         const entry = entries[0];
 
-        setScrollableElSize({
-          width: entry.contentRect.width,
-          height: entry.contentRect.height,
-        });
+        setClientWidth(entry.contentRect.width);
+        setClientHeight(entry.contentRect.height);
       });
 
       resizeObserver.observe(containerElCopy);
@@ -81,148 +94,205 @@ const Scroll = forwardRef<ScrollHandle, Props>(
       };
     }, []);
 
-    // useEffect(() => {
-    //   const observer = new MutationObserver(() => {});
-    //
-    //   const config = {
-    //     attributes: true, // Observe attribute changes
-    //     childList: true, // Observe direct children
-    //     subtree: true, // Observe all descendants
-    //     characterData: true, // Observe changes to text nodes
-    //   };
-    //
-    //   observer.observe(scrollableEl.current, config);
-    //
-    //   return () => {
-    //     observer.disconnect();
-    //   };
-    // }, []);
+    useEffect(() => {
+      const observer = new MutationObserver(() => {
+        const oldScrollHeight = scrollHeight;
+        const newScrollHeight = scrollableEl.current.scrollHeight;
 
-    useImperativeHandle(ref, () => ({
-      scrollToBottom() {
-        scrollableEl.current.scrollTo({
-          top: scrollableEl.current.scrollHeight,
-          behavior: "instant",
-        });
-      },
-      scrollableEl: scrollableEl.current,
-    }));
+        // scrollableEl.current.scrollTo({
+        //   top: scrollableEl.current.scrollHeight,
+        //   behavior: "instant",
+        // });
 
-    const showHasTopOverlay = useMemo(() => {
-      return scrollPosition.top > 0;
-    }, [scrollPosition.top]);
+        setScrollHeight(scrollableEl.current.scrollHeight);
+        setScrollWidth(scrollableEl.current.scrollWidth);
+      });
 
-    const showHasBottomOverlay = useMemo(() => {
-      if (!scrollableEl.current) {
-        return false;
-      }
+      const config = {
+        childList: true, // Observe direct children
+        subtree: true, // Observe all descendants
+        characterData: true, // Observe changes to text nodes
+      };
 
-      return scrollableEl.current.scrollHeight - scrollPosition.top !== scrollableEl.current.clientHeight;
-    }, [scrollPosition.top]);
+      observer.observe(scrollableEl.current, config);
 
-    const showLeftOverlay = useMemo(() => {
-      return scrollPosition.left !== 0;
-    }, [scrollPosition.left]);
+      return () => {
+        observer.disconnect();
+      };
+    }, [scrollHeight]);
 
-    const showRightOverlay = useMemo(() => {
-      if (!scrollableEl.current) {
-        return false;
-      }
+    const isScrolledToBottom = useMemo(() => {
+      return scrollHeight - scrollTop <= clientHeight + 5;
+    }, [scrollTop, scrollHeight, clientHeight]);
 
-      return scrollableEl.current.scrollWidth - scrollPosition.left !== scrollableEl.current.clientWidth;
-    }, [scrollPosition.left]);
+    const isScrolledToTop = useMemo(() => {
+      return scrollTop === 0;
+    }, [scrollTop]);
+
+    const isScrolledToLeft = useMemo(() => {
+      return scrollLeft === 0;
+    }, [scrollLeft]);
+
+    const isScrolledToRight = useMemo(() => {
+      return scrollLeft >= scrollWidth - clientWidth;
+    }, [scrollLeft, scrollWidth, clientWidth]);
+
+    const subscribers = useRef<Array<(to: boolean) => void>>([]);
 
     useEffect(() => {
-      if (scrollToBottomOnMount) {
-        scrollableEl.current.scrollTo({
-          top: scrollableEl.current.scrollHeight,
-          behavior: "instant",
+      subscribers.current.forEach((handler) => {
+        handler(isScrolledToBottom);
+      });
+    }, [isScrolledToBottom]);
+
+    useImperativeHandle(ref, () => ({
+      scrollToBottom,
+      isScrolledToBottom() {
+        return Math.ceil(scrollableEl.current.scrollTop) >= scrollableEl.current.scrollHeight - scrollableEl.current.clientHeight;
+      },
+      subscribeToIsScrolledToBottomChanged(handler: (to: boolean) => void) {
+        subscribers.current.push(handler);
+
+        return () => {
+          subscribers.current = subscribers.current.filter((_handler) => _handler !== handler);
+        };
+      },
+    }));
+
+    const showTopScrollHint = useMemo(() => {
+      return false;
+      return !isScrolledToTop;
+    }, [isScrolledToTop]);
+
+    const showBottomScrollHint = useMemo(() => {
+      return false;
+      return !isScrolledToBottom;
+    }, [isScrolledToBottom]);
+
+    const showLeftScrollHint = useMemo(() => {
+      return false;
+      return !isScrolledToLeft;
+    }, [isScrolledToLeft]);
+
+    const showRightScrollHint = useMemo(() => {
+      return false;
+      return !isScrolledToRight;
+    }, [isScrolledToRight]);
+
+    const handleScroll = (e: UIEvent<HTMLDivElement>) => {
+      const oldScrollTop = scrollTop;
+
+      const newScrollTop = e.currentTarget.scrollTop;
+      const newScrollLeft = e.currentTarget.scrollLeft;
+
+      const isScrolledToTop = newScrollTop === 0;
+      const isScrolledToBottom = scrollHeight - newScrollTop <= clientHeight;
+      const isReachedBottomThreshold = newScrollTop > oldScrollTop && scrollHeight - (newScrollTop + clientHeight) <= bottomThreshold;
+
+      if (onReachTopThreshold) {
+        onReachTopThreshold.forEach(({ threshold, handler }) => {
+          if (newScrollTop <= threshold && oldScrollTop > threshold) {
+            handler();
+          }
         });
       }
-    }, [scrollToBottomOnMount]);
-
-    // const isScrolledToBottom = useCallback(() => scrollableEl.current.scrollHeight - scrollableEl.current.scrollTop === scrollableEl.current.clientHeight, []);
-    // const isScrolledToTop = useCallback(() => scrollableEl.current.scrollTop <= scrollThreshold, [scrollThreshold]);
-    // const isScrolledToRight = useCallback(() => scrollableEl.current.scrollWidth - scrollableEl.current.scrollLeft === scrollableEl.current.clientWidth, []);
-    // const isScrolledToLeft = useCallback(() => scrollableEl.current.scrollLeft === 0, []);
-
-    const handleScroll: UIEventHandler<HTMLDivElement> = (e) => {
-      const currentTop = scrollPosition.top;
-      const newTop = e.currentTarget.scrollTop;
-
-      if (onScrollToTop) {
-        if (newTop === 0) {
-          onScrollToTop();
-        }
+      if (isScrolledToTop) {
+        onScrollToTop?.();
       }
 
-      if (onReachTopThreshold && topThreshold) {
-        if (newTop <= topThreshold && currentTop > topThreshold) {
-          onReachTopThreshold();
-        }
+      if (isScrolledToBottom) {
+        onScrollToBottom?.();
       }
 
-      setScrollPosition({
-        top: newTop,
-        left: e.currentTarget.scrollLeft,
-      });
+      if (isReachedBottomThreshold) {
+        onReachBottomThreshold?.();
+      }
+
+      setScrollTop(newScrollTop);
+      setScrollLeft(newScrollLeft);
     };
 
-    const scrollableElStyles = useMemo<CSSProperties>(() => {
-      return {
-        width: scrollableElSize.width + "px",
-        height: scrollableElSize.height + "px",
-      };
-      // const result: CSSProperties = {};
-      //
-      // if (typeof height === "number") {
-      //   result.height = height + "px";
-      // }
-      //
-      // if (height === "full") {
-      //   result.height = "100%";
-      // }
-      //
-      // return result;
-    }, [scrollableElSize.width, scrollableElSize.height]);
+    const styles = useMemo<{ containerEl: CSSProperties; scrollableEl: CSSProperties }>(() => {
+      if (height === "full") {
+        return {
+          containerEl: {
+            height: "100%",
+            overflow: "hidden",
+            position: "relative",
+          },
+          scrollableEl: {
+            position: "absolute",
+            top: "0px",
+            left: "0px",
+            bottom: "0px",
+            right: "0px",
+            overflow: "auto",
+          },
+        };
+      }
 
-    const rootElStyles = useMemo(() => {
-      const result: CSSProperties = {};
+      if (height === "auto") {
+        return {
+          containerEl: {
+            overflowX: "hidden",
+            position: "relative",
+          },
+          scrollableEl: {
+            overflowX: "scroll",
+          },
+        };
+      }
 
       if (typeof height === "number") {
-        result.height = height + "px";
+        return {
+          containerEl: {
+            height: height + "px",
+            overflow: "hidden",
+            position: "relative",
+          },
+          scrollableEl: {
+            position: "absolute",
+            top: "0px",
+            left: "0px",
+            bottom: "0px",
+            right: "0px",
+            overflow: "auto",
+          },
+        };
       }
 
-      if (height === "full") {
-        result.height = "100%";
+      if (typeof height === "string" && height.startsWith("max-")) {
+        const maxValue = height.split("-")[1];
+
+        return {
+          containerEl: {
+            maxHeight: maxValue,
+            position: "relative",
+          },
+          scrollableEl: {
+            maxHeight: maxValue,
+            overflowY: "scroll",
+          },
+        };
       }
 
-      return result;
+      throw new Error("invalid value for prop 'height'");
     }, [height]);
 
     return (
-      <div ref={containerEl} className={cls("relative", className)}>
-        {showHasTopOverlay && (
-          <div className={cls(`absolute top-0 left-0 right-0 h-[${OVERLAY_SIZE}px] z-[2] bg-gradient-to-b from-white to-transparent pointer-events-none`)} />
-        )}
-        {showHasBottomOverlay && (
-          <div className={cls(`absolute bottom-0 left-0 right-0 h-[${OVERLAY_SIZE}px] z-[2] bg-gradient-to-t from-white to-transparent pointer-events-none`)} />
-        )}
-        {showLeftOverlay && (
-          <div className={cls(`absolute left-0 top-0 bottom-0 w-[${OVERLAY_SIZE}px] z-[2] bg-gradient-to-r from-white to-transparent pointer-events-none`)} />
-        )}
-        {showRightOverlay && (
-          <div className={cls(`absolute right-0 top-0 bottom-0 w-[${OVERLAY_SIZE}px] z-[2] bg-gradient-to-l from-white to-transparent pointer-events-none`)} />
+      <div ref={containerEl} style={styles.containerEl}>
+        {showTopScrollHint && <ScrollHint position="top" />}
+        {showBottomScrollHint && <ScrollHint position="bottom" />}
+        {showLeftScrollHint && <ScrollHint position="left" />}
+        {showRightScrollHint && <ScrollHint position="right" />}
+
+        {isLastScrollToBottom && !isScrolledToBottom && showScrollToBottomButton && (
+          <div className="absolute bottom-[20px] right-[20px] z-[10]">
+            <IconButton type="button" Icon={MdOutlineArrowDownward} size="lg" color="light" onClick={() => scrollToBottom()} />
+          </div>
         )}
 
-        <div
-          ref={(el) => {
-            scrollableEl.current = el!;
-          }}
-          className={cls("z-[1] overflow-scroll", className)}
-          style={scrollableElStyles}
-          onScroll={handleScroll}
-        >
+        <div ref={scrollableEl} style={styles.scrollableEl} onScroll={handleScroll}>
           {children}
         </div>
       </div>

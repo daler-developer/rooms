@@ -182,7 +182,7 @@ const BaseMessage = ({
                   </div>
                 )}
                 <div
-                  className={clsx("py-[2px] px-[6px] text-[14px]", {
+                  className={clsx("py-[2px] px-[6px] text-[14px] pb-[300px]", {
                     "flex flex-col bg-indigo-500 text-white": senderIsMe,
                     "flex flex-col bg-white": !senderIsMe,
                   })}

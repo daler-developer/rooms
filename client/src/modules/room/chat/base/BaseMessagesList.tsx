@@ -8,6 +8,7 @@ type Props = {
   onSelectedMessagesChange: (selectedMessages: Array<number | string>) => void;
   onReachStart?: () => void;
   noDataMessage: string;
+  onMore?: () => void;
 };
 
 type BaseMessagesListHandle = {
@@ -16,7 +17,7 @@ type BaseMessagesListHandle = {
 };
 
 const BaseMessagesList = forwardRef<BaseMessagesListHandle, Props>(
-  ({ children, onReachStart, selectedMessages, onSelectedMessagesChange, noDataMessage }, ref) => {
+  ({ children, onReachStart, selectedMessages, onSelectedMessagesChange, noDataMessage, onMore }, ref) => {
     const scrollControl = useScrollControl();
 
     useEffect(() => {
@@ -75,6 +76,14 @@ const BaseMessagesList = forwardRef<BaseMessagesListHandle, Props>(
             onScrollToTop={() => {
               onReachStart?.();
             }}
+            onReachTopThreshold={[
+              {
+                threshold: 500,
+                handler() {
+                  onMore?.();
+                },
+              },
+            ]}
           >
             <div ref={wrapperEl} className="flex flex-col gap-6 pt-8 pb-8">
               {children}
