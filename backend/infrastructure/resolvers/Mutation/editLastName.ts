@@ -12,7 +12,7 @@ const validationSchema = yup.object({
 type Args = InferType<typeof validationSchema>;
 
 const resolver = async (_, args: Args, { userId, userService }: CustomContext) => {
-  return await userService.editLastName({ userId, newLastName: args.input.newLastName });
+  return await userService.editLastName({ currentUserId: userId, newLastName: args.input.newLastName });
 };
 
 export default composeResolvers(authRequired, withValidation(validationSchema))(resolver);

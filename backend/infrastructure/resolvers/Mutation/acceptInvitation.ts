@@ -15,8 +15,7 @@ type Args = InferType<typeof validationSchema>;
 const sleep = () => new Promise((res) => setTimeout(() => res(1), 1000));
 
 const resolver = async (_, args: Args, { invitationService, userId }: CustomContext) => {
-  // await sleep();
-  return await invitationService.acceptInvitation(userId, args.input.roomId);
+  return await invitationService.acceptInvitation({ currentUserId: userId, roomId: args.input.roomId });
 };
 
 export default composeResolvers(authRequired, checkBlockedStatus, withValidation(validationSchema))(resolver);

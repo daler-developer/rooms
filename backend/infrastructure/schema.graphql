@@ -261,7 +261,6 @@ type Mutation {
     notifyMeTypingStatusChange(roomId: Int!, isTyping: Boolean): Boolean!
     markMessageAsViewed(messageId: Int!): Message!
     inviteUsersToRoom(roomId: Int!, invitedUsersIds: [Int!]!): Boolean!
-    notifyMeOnlineStatusChange(status: String!): User!
     excludeUserFromRoom(roomId: Int!, userId: Int!): Room!
     deleteMessages(roomId: Int!, messageIds: [Int!]!): Boolean!
     deleteScheduledMessages(messageIds: [Int!]!): Boolean!

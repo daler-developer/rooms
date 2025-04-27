@@ -55,8 +55,8 @@ export class RoomService {
     return room;
   }
 
-  async fetchUserRooms({ userId }: { userId: number }) {
-    const participations = await this.userToRoomParticipationRepository.getManyByUserId(userId);
+  async fetchUserRooms({ currentUserId }: { currentUserId: number }) {
+    const participations = await this.userToRoomParticipationRepository.getManyByUserId(currentUserId);
     const roomIds = participations.map((p) => p.roomId);
 
     if (roomIds.length === 0) {
@@ -92,18 +92,18 @@ export class RoomService {
     }
   }
 
-  async leaveRoom({ userId, roomId }: { userId: number; roomId: number }) {
-    const user = await this.userRepository.getOneById(userId);
+  async leaveRoom({ currentUserId, roomId }: { currentUserId: number; roomId: number }) {
+    const user = await this.userRepository.getOneById(currentUserId);
     let room = await this.roomRepository.getOneById(roomId);
 
-    await this.userToRoomParticipationRepository.deleteOneByPk(userId, roomId);
+    await this.userToRoomParticipationRepository.deleteOneByPk(currentUserId, roomId);
 
     room = await this.roomRepository.updateOneById(roomId, {
       participantsCount: room.participantsCount - 1,
     });
     await this.userRoomNewMessagesCountRepository.deleteOneByPk({
       roomId: room.id,
-      userId,
+      userId: currentUserId,
     });
 
     pubsub.publish("ROOM_PARTICIPANT_LEFT", {

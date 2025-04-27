@@ -15,7 +15,7 @@ const sleep = () => new Promise((resolve) => setTimeout(resolve, 500));
 
 const resolver = async (_, args: Args, { userId, userService }: CustomContext) => {
   // await sleep();
-  return await userService.editFirstName({ userId, newFirstName: args.input.newFirstName });
+  return await userService.editFirstName({ currentUserId: userId, newFirstName: args.input.newFirstName });
 };
 
 export default composeResolvers(handleErrors, authRequired, withValidation(validationSchema))(resolver);

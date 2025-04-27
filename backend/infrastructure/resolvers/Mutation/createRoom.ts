@@ -18,15 +18,13 @@ type Args = InferType<typeof validationSchema>;
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 const resolver = async (_, { input }: Args, { roomService, userId, sessionId }: CustomContext) => {
-  const room = await roomService.createRoom({
+  return await roomService.createRoom({
     name: input.name,
     creatorId: userId,
     invitedUsersIds: input.usersInvitedIds,
     thumbnailUrl: input.thumbnailUrl,
     sessionId,
   });
-
-  return room;
 };
 
 export default composeResolvers(authRequired, withValidation(validationSchema))(resolver);

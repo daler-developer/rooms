@@ -12,7 +12,7 @@ type Args = InferType<typeof validationSchema>;
 const sleep = () => new Promise((res) => setTimeout(res, 1500));
 
 const resolver = async (_, args: Args, { userService, userId, sessionId }: CustomContext) => {
-  await userService.notifyTypingStart({ sessionId, userId, roomId: args.roomId });
+  await userService.notifyTypingStart({ sessionId, currentUserId: userId, roomId: args.roomId });
 
   return true;
 };

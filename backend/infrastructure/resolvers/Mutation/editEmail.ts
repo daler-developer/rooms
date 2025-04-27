@@ -12,7 +12,7 @@ type Args = {
 };
 
 const resolver = async (_, { input }: Args, { userService, userId }: CustomContext) => {
-  return userService.userEditEmail({ userId, newEmail: input.newEmail });
+  return userService.editEmail({ currentUserId: userId, newEmail: input.newEmail });
 };
 
 export default composeResolvers(handleErrors, withValidation(validationSchema))(resolver);

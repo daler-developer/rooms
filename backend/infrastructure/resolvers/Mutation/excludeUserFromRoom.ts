@@ -13,7 +13,6 @@ type Args = InferType<typeof validationSchema>;
 const sleep = () => new Promise((resolve) => setTimeout(resolve, 2000));
 
 const resolver = async (_, args: Args, { roomService }: CustomContext) => {
-  // await sleep();
   return await roomService.excludeUserFromRoom(args.roomId, args.userId);
 };
 

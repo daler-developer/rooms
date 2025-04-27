@@ -1,16 +1,9 @@
 import { inject, injectable } from "inversify";
 import { TYPES } from "../../../types";
 import { UserRepository } from "../../repositories/UserRepository/UserRepository";
-import db from "../../../infrastructure/db";
-import { usersToRoomsInvite } from "../../../infrastructure/entities/UsersToRoomsInvite";
-import { eq } from "drizzle-orm";
 import pubsub from "../../../infrastructure/pubsub";
-import usersOnlineStatusChange from "../../../infrastructure/resolvers/Subscription/usersOnlineStatusChange";
 import redisClient from "../../../infrastructure/db/redisClient";
 import { UserToRoomParticipationRepository } from "../../repositories/UserToRoomParticipationRepository/UserToRoomParticipationRepository";
-import { AddUserDto } from "../../repositories/UserRepository/dto/AddUserDto";
-import { IncorrectPasswordGraphQLError, MeIsBlockedGraphQLError, UserNotFoundGraphQLError } from "../../../infrastructure/lib/graphql/errors";
-import { RoomRepository } from "../../repositories/RoomRepository/RoomRepository";
 
 const sleep = () => new Promise((res) => setTimeout(res, 500));
 
@@ -18,18 +11,21 @@ const sleep = () => new Promise((res) => setTimeout(res, 500));
 class UserService {
   constructor(
     @inject(TYPES.UserRepository) private userRepository: UserRepository,
-    @inject(TYPES.RoomRepository) private roomRepository: RoomRepository,
     @inject(TYPES.UserToRoomParticipationRepository) private userToRoomParticipationRepository: UserToRoomParticipationRepository,
   ) {}
 
-  async userEditEmail({ userId, newEmail }: { userId: number; newEmail: string }) {
-    return await this.userRepository.updateOneById(userId, {
+  async editEmail({ currentUserId, newEmail }: { currentUserId: number; newEmail: string }) {
+    const updatedUser = await this.userRepository.updateOneById(currentUserId, {
       email: newEmail,
     });
+
+    pubsub.publish("USER_PROFILE_UPDATED", updatedUser);
+
+    return updatedUser;
   }
 
-  async editFirstName({ userId, newFirstName }: { userId: number; newFirstName: string }) {
-    const updatedUser = await this.userRepository.updateOneById(userId, {
+  async editFirstName({ currentUserId, newFirstName }: { currentUserId: number; newFirstName: string }) {
+    const updatedUser = await this.userRepository.updateOneById(currentUserId, {
       firstName: newFirstName,
     });
 
@@ -38,8 +34,8 @@ class UserService {
     return updatedUser;
   }
 
-  async editLastName({ userId, newLastName }: { userId: number; newLastName: string }) {
-    const updatedUser = await this.userRepository.updateOneById(userId, {
+  async editLastName({ currentUserId, newLastName }: { currentUserId: number; newLastName: string }) {
+    const updatedUser = await this.userRepository.updateOneById(currentUserId, {
       lastName: newLastName,
     });
 
@@ -48,8 +44,8 @@ class UserService {
     return updatedUser;
   }
 
-  async editProfilePicture({ userId, newProfilePictureUrl }: { userId: number; newProfilePictureUrl: string | null }) {
-    const updatedUser = await this.userRepository.updateOneById(userId, { profilePictureUrl: newProfilePictureUrl });
+  async editProfilePicture({ currentUserId, newProfilePictureUrl }: { currentUserId: number; newProfilePictureUrl: string | null }) {
+    const updatedUser = await this.userRepository.updateOneById(currentUserId, { profilePictureUrl: newProfilePictureUrl });
 
     pubsub.publish("USER_PROFILE_UPDATED", updatedUser);
 
@@ -64,8 +60,8 @@ class UserService {
     return await this.userRepository.getOneById(id);
   }
 
-  async resetPassword({ userId, newPassword }: { userId: number; newPassword: string }) {
-    return await this.userRepository.updateOneById(userId, {
+  async resetPassword({ currentUserId, newPassword }: { currentUserId: number; newPassword: string }) {
+    return await this.userRepository.updateOneById(currentUserId, {
       password: newPassword,
     });
   }
@@ -142,18 +138,28 @@ class UserService {
     return await this.userRepository.getManyByIds(userIds);
   }
 
-  async notifyUserTypingStatusChange({ userId, sessionId, isTyping, roomId }: { userId: number; sessionId: string; isTyping: boolean; roomId: number }) {
-    const user = await this.userRepository.getOneById(userId);
+  async notifyUserTypingStatusChange({
+    currentUserId,
+    sessionId,
+    isTyping,
+    roomId,
+  }: {
+    currentUserId: number;
+    sessionId: string;
+    isTyping: boolean;
+    roomId: number;
+  }) {
+    const user = await this.userRepository.getOneById(currentUserId);
 
     if (isTyping) {
-      await redisClient.sAdd(`rooms:${roomId}:participants:${userId}:currently_typing_session_ids`, sessionId);
+      await redisClient.sAdd(`rooms:${roomId}:participants:${currentUserId}:currently_typing_session_ids`, sessionId);
     }
 
     if (!isTyping) {
-      await redisClient.sRem(`rooms:${roomId}:participants:${userId}:currently_typing_session_ids`, sessionId);
+      await redisClient.sRem(`rooms:${roomId}:participants:${currentUserId}:currently_typing_session_ids`, sessionId);
     }
 
-    const sessionIds = await redisClient.sMembers(`rooms:${roomId}:participants:${userId}:currently_typing_session_ids`);
+    const sessionIds = await redisClient.sMembers(`rooms:${roomId}:participants:${currentUserId}:currently_typing_session_ids`);
 
     if (sessionIds.length === 0) {
       pubsub.publish("USER_TYPING_STATUS_CHANGE", {
@@ -174,27 +180,27 @@ class UserService {
     }
   }
 
-  async notifyTypingStart({ roomId, userId, sessionId }: { roomId: number; sessionId: string; userId: number }) {
-    const sessionsCount = await redisClient.sCard(`rooms:${roomId}:participants:${userId}:currently_typing_session_ids`);
+  async notifyTypingStart({ roomId, currentUserId, sessionId }: { roomId: number; sessionId: string; currentUserId: number }) {
+    const sessionsCount = await redisClient.sCard(`rooms:${roomId}:participants:${currentUserId}:currently_typing_session_ids`);
 
     if (sessionsCount === 0) {
       pubsub.publish("USER_TYPING_START", {
-        userId,
+        userId: currentUserId,
         roomId,
       });
     }
 
-    await redisClient.sAdd(`rooms:${roomId}:participants:${userId}:currently_typing_session_ids`, sessionId);
+    await redisClient.sAdd(`rooms:${roomId}:participants:${currentUserId}:currently_typing_session_ids`, sessionId);
   }
 
-  async notifyTypingStop({ roomId, sessionId, userId }: { roomId: number; sessionId: string; userId: number }) {
-    await redisClient.sRem(`rooms:${roomId}:participants:${userId}:currently_typing_session_ids`, sessionId);
+  async notifyTypingStop({ roomId, sessionId, currentUserId }: { roomId: number; sessionId: string; currentUserId: number }) {
+    await redisClient.sRem(`rooms:${roomId}:participants:${currentUserId}:currently_typing_session_ids`, sessionId);
 
-    const sessionsCount = await redisClient.sCard(`rooms:${roomId}:participants:${userId}:currently_typing_session_ids`);
+    const sessionsCount = await redisClient.sCard(`rooms:${roomId}:participants:${currentUserId}:currently_typing_session_ids`);
 
     if (sessionsCount === 0) {
       pubsub.publish("USER_TYPING_STOP", {
-        userId,
+        userId: currentUserId,
         roomId,
       });
     }

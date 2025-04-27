@@ -278,10 +278,10 @@ export class MessageService {
     }
   }
 
-  async markMessageAsViewed({ messageId, userId }: { messageId: number; userId: number }) {
+  async markMessageAsViewed({ messageId, currentUserId }: { messageId: number; currentUserId: number }) {
     let message = await this.messageRepository.getOneById(messageId);
 
-    if (Boolean(await this.messageViewRepository.getOneByPk({ messageId, userId }))) {
+    if (Boolean(await this.messageViewRepository.getOneByPk({ messageId, userId: currentUserId }))) {
       return await this.messageRepository.getOneById(messageId);
     }
 
@@ -294,9 +294,9 @@ export class MessageService {
     const isMessageSentAfterUserJoined = new Date(message.sentAt!).getTime() > new Date(userRoomParticipation.createdAt).getTime();
 
     if (isMessageSentAfterUserJoined) {
-      let newMessagesCount = await this.userRoomNewMessagesCountRepository.getOneByPk({ userId, roomId: message.roomId });
+      let newMessagesCount = await this.userRoomNewMessagesCountRepository.getOneByPk({ userId: currentUserId, roomId: message.roomId });
       newMessagesCount = await this.userRoomNewMessagesCountRepository.updateOneByPk(
-        { userId, roomId: message.roomId },
+        { userId: currentUserId, roomId: message.roomId },
         {
           count: newMessagesCount.count - 1,
         },
@@ -304,13 +304,13 @@ export class MessageService {
 
       pubsub.publish("ROOM_NEW_MESSAGES_COUNT_CHANGE", {
         roomId: message.roomId,
-        userId,
+        userId: currentUserId,
         count: newMessagesCount.count,
       });
     }
 
     await this.messageViewRepository.addOne({
-      userId,
+      userId: currentUserId,
       messageId,
     });
 
