@@ -17,7 +17,7 @@ const MessagesList = () => {
 
   useKeyboard({
     Escape: () => {
-      roomChatStore.clearSelectedMessages();
+      roomChatStore.setSelectedMessages([]);
     },
   });
 

@@ -64,6 +64,10 @@ const start = async () => {
     path: "/subscriptions",
   });
 
+  wsServer.on("close", () => {
+    console.log("connection");
+  });
+
   const typeDefs = gql(
     readFileSync("infrastructure/schema.graphql", {
       encoding: "utf-8",
@@ -115,21 +119,27 @@ const start = async () => {
 
         return result;
       },
+      onError(e) {
+        console.log("error");
+      },
       onConnect(ctx) {
-        const authService = iocContainer.get<AuthService>(TYPES.AuthService);
-        const userService = iocContainer.get<UserService>(TYPES.UserService);
+        // const authService = iocContainer.get<AuthService>(TYPES.AuthService);
+        // const userService = iocContainer.get<UserService>(TYPES.UserService);
+        //
+        // const authToken = ctx.connectionParams.authToken;
+        // const sessionToken = ctx.connectionParams.sessionToken;
+        //
+        // const { userId } = authService.decodeAuthToken(authToken);
+        // const { sessionId } = authService.decodeSessionToken(sessionToken);
+        //
+        // userService.handleUserConnect({ userId, sessionId });
 
-        const authToken = ctx.connectionParams.authToken;
-        const sessionToken = ctx.connectionParams.sessionToken;
-
-        const { userId } = authService.decodeAuthToken(authToken);
-        const { sessionId } = authService.decodeSessionToken(sessionToken);
-
-        userService.handleUserConnect({ userId, sessionId });
-
-        console.log("connect");
+        // console.log("connect");
         return true;
         // userService.updateUserOnlineStatus({ userId, sessionId, isOnline: true });
+      },
+      onDisconnect() {
+        // console.log("disconnect");
       },
       onClose(ctx) {
         // console.log("close");
@@ -149,7 +159,7 @@ const start = async () => {
     wsServer,
   );
 
-  app.use(cors());
+  // app.use(cors());
   app.use(express.json());
 
   const server = new ApolloServer<CustomContext>({

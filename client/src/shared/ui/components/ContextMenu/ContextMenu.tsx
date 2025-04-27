@@ -150,23 +150,6 @@ const ContextMenu = forwardRef<ContextMenuHandle, Props>(
             }}
           >
             {content}
-            {/*<ul>*/}
-            {/*  {items!.map((item) => (*/}
-            {/*    <li*/}
-            {/*      key={item.label}*/}
-            {/*      className="p-1 hover:bg-gray-200 cursor-pointer"*/}
-            {/*      onClick={() => {*/}
-            {/*        item.onClick?.();*/}
-            {/*        setShowContextMenu(false);*/}
-            {/*        enableAllScrolling();*/}
-            {/*        hasAtLeastOneContextMenuVisibleOnTheScreen = false;*/}
-            {/*        onHide?.();*/}
-            {/*      }}*/}
-            {/*    >*/}
-            {/*      {item.label}*/}
-            {/*    </li>*/}
-            {/*  ))}*/}
-            {/*</ul>*/}
           </div>
         </Portal>
       </>

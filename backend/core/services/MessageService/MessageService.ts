@@ -289,7 +289,7 @@ export class MessageService {
       viewsCount: message.viewsCount + 1,
     });
 
-    const userRoomParticipation = await this.userToRoomParticipationRepository.getOneByPk({ roomId: message.roomId, userId });
+    const userRoomParticipation = await this.userToRoomParticipationRepository.getOneByPk({ roomId: message.roomId, userId: currentUserId });
 
     const isMessageSentAfterUserJoined = new Date(message.sentAt!).getTime() > new Date(userRoomParticipation.createdAt).getTime();
 

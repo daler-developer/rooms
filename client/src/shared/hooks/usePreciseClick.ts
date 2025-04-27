@@ -1,8 +1,11 @@
 import { useRef, useEffect } from "react";
+import { useLatest } from "@/shared/hooks/index.ts";
 
 const TOLERANCE = 0;
 
 const usePreciseClick = (onPreciseClick: () => void) => {
+  const latestOnPreciseClick = useLatest(onPreciseClick);
+
   const elementRef = useRef<HTMLElement>(null);
   const downCoords = useRef<{ x: number | null; y: number | null }>({ x: null, y: null });
 
@@ -14,7 +17,7 @@ const usePreciseClick = (onPreciseClick: () => void) => {
     const handleMouseUp = (event: MouseEvent) => {
       const { x, y } = downCoords.current;
       if (x !== null && y !== null && Math.abs(x - event.clientX) <= TOLERANCE && Math.abs(y - event.clientY) <= TOLERANCE) {
-        onPreciseClick();
+        latestOnPreciseClick.current();
       }
     };
 
@@ -30,7 +33,7 @@ const usePreciseClick = (onPreciseClick: () => void) => {
         element.removeEventListener("mouseup", handleMouseUp);
       }
     };
-  }, [onPreciseClick]);
+  }, []);
 
   return elementRef;
 };
