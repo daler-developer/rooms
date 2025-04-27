@@ -399,6 +399,13 @@ export class MessageService {
       await this.roomRepository.updateOneById(Number(roomId), {
         messagesCount: room.messagesCount - messageIds.length,
       });
+      const scheduledMessagesCount = await this.scheduledMessagesCountRepository.getOneByPk({ userId, roomId: Number(roomId) });
+      await this.scheduledMessagesCountRepository.updateOneByPk(
+        { userId, roomId: Number(roomId) },
+        {
+          count: scheduledMessagesCount.count - messages.length,
+        },
+      );
       for (const messageId of messageIds) {
         await this.messageRepository.updateOneById(messageId, {
           isDeleted: true,
