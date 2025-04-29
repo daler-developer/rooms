@@ -7,6 +7,7 @@ import pubsub from "../../../infrastructure/pubsub";
 import { RoomRepository } from "../../repositories/RoomRepository/RoomRepository";
 import { ScheduledMessagesCountRepository } from "../../repositories/ScheduledMessagesCountRepository/ScheduledMessagesCountRepository";
 import { UserRoomNewMessagesCountRepository } from "../../repositories/UserRoomNewMessagesCountRepository/UserRoomNewMessagesCountRepository";
+import { InvitationNotFound } from "../../../core/errors/invitations";
 
 @injectable()
 class InvitationService {
@@ -31,6 +32,9 @@ class InvitationService {
 
   async acceptInvitation({ roomId, currentUserId }: { currentUserId: number; roomId: number }) {
     const invitation = await this.invitationRepository.getOneByPk(currentUserId, roomId);
+    if (!invitation) {
+      throw new InvitationNotFound();
+    }
     await this.userRoomNewMessagesCountRepository.addOne({
       userId: currentUserId,
       roomId,
@@ -72,6 +76,9 @@ class InvitationService {
 
   async rejectInvitation({ currentUserId, roomId }: { currentUserId: number; roomId: number }) {
     const invitation = await this.invitationRepository.getOneByPk(currentUserId, roomId);
+    if (!invitation) {
+      throw new InvitationNotFound();
+    }
     let user = await this.userRepository.getOneById(currentUserId);
     let room = await this.roomRepository.getOneById(roomId);
 

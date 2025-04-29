@@ -66,10 +66,6 @@ class AuthService {
     return jwt.verify(sessionToken, "jwt-secret");
   }
 
-  createAuthToken(userId: number) {
-    return jwt.sign({ userId }, "jwt-secret", { expiresIn: "2 days" });
-  }
-
   decodeAuthToken(token: string) {
     return jwt.verify(token, "jwt-secret");
   }

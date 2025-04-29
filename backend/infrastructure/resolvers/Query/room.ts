@@ -9,13 +9,8 @@ const validationSchema = yup.object({
 
 type Args = InferType<typeof validationSchema>;
 
-const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
-
-const resolver = async (_, args: Args, { roomService }: CustomContext) => {
-  await sleep(300);
-  const room = await roomService.fetchRoomById(args.id);
-
-  return room;
+const resolver = async (_, args: Args, { roomService, userId }: CustomContext) => {
+  return await roomService.fetchRoomById({ roomId: args.id, currentUserId: userId });
 };
 
 export default composeResolvers(authRequired, checkBlockedStatus, withValidation(validationSchema))(resolver);

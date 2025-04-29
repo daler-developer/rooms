@@ -1,9 +1,7 @@
 import * as yup from "yup";
 import { InferType } from "yup";
 import { CustomContext } from "../../types";
-import { CreateRoomDto } from "../../../core/repositories/RoomRepository/dto/CreateRoomDto";
 import { composeResolvers, authRequired, withValidation } from "../../lib/graphql/resolver-wrappers";
-import pubsub from "../../pubsub";
 
 const validationSchema = yup.object({
   input: yup.object({

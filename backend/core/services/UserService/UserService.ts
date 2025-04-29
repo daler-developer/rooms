@@ -4,6 +4,8 @@ import { UserRepository } from "../../repositories/UserRepository/UserRepository
 import pubsub from "../../../infrastructure/pubsub";
 import redisClient from "../../../infrastructure/db/redisClient";
 import { UserToRoomParticipationRepository } from "../../repositories/UserToRoomParticipationRepository/UserToRoomParticipationRepository";
+import { RoomRepository } from "../../repositories/RoomRepository/RoomRepository";
+import { RoomNotFound } from "../../errors/rooms";
 
 const sleep = () => new Promise((res) => setTimeout(res, 500));
 
@@ -11,6 +13,7 @@ const sleep = () => new Promise((res) => setTimeout(res, 500));
 class UserService {
   constructor(
     @inject(TYPES.UserRepository) private userRepository: UserRepository,
+    @inject(TYPES.RoomRepository) private roomRepository: RoomRepository,
     @inject(TYPES.UserToRoomParticipationRepository) private userToRoomParticipationRepository: UserToRoomParticipationRepository,
   ) {}
 
@@ -181,6 +184,11 @@ class UserService {
   }
 
   async notifyTypingStart({ roomId, currentUserId, sessionId }: { roomId: number; sessionId: string; currentUserId: number }) {
+    const room = await this.roomRepository.getOneById(roomId);
+    if (!room) {
+      throw new RoomNotFound();
+    }
+
     const sessionsCount = await redisClient.sCard(`rooms:${roomId}:participants:${currentUserId}:currently_typing_session_ids`);
 
     if (sessionsCount === 0) {
@@ -194,6 +202,11 @@ class UserService {
   }
 
   async notifyTypingStop({ roomId, sessionId, currentUserId }: { roomId: number; sessionId: string; currentUserId: number }) {
+    const room = await this.roomRepository.getOneById(roomId);
+    if (!room) {
+      throw new RoomNotFound();
+    }
+
     await redisClient.sRem(`rooms:${roomId}:participants:${currentUserId}:currently_typing_session_ids`, sessionId);
 
     const sessionsCount = await redisClient.sCard(`rooms:${roomId}:participants:${currentUserId}:currently_typing_session_ids`);

@@ -10,6 +10,11 @@ import { AddOneInvitationDto } from "../../repositories/InvitationRepository/dto
 import redisClient from "../../../infrastructure/db/redisClient";
 import { ScheduledMessagesCountRepository } from "../../repositories/ScheduledMessagesCountRepository/ScheduledMessagesCountRepository";
 import { UserRoomNewMessagesCountRepository } from "../../repositories/UserRoomNewMessagesCountRepository/UserRoomNewMessagesCountRepository";
+import { UserIsNotRoomParticipant, UserNotFound } from "../../errors/users";
+import { RoomNotFound } from "../../errors/rooms";
+import { AlreadyInvited } from "../../errors/invitations";
+import { User } from "../../entities/User";
+import { ExcludeUserFromRoomForbidden } from "../../errors/auth";
 
 @injectable()
 export class RoomService {
@@ -44,15 +49,19 @@ export class RoomService {
       count: 0,
     });
 
-    await this.inviteUsersToRoom({ roomId: room.id, inviterId: dto.creatorId, invitedUsersIds: dto.invitedUsersIds });
+    await this.inviteUsersToRoom({ roomId: room.id, currentUserId: dto.creatorId, invitedUsersIds: dto.invitedUsersIds });
 
     return room;
   }
 
-  async fetchRoomById(roomId: number) {
-    const room = await this.roomRepository.getOneById(roomId);
+  async fetchRoomById({ currentUserId, roomId }: { currentUserId: number; roomId: number }) {
+    const isParticipant = !!(await this.userToRoomParticipationRepository.getOneByPk({ userId: currentUserId, roomId }));
 
-    return room;
+    if (!isParticipant) {
+      throw new RoomNotFound();
+    }
+
+    return this.roomRepository.getOneById(roomId);
   }
 
   async fetchUserRooms({ currentUserId }: { currentUserId: number }) {
@@ -65,8 +74,12 @@ export class RoomService {
     return this.roomRepository.getManyByIds(roomIds);
   }
 
-  async inviteUsersToRoom({ roomId, inviterId, invitedUsersIds }: { roomId: number; inviterId: number; invitedUsersIds: number[] }) {
+  async inviteUsersToRoom({ roomId, currentUserId, invitedUsersIds }: { roomId: number; currentUserId: number; invitedUsersIds: number[] }) {
     let room = await this.roomRepository.getOneById(roomId);
+
+    if (!room) {
+      throw new RoomNotFound();
+    }
 
     room = await this.roomRepository.updateOneById(roomId, {
       pendingInvitationsCount: room.pendingInvitationsCount + invitedUsersIds.length,
@@ -74,16 +87,32 @@ export class RoomService {
 
     pubsub.publish("ROOM_PENDING_INVITATIONS_COUNT_CHANGE", room);
 
-    for (const invitedUserId of invitedUsersIds) {
-      let invitedUser = await this.userRepository.getOneById(invitedUserId);
+    const invitedUsers: User[] = [];
 
+    for (const invitedUserId of invitedUsersIds) {
+      const user = await this.userRepository.getOneById(invitedUserId);
+
+      if (!user) {
+        throw new UserNotFound();
+      }
+
+      const alreadyInvited = await this.invitationRepository.getOneByPk(invitedUserId, roomId);
+
+      if (!alreadyInvited) {
+        throw new AlreadyInvited();
+      }
+
+      invitedUsers.push(user);
+    }
+
+    for (const invitedUser of invitedUsers) {
       const invitation = await this.invitationRepository.addOne({
-        userId: invitedUserId,
+        userId: invitedUser.id,
         roomId,
-        inviterId,
+        inviterId: currentUserId,
       });
 
-      invitedUser = await this.userRepository.updateOneById(invitedUser.id, {
+      await this.userRepository.updateOneById(invitedUser.id, {
         invitationsCount: invitedUser.invitationsCount + 1,
       });
 
@@ -95,6 +124,10 @@ export class RoomService {
   async leaveRoom({ currentUserId, roomId }: { currentUserId: number; roomId: number }) {
     const user = await this.userRepository.getOneById(currentUserId);
     let room = await this.roomRepository.getOneById(roomId);
+
+    if (!room) {
+      throw new RoomNotFound();
+    }
 
     await this.userToRoomParticipationRepository.deleteOneByPk(currentUserId, roomId);
 
@@ -128,12 +161,32 @@ export class RoomService {
     return count;
   }
 
-  async excludeUserFromRoom(roomId: number, userId: number) {
-    const room = await this.roomRepository.getOneById(roomId);
+  async excludeUserFromRoom({ currentUserId, roomId, userId }: { currentUserId: number; roomId: number; userId: number }) {
+    let room = await this.roomRepository.getOneById(roomId);
+    const user = await this.userRepository.getOneById(userId);
 
-    await this.roomRepository.updateOneById(roomId, {
+    if (!room) {
+      throw new RoomNotFound();
+    }
+
+    if (room.creatorId !== currentUserId) {
+      throw new ExcludeUserFromRoomForbidden();
+    }
+
+    if (!user) {
+      throw new UserNotFound();
+    }
+
+    const participation = await this.userToRoomParticipationRepository.getOneByPk({ userId, roomId });
+
+    if (!participation) {
+      throw new UserIsNotRoomParticipant();
+    }
+
+    room = await this.roomRepository.updateOneById(roomId, {
       participantsCount: room.participantsCount - 1,
     });
+
     await this.userRoomNewMessagesCountRepository.deleteOneByPk({
       userId,
       roomId,
@@ -141,15 +194,12 @@ export class RoomService {
 
     await this.userToRoomParticipationRepository.deleteOneByPk(userId, roomId);
 
-    const updatedUser = await this.userRepository.getOneById(userId);
-    const updatedRoom = await this.roomRepository.getOneById(roomId);
-
     pubsub.publish("USER_EXCLUDED_FROM_ROOM", {
-      room: updatedRoom,
-      user: updatedUser,
+      room,
+      user,
     });
 
-    return updatedRoom;
+    return room;
   }
 
   async fetchRoomNewMessagesCount({ roomId, userId }: { roomId: number; userId: number }) {

@@ -7,13 +7,13 @@ import { MessageImageRepository } from "../../repositories/MessageImageRepositor
 import { MessageViewRepository } from "../../repositories/MessageViewRepository/MessageViewRepository";
 import { UserRepository } from "../../repositories/UserRepository/UserRepository";
 import { RoomRepository } from "../../repositories/RoomRepository/RoomRepository";
-import message from "../../../infrastructure/resolvers/Query/message";
 import { ScheduledMessagesCountRepository } from "../../repositories/ScheduledMessagesCountRepository/ScheduledMessagesCountRepository";
 import { Message } from "../../entities/Message";
-import redisClient from "../../../infrastructure/db/redisClient";
 import { UserToRoomParticipationRepository } from "../../repositories/UserToRoomParticipationRepository/UserToRoomParticipationRepository";
 import { InvitationRepository } from "../../repositories/InvitationRepository/InvitationRepository";
 import { UserRoomNewMessagesCountRepository } from "../../repositories/UserRoomNewMessagesCountRepository/UserRoomNewMessagesCountRepository";
+import { RoomNotFound } from "../../errors/rooms";
+import { MessageNotFound, MessagesDeleteForbidden } from "../../errors/messages";
 
 @injectable()
 export class MessageService {
@@ -72,8 +72,15 @@ export class MessageService {
         sessionId,
       }),
     );
-
+    const notExists = !(await this.roomRepository.getOneById(roomId));
+    if (notExists) {
+      throw new RoomNotFound();
+    }
     const participantsIds = (await this.userToRoomParticipationRepository.getManyByRoomId(roomId)).map((p) => p.userId);
+    const isParticipant = participantsIds.includes(senderId);
+    if (isParticipant) {
+      throw new RoomNotFound();
+    }
 
     for (const participantsId of participantsIds) {
       const isSender = senderId === participantsId;
@@ -195,6 +202,12 @@ export class MessageService {
     scheduleAt,
     sessionId,
   }: Pick<CreateMessageDto, "text" | "senderId" | "roomId" | "imageUrls" | "scheduleAt" | "sessionId">) {
+    const isParticipant = Boolean(await this.userToRoomParticipationRepository.getOneByPk({ userId: senderId, roomId }));
+
+    if (!isParticipant) {
+      throw new RoomNotFound();
+    }
+
     let message = await this.messageRepository.addOne(
       new CreateMessageDto({
         senderId,
@@ -281,15 +294,25 @@ export class MessageService {
   async markMessageAsViewed({ messageId, currentUserId }: { messageId: number; currentUserId: number }) {
     let message = await this.messageRepository.getOneById(messageId);
 
-    if (Boolean(await this.messageViewRepository.getOneByPk({ messageId, userId: currentUserId }))) {
-      return await this.messageRepository.getOneById(messageId);
+    if (!message) {
+      throw new MessageNotFound();
     }
 
-    await this.messageRepository.updateOneById(messageId, {
+    const userRoomParticipation = await this.userToRoomParticipationRepository.getOneByPk({ roomId: message.roomId, userId: currentUserId });
+
+    if (!userRoomParticipation) {
+      throw new MessageNotFound();
+    }
+
+    const alreadyMarkedAsViewed = Boolean(await this.messageViewRepository.getOneByPk({ messageId, userId: currentUserId }));
+
+    if (alreadyMarkedAsViewed) {
+      return message;
+    }
+
+    message = await this.messageRepository.updateOneById(messageId, {
       viewsCount: message.viewsCount + 1,
     });
-
-    const userRoomParticipation = await this.userToRoomParticipationRepository.getOneByPk({ roomId: message.roomId, userId: currentUserId });
 
     const isMessageSentAfterUserJoined = new Date(message.sentAt!).getTime() > new Date(userRoomParticipation.createdAt).getTime();
 
@@ -346,9 +369,19 @@ export class MessageService {
     return this.messageRepository.getOneById(messageId);
   }
 
-  async deleteMessages(messageIds: number[]) {
+  async deleteMessages({ currentUserId, messageIds }: { currentUserId: number; messageIds: number[] }) {
     const messages = await this.messageRepository.getManyByIds(messageIds);
+
+    for (const message of messages) {
+      const participation = await this.userToRoomParticipationRepository.getOneByPk({ userId: currentUserId, roomId: message.roomId });
+
+      if (!participation) {
+        throw new MessagesDeleteForbidden();
+      }
+    }
+
     type RoomId = number;
+
     const grouped = messages.reduce<Map<RoomId, Message[]>>((accum, message) => {
       if (!accum.has(message.roomId)) {
         accum.set(message.roomId, []);
@@ -356,6 +389,7 @@ export class MessageService {
       accum.get(message.roomId).push(message);
       return accum;
     }, new Map());
+
     for (let [roomId, messages] of grouped.entries()) {
       const messageIds = messages.map((message) => message.id);
       pubsub.publish("MESSAGES_DELETED", {

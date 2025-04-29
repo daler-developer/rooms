@@ -11,10 +11,7 @@ type Args = {
   input: InferType<typeof validationSchema>;
 };
 
-const sleep = () => new Promise((res) => setTimeout(res, 3000));
-
 const resolver = async (_, { input }: Args, { userService, userId }: CustomContext) => {
-  // await sleep();
   return await userService.editProfilePicture({ currentUserId: userId, newProfilePictureUrl: input.profilePictureUrl });
 };
 

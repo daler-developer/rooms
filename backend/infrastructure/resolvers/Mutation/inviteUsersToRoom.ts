@@ -13,7 +13,7 @@ type Args = InferType<typeof validationSchema>;
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 const resolver = async (_, args: Args, { userId, roomService }: CustomContext) => {
-  await roomService.inviteUsersToRoom({ roomId: args.roomId, inviterId: userId, invitedUsersIds: args.invitedUsersIds });
+  await roomService.inviteUsersToRoom({ roomId: args.roomId, currentUserId: userId, invitedUsersIds: args.invitedUsersIds });
 
   return true;
 };

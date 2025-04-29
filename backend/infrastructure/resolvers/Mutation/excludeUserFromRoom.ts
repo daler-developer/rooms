@@ -12,8 +12,8 @@ type Args = InferType<typeof validationSchema>;
 
 const sleep = () => new Promise((resolve) => setTimeout(resolve, 2000));
 
-const resolver = async (_, args: Args, { roomService }: CustomContext) => {
-  return await roomService.excludeUserFromRoom(args.roomId, args.userId);
+const resolver = async (_, args: Args, { userId, roomService }: CustomContext) => {
+  return await roomService.excludeUserFromRoom({ currentUserId: userId, roomId: args.roomId, userId: args.userId });
 };
 
 export default composeResolvers(withValidation(validationSchema))(resolver);

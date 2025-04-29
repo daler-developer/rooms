@@ -12,8 +12,6 @@ const validationSchema = yup.object({
 
 type Args = InferType<typeof validationSchema>;
 
-const sleep = () => new Promise((res) => setTimeout(res, 1000));
-
 const resolver = async (_, args: Args, { authService, res }: CustomContext) => {
   const { user, token } = await authService.login({ email: args.input.email, password: args.input.password });
 
