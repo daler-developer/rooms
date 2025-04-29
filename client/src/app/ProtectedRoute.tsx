@@ -1,6 +1,7 @@
-import { ReactNode, useLayoutEffect } from "react";
+import { ReactNode, useEffect } from "react";
 import { useAuth } from "@/modules/auth";
 import { useNavigate } from "react-router-dom";
+import { buildRoutePath } from "@/shared/lib/router";
 
 type Props = {
   children: ReactNode;
@@ -10,17 +11,21 @@ const ProtectedRoute = ({ children }: Props) => {
   const { isAuthenticated } = useAuth();
   const navigate = useNavigate();
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     if (!isAuthenticated) {
-      navigate("/login");
+      navigate(buildRoutePath.LOGIN());
     }
-  }, []);
+  }, [isAuthenticated, navigate]);
 
   if (isAuthenticated) {
     return children;
   }
 
-  return null;
+  return (
+    <div>
+      <h1>Test</h1>
+    </div>
+  );
 };
 
 export default ProtectedRoute;

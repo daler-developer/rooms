@@ -7,7 +7,8 @@ import pubsub from "../../../infrastructure/pubsub";
 import { RoomRepository } from "../../repositories/RoomRepository/RoomRepository";
 import { ScheduledMessagesCountRepository } from "../../repositories/ScheduledMessagesCountRepository/ScheduledMessagesCountRepository";
 import { UserRoomNewMessagesCountRepository } from "../../repositories/UserRoomNewMessagesCountRepository/UserRoomNewMessagesCountRepository";
-import { InvitationNotFound } from "../../../core/errors/invitations";
+import { InvitationNotFound } from "../../errors/invitations";
+import { RoomNotFound } from "../../errors/rooms";
 
 @injectable()
 class InvitationService {
@@ -20,14 +21,18 @@ class InvitationService {
     @inject(TYPES.UserRoomNewMessagesCountRepository) private userRoomNewMessagesCountRepository: UserRoomNewMessagesCountRepository,
   ) {}
 
-  async fetchPendingInvitationsToRoom(roomId: number) {
+  async fetchPendingInvitationsToRoom({ roomId, currentUserId }: { roomId: number; currentUserId: number }) {
+    const participation = await this.userToRoomParticipationRepository.getOneByPk({ roomId, userId: currentUserId });
+
+    if (!participation) {
+      throw new RoomNotFound();
+    }
+
     return this.invitationRepository.getManyByRoomId(roomId);
   }
 
-  async fetchUserInvitations({ currentUserId }: { currentUserId: number }) {
-    const invitations = await this.invitationRepository.getManyByUserId(currentUserId);
-
-    return invitations;
+  async fetchInvitations({ currentUserId }: { currentUserId: number }) {
+    return this.invitationRepository.getManyByUserId(currentUserId);
   }
 
   async acceptInvitation({ roomId, currentUserId }: { currentUserId: number; roomId: number }) {

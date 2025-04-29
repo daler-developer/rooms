@@ -185,7 +185,14 @@ class UserService {
 
   async notifyTypingStart({ roomId, currentUserId, sessionId }: { roomId: number; sessionId: string; currentUserId: number }) {
     const room = await this.roomRepository.getOneById(roomId);
+
     if (!room) {
+      throw new RoomNotFound();
+    }
+
+    const participation = await this.userToRoomParticipationRepository.getOneByPk({ userId: currentUserId, roomId });
+
+    if (!participation) {
       throw new RoomNotFound();
     }
 
@@ -203,7 +210,14 @@ class UserService {
 
   async notifyTypingStop({ roomId, sessionId, currentUserId }: { roomId: number; sessionId: string; currentUserId: number }) {
     const room = await this.roomRepository.getOneById(roomId);
+
     if (!room) {
+      throw new RoomNotFound();
+    }
+
+    const participation = await this.userToRoomParticipationRepository.getOneByPk({ userId: currentUserId, roomId });
+
+    if (!participation) {
       throw new RoomNotFound();
     }
 
