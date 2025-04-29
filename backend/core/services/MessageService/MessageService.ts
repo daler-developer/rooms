@@ -78,7 +78,7 @@ export class MessageService {
     }
     const participantsIds = (await this.userToRoomParticipationRepository.getManyByRoomId(roomId)).map((p) => p.userId);
     const isParticipant = participantsIds.includes(senderId);
-    if (isParticipant) {
+    if (!isParticipant) {
       throw new RoomNotFound();
     }
 
