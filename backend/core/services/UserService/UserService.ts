@@ -7,8 +7,6 @@ import { UserToRoomParticipationRepository } from "../../repositories/UserToRoom
 import { RoomRepository } from "../../repositories/RoomRepository/RoomRepository";
 import { RoomNotFound } from "../../errors/rooms";
 
-const sleep = () => new Promise((res) => setTimeout(res, 500));
-
 @injectable()
 class UserService {
   constructor(
@@ -91,92 +89,11 @@ class UserService {
     return activeSessions.length > 0;
   }
 
-  async handleUserConnect({ userId, sessionId }: { userId: number; sessionId: string }) {
-    await redisClient.sAdd(`user:${String(userId)}:active_sessions`, sessionId);
-
-    const user = await this.userRepository.getOneById(userId);
-
-    pubsub.publish("USER_ONLINE_STATUS_CHANGE", user);
-
-    const participations = await this.userToRoomParticipationRepository.getManyByUserId(userId);
-    const roomIds = participations.map((p) => p.roomId);
-
-    for (const roomId of roomIds) {
-      pubsub.publish("ROOM_PARTICIPANTS_ONLINE_COUNT_CHANGE", {
-        roomId,
-      });
-    }
-
-    // if (isOnline) {
-    //   await redisClient.sAdd(`user:${String(userId)}:active_sessions`, sessionId);
-    //
-    //   const user = await this.userRepository.getById(userId);
-    //
-    //   pubsub.publish("USER_ONLINE_STATUS_CHANGE", {
-    //     usersOnlineStatusChange: user,
-    //   });
-    //
-    //   return await this.userRepository.getById(userId);
-    // } else {
-    //   await redisClient.sRem(`user:${String(userId)}:active_sessions`, sessionId);
-    //
-    //   const user = await this.userRepository.getById(userId);
-    //
-    //   pubsub.publish("USER_ONLINE_STATUS_CHANGE", {
-    //     usersOnlineStatusChange: user,
-    //   });
-    //
-    //   return await this.userRepository.getById(userId);
-    // }
-  }
-
   async fetchRoomParticipants(roomId: number) {
     const participations = await this.userToRoomParticipationRepository.getManyByRoomId(roomId);
     const userIds = participations.map((p) => p.userId);
 
     return await this.userRepository.getManyByIds(userIds);
-  }
-
-  async notifyUserTypingStatusChange({
-    currentUserId,
-    sessionId,
-    isTyping,
-    roomId,
-  }: {
-    currentUserId: number;
-    sessionId: string;
-    isTyping: boolean;
-    roomId: number;
-  }) {
-    const user = await this.userRepository.getOneById(currentUserId);
-
-    if (isTyping) {
-      await redisClient.sAdd(`rooms:${roomId}:participants:${currentUserId}:currently_typing_session_ids`, sessionId);
-    }
-
-    if (!isTyping) {
-      await redisClient.sRem(`rooms:${roomId}:participants:${currentUserId}:currently_typing_session_ids`, sessionId);
-    }
-
-    const sessionIds = await redisClient.sMembers(`rooms:${roomId}:participants:${currentUserId}:currently_typing_session_ids`);
-
-    if (sessionIds.length === 0) {
-      pubsub.publish("USER_TYPING_STATUS_CHANGE", {
-        userTypingStatusChange: {
-          isTyping: false,
-          user,
-          roomId,
-        },
-      });
-    } else {
-      pubsub.publish("USER_TYPING_STATUS_CHANGE", {
-        userTypingStatusChange: {
-          isTyping: true,
-          user,
-          roomId,
-        },
-      });
-    }
   }
 
   async notifyTypingStart({ roomId, currentUserId, sessionId }: { roomId: number; sessionId: string; currentUserId: number }) {

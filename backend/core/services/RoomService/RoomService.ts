@@ -96,9 +96,9 @@ export class RoomService {
         throw new UserNotFound();
       }
 
-      const alreadyInvited = await this.invitationRepository.getOneByPk(invitedUserId, roomId);
+      const invitation = await this.invitationRepository.getOneByPk(invitedUserId, roomId);
 
-      if (!alreadyInvited) {
+      if (invitation) {
         throw new AlreadyInvited();
       }
 

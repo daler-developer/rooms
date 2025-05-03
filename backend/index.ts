@@ -24,30 +24,42 @@ import InvitationService from "./core/services/InvitationService/InvitationServi
 import { MessageService } from "./core/services/MessageService/MessageService";
 import { MessageImageService } from "./core/services/MessageImageService/MessageImageService";
 import { setMaxListeners } from "events";
-import db from "./infrastructure/db";
-import { messages } from "./infrastructure/entities/Message";
-import { eq } from "drizzle-orm";
 
 setMaxListeners(1000);
 
-const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+const buildContext = ({ authToken, sessionToken }: { authToken: string; sessionToken: string }): CustomContext => {
+  const authService = iocContainer.get<AuthService>(TYPES.AuthService);
+  const userService = iocContainer.get<UserService>(TYPES.UserService);
+  const roomService = iocContainer.get<RoomService>(TYPES.RoomService);
+  const invitationService = iocContainer.get<InvitationService>(TYPES.InvitationService);
+  const messageService = iocContainer.get<MessageService>(TYPES.MessageService);
+  const messageImageService = iocContainer.get<MessageImageService>(TYPES.MessageImageService);
 
-const errorHandlingPlugin = {
-  // Called at the beginning of a request
-  requestDidStart(requestContext) {
-    return {
-      // Called if any errors are encountered during request processing
-      didEncounterErrors(requestContext) {
-        // console.error("Global error handler:", requestContext.errors);
-        // You can also modify errors here or report them to an external service
-        // For example, you might want to sanitize error messages in production:
-        // requestContext.errors = requestContext.errors.map(err => ({
-        //   message: 'Internal server error',
-        //   // Optionally, pass along a custom code or other safe details
-        // }));
-      },
-    };
-  },
+  const ctx = {
+    authService,
+    userService,
+    roomService,
+    invitationService,
+    messageService,
+    messageImageService,
+  };
+
+  if (sessionToken) {
+    const { sessionId } = authService.decodeSessionToken(sessionToken);
+
+    ctx.sessionId = sessionId || null;
+  }
+
+  if (authToken) {
+    try {
+      const { userId } = authService.decodeAuthToken(authToken);
+      ctx.userId = userId;
+    } catch {
+      return ctx;
+    }
+  }
+
+  return ctx;
 };
 
 const start = async () => {
@@ -119,13 +131,9 @@ const start = async () => {
 
         return result;
       },
-      onError(e) {
-        // console.log("error");
-      },
       onConnect(ctx) {
         console.log("connect");
         const authService = iocContainer.get<AuthService>(TYPES.AuthService);
-        const userService = iocContainer.get<UserService>(TYPES.UserService);
 
         const authToken = ctx.connectionParams.authToken;
         const sessionToken = ctx.connectionParams.sessionToken;
@@ -152,7 +160,7 @@ const start = async () => {
     wsServer,
   );
 
-  // app.use(cors());
+  app.use(cors());
   app.use(express.json());
 
   const server = new ApolloServer<CustomContext>({
@@ -190,43 +198,47 @@ const start = async () => {
     cors(),
     express.json(),
     expressMiddleware(server, {
-      async context({ req, res }) {
-        const authService = iocContainer.get<AuthService>(TYPES.AuthService);
-        const userService = iocContainer.get<UserService>(TYPES.UserService);
-        const roomService = iocContainer.get<RoomService>(TYPES.RoomService);
-        const invitationService = iocContainer.get<InvitationService>(TYPES.InvitationService);
-        const messageService = iocContainer.get<MessageService>(TYPES.MessageService);
-        const messageImageService = iocContainer.get<MessageImageService>(TYPES.MessageImageService);
-
-        const ctx = {
-          authService,
-          userService,
-          roomService,
-          invitationService,
-          messageService,
-          messageImageService,
-          res,
-        };
-
+      async context({ req }) {
         const authToken = req.header("authorization");
         const sessionToken = req.header("session");
 
-        if (sessionToken) {
-          const { sessionId } = authService.decodeSessionToken(sessionToken);
-
-          ctx.sessionId = sessionId || null;
-        }
-
-        if (authToken) {
-          try {
-            const { userId } = authService.decodeAuthToken(authToken);
-            ctx.userId = userId;
-          } catch {
-            return ctx;
-          }
-        }
-
-        return ctx;
+        return buildContext({ authToken, sessionToken });
+        // const authService = iocContainer.get<AuthService>(TYPES.AuthService);
+        // const userService = iocContainer.get<UserService>(TYPES.UserService);
+        // const roomService = iocContainer.get<RoomService>(TYPES.RoomService);
+        // const invitationService = iocContainer.get<InvitationService>(TYPES.InvitationService);
+        // const messageService = iocContainer.get<MessageService>(TYPES.MessageService);
+        // const messageImageService = iocContainer.get<MessageImageService>(TYPES.MessageImageService);
+        //
+        // const ctx = {
+        //   authService,
+        //   userService,
+        //   roomService,
+        //   invitationService,
+        //   messageService,
+        //   messageImageService,
+        //   res,
+        // };
+        //
+        // const authToken = req.header("authorization");
+        // const sessionToken = req.header("session");
+        //
+        // if (sessionToken) {
+        //   const { sessionId } = authService.decodeSessionToken(sessionToken);
+        //
+        //   ctx.sessionId = sessionId || null;
+        // }
+        //
+        // if (authToken) {
+        //   try {
+        //     const { userId } = authService.decodeAuthToken(authToken);
+        //     ctx.userId = userId;
+        //   } catch {
+        //     return ctx;
+        //   }
+        // }
+        //
+        // return ctx;
       },
     }),
   );

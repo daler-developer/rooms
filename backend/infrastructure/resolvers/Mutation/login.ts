@@ -15,8 +15,6 @@ type Args = InferType<typeof validationSchema>;
 const resolver = async (_, args: Args, { authService, res }: CustomContext) => {
   const { user, token } = await authService.login({ email: args.input.email, password: args.input.password });
 
-  res.cookie("token", token);
-
   return {
     user,
     token,
