@@ -96,9 +96,7 @@ class UserService {
 
     const user = await this.userRepository.getOneById(userId);
 
-    pubsub.publish("USER_ONLINE_STATUS_CHANGE", {
-      usersOnlineStatusChange: user,
-    });
+    pubsub.publish("USER_ONLINE_STATUS_CHANGE", user);
 
     const participations = await this.userToRoomParticipationRepository.getManyByUserId(userId);
     const roomIds = participations.map((p) => p.roomId);
@@ -131,8 +129,6 @@ class UserService {
     //   return await this.userRepository.getById(userId);
     // }
   }
-
-  async handleUserDisconnect({ userId, sessionId }: { userId: number; sessionId: string }) {}
 
   async fetchRoomParticipants(roomId: number) {
     const participations = await this.userToRoomParticipationRepository.getManyByRoomId(roomId);

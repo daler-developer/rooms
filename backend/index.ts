@@ -124,38 +124,29 @@ const start = async () => {
       },
       onConnect(ctx) {
         console.log("connect");
-        // const authService = iocContainer.get<AuthService>(TYPES.AuthService);
-        // const userService = iocContainer.get<UserService>(TYPES.UserService);
-        //
-        // const authToken = ctx.connectionParams.authToken;
-        // const sessionToken = ctx.connectionParams.sessionToken;
-        //
-        // const { userId } = authService.decodeAuthToken(authToken);
-        // const { sessionId } = authService.decodeSessionToken(sessionToken);
-        //
-        // userService.handleUserConnect({ userId, sessionId });
+        const authService = iocContainer.get<AuthService>(TYPES.AuthService);
+        const userService = iocContainer.get<UserService>(TYPES.UserService);
 
-        // console.log("connect");
+        const authToken = ctx.connectionParams.authToken;
+        const sessionToken = ctx.connectionParams.sessionToken;
+
+        const { userId } = authService.decodeAuthToken(authToken);
+        const { sessionId } = authService.decodeSessionToken(sessionToken);
+
+        authService.handleUserConnect({ userId, sessionId });
         return true;
-        // userService.updateUserOnlineStatus({ userId, sessionId, isOnline: true });
       },
-      onDisconnect() {
+      onDisconnect(ctx) {
         console.log("disconnect");
-        // console.log("disconnect");
-      },
-      onClose(ctx) {
-        // console.log("close");
-        // const authService = iocContainer.get<AuthService>(TYPES.AuthService);
-        // const userService = iocContainer.get<UserService>(TYPES.UserService);
-        //
-        // const authToken = ctx.connectionParams.authToken;
-        // const sessionToken = ctx.connectionParams.sessionToken;
-        //
-        // const { userId } = authService.decodeAuthToken(authToken);
-        // const { sessionId } = authService.decodeSessionToken(sessionToken);
-        //
-        // userService.handleUserDisconnect({ userId, sessionId });
-        // userService.updateUserOnlineStatus({ userId, sessionId, isOnline: false });
+        const authService = iocContainer.get<AuthService>(TYPES.AuthService);
+
+        const authToken = ctx.connectionParams.authToken;
+        const sessionToken = ctx.connectionParams.sessionToken;
+
+        const { userId } = authService.decodeAuthToken(authToken);
+        const { sessionId } = authService.decodeSessionToken(sessionToken);
+
+        authService.handleUserDisconnect({ currentUserId: userId, sessionId });
       },
     },
     wsServer,

@@ -5,16 +5,7 @@ import { CustomContext } from "../../types";
 
 export default {
   subscribe: withFilter(
-    async function* (_, variables, ctx: CustomContext) {
-      const user = ctx.userService.getUserById(variables.userId);
-
-      yield user;
-
-      const iterator = pubsub.asyncIterator(["USER_PROFILE_UPDATED"]);
-      for await (const payload of iterator) {
-        yield payload;
-      }
-    },
+    () => pubsub.asyncIterator(["USER_PROFILE_UPDATED"]),
     (payload, variables) => {
       return variables.userId === payload.id;
     },

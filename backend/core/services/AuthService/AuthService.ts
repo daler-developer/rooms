@@ -7,10 +7,18 @@ import { IncorrectPasswordError } from "../../errors/auth";
 import { UserNotFound } from "../../errors/users";
 import { UserWithEmailAlreadyExists } from "../../errors/auth";
 import { AddUserDto } from "../../repositories/UserRepository/dto/AddUserDto";
+import redisClient from "../../../infrastructure/db/redisClient";
+import pubsub from "../../../infrastructure/pubsub";
+import { UserToRoomParticipationRepository } from "../../repositories/UserToRoomParticipationRepository/UserToRoomParticipationRepository";
+import { RoomRepository } from "../../repositories/RoomRepository/RoomRepository";
 
 @injectable()
 class AuthService {
-  constructor(@inject(TYPES.UserRepository) private userRepository: UserRepository) {}
+  constructor(
+    @inject(TYPES.UserRepository) private userRepository: UserRepository,
+    @inject(TYPES.UserToRoomParticipationRepository) private userToRoomParticipationRepository: UserToRoomParticipationRepository,
+    @inject(TYPES.RoomRepository) private roomRepository: RoomRepository,
+  ) {}
 
   async checkEmailAvailabilityForRegistration(email: string) {
     const user = await this.userRepository.getOneByEmail(email);
@@ -60,6 +68,46 @@ class AuthService {
     return {
       sessionToken,
     };
+  }
+
+  async handleUserConnect({ userId, sessionId }: { userId: number; sessionId: string }) {
+    await redisClient.sAdd(`user:${String(userId)}:active_sessions`, sessionId);
+
+    const user = await this.userRepository.getOneById(userId);
+
+    pubsub.publish("USER_ONLINE_STATUS_CHANGE", user);
+
+    const participations = await this.userToRoomParticipationRepository.getManyByUserId(userId);
+    const roomIds = participations.map((p) => p.roomId);
+
+    for (const roomId of roomIds) {
+      pubsub.publish("ROOM_PARTICIPANTS_ONLINE_COUNT_CHANGE", {
+        roomId,
+      });
+    }
+  }
+
+  async handleUserDisconnect({ currentUserId, sessionId }: { currentUserId: number; sessionId: string }) {
+    await redisClient.sRem(`user:${String(currentUserId)}:active_sessions`, sessionId);
+
+    const user = await this.userRepository.getOneById(currentUserId);
+
+    pubsub.publish("USER_ONLINE_STATUS_CHANGE", user);
+
+    const roomParticipations = await this.userToRoomParticipationRepository.getManyByUserId(currentUserId);
+    const roomIds = roomParticipations.map((p) => p.roomId);
+
+    for (const roomId of roomIds) {
+      await redisClient.sRem(`rooms:${roomId}:participants:${currentUserId}:currently_typing_session_ids`, sessionId);
+      const sessionsCount = await redisClient.sCard(`rooms:${roomId}:participants:${currentUserId}:currently_typing_session_ids`);
+
+      if (sessionsCount === 0) {
+        pubsub.publish("USER_TYPING_STOP", {
+          userId: currentUserId,
+          roomId,
+        });
+      }
+    }
   }
 
   decodeSessionToken(sessionToken: string) {
