@@ -1,33 +1,10 @@
 import { RoomChat } from "@/modules/room/chat";
-import { useCustomSearchParam } from "@/shared/lib/router";
 import Sidebar from "./sidebar/Sidebar.tsx";
 import { HiOutlineChat } from "react-icons/hi";
 import useNewInvitationSub from "../gql/useNewInvitationSub.ts";
 import useUserRejectedInvitationSub from "../gql/useUserRejectedInvitationSub.ts";
 import useUserAcceptedInvitationSub from "../gql/useUserAcceptedInvitationSub.ts";
 import useRoomIdSearchParam from "../useRoomIdSearchParam.ts";
-import { Avatar, Button } from "@/shared/ui";
-import { useState } from "react";
-
-// const HomePage = () => {
-//   const [show, setShow] = useState(true);
-//
-//   return (
-//     <div className="p-10">
-//       <div className="mb-10">
-//         <Button
-//           type="button"
-//           onClick={() => {
-//             setShow((prev) => !prev);
-//           }}
-//         >
-//           Show/Hide
-//         </Button>
-//       </div>
-//       {show && <Avatar size="xl" alt="Room" />}
-//     </div>
-//   );
-// };
 
 const HomePage = () => {
   const { roomId, removeRoomId } = useRoomIdSearchParam();

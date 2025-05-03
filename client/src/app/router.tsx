@@ -1,4 +1,4 @@
-import { createBrowserRouter } from "react-router-dom";
+import { createBrowserRouter, Navigate } from "react-router-dom";
 import { ROUTE_PATH } from "@/shared/lib/router";
 import ProtectedRoute from "./ProtectedRoute.tsx";
 
@@ -22,6 +22,10 @@ const router = createBrowserRouter([
         <HomePage />
       </ProtectedRoute>
     ),
+  },
+  {
+    path: "*",
+    element: <Navigate to={ROUTE_PATH.HOME} replace />,
   },
 ]);
 
