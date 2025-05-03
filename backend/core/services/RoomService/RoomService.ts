@@ -15,6 +15,7 @@ import { RoomNotFound } from "../../errors/rooms";
 import { AlreadyInvited } from "../../errors/invitations";
 import { User } from "../../entities/User";
 import { ExcludeUserFromRoomForbidden } from "../../errors/auth";
+import { Invitation } from "../../entities/Invitation";
 
 @injectable()
 export class RoomService {
@@ -62,6 +63,10 @@ export class RoomService {
     }
 
     return this.roomRepository.getOneById(roomId);
+  }
+
+  async fetchInvitationRoom({ invitation }: { currentUserId: number; invitation: Invitation }) {
+    return this.roomRepository.getOneById(invitation.roomId);
   }
 
   async fetchUserRooms({ currentUserId }: { currentUserId: number }) {
