@@ -14,8 +14,6 @@ const validationSchema = yup.object({
 
 type Args = InferType<typeof validationSchema>;
 
-const sleep = () => new Promise((res) => setTimeout(res, 1000));
-
 const resolver = async (_, { input }: Args, { userService, userId }: CustomContext) => {
   return await userService.resetPassword({ currentUserId: userId, newPassword: input.newPassword });
 };

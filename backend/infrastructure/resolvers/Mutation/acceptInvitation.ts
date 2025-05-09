@@ -12,8 +12,6 @@ const validationSchema = yup.object({
 
 type Args = InferType<typeof validationSchema>;
 
-const sleep = () => new Promise((res) => setTimeout(() => res(1), 1000));
-
 const resolver = async (_, args: Args, { invitationService, userId }: CustomContext) => {
   return await invitationService.acceptInvitation({ currentUserId: userId, roomId: args.input.roomId });
 };

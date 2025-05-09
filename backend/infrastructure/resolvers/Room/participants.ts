@@ -10,12 +10,8 @@ type Args = InferType<typeof validationSchema>;
 
 type Parent = Room;
 
-const sleep = () => new Promise((resolve) => setTimeout(resolve, 1000));
-
 const resolver = async (parent: Parent, _: Args, { userService }: CustomContext) => {
-  const result = await userService.fetchRoomParticipants(parent.id);
-
-  return result;
+  return await userService.fetchRoomParticipants(parent.id);
 };
 
 export default composeResolvers(authRequired, checkBlockedStatus, withValidation(validationSchema))(resolver);

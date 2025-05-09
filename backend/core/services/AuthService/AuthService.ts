@@ -10,14 +10,12 @@ import { AddUserDto } from "../../repositories/UserRepository/dto/AddUserDto";
 import redisClient from "../../../infrastructure/db/redisClient";
 import pubsub from "../../../infrastructure/pubsub";
 import { UserToRoomParticipationRepository } from "../../repositories/UserToRoomParticipationRepository/UserToRoomParticipationRepository";
-import { RoomRepository } from "../../repositories/RoomRepository/RoomRepository";
 
 @injectable()
 class AuthService {
   constructor(
     @inject(TYPES.UserRepository) private userRepository: UserRepository,
     @inject(TYPES.UserToRoomParticipationRepository) private userToRoomParticipationRepository: UserToRoomParticipationRepository,
-    @inject(TYPES.RoomRepository) private roomRepository: RoomRepository,
   ) {}
 
   async checkEmailAvailabilityForRegistration(email: string) {

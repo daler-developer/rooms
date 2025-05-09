@@ -10,8 +10,6 @@ type Args = InferType<typeof validationSchema>;
 
 type Parent = Room;
 
-const sleep = () => new Promise((resolve) => setTimeout(resolve, 1000));
-
 const resolver = async (parent: Parent, _: Args, { messageService, userId }: CustomContext) => {
   return await messageService.fetchScheduledMessagesCount({ roomId: parent.id, userId });
 };

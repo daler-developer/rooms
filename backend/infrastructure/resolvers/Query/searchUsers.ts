@@ -14,11 +14,7 @@ const validationSchema = yup.object({
 
 type Args = InferType<typeof validationSchema>;
 
-const sleep = () => new Promise((res) => setTimeout(() => res(1), 500));
-
 const resolver = async (_, args: Args, { userService }: CustomContext) => {
-  // await sleep();
-
   return userService.fetchUsers({ offset: args.filter.offset, limit: args.filter.limit, excludeIds: args.filter.excludeIds, q: args.filter.q });
 };
 

@@ -16,8 +16,6 @@ const validationSchema = yup.object({
 
 type Args = InferType<typeof validationSchema>;
 
-const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-
 const resolver = async (_, args: Args, { messageService, userId, sessionId }: CustomContext) => {
   return await messageService.scheduleMessage({
     senderId: userId,

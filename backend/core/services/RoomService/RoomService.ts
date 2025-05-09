@@ -6,7 +6,6 @@ import { UserRepository } from "../../repositories/UserRepository/UserRepository
 import { InvitationRepository } from "../../repositories/InvitationRepository/InvitationRepository";
 import pubsub from "../../../infrastructure/pubsub";
 import { UserToRoomParticipationRepository } from "../../repositories/UserToRoomParticipationRepository/UserToRoomParticipationRepository";
-import { AddOneInvitationDto } from "../../repositories/InvitationRepository/dto/AddOneInvitationDto";
 import redisClient from "../../../infrastructure/db/redisClient";
 import { ScheduledMessagesCountRepository } from "../../repositories/ScheduledMessagesCountRepository/ScheduledMessagesCountRepository";
 import { UserRoomNewMessagesCountRepository } from "../../repositories/UserRoomNewMessagesCountRepository/UserRoomNewMessagesCountRepository";
@@ -147,6 +146,9 @@ export class RoomService {
     pubsub.publish("ROOM_PARTICIPANT_LEFT", {
       room,
       user,
+    });
+    pubsub.publish("ROOM_PARTICIPANTS_ONLINE_COUNT_CHANGE", {
+      roomId,
     });
   }
 

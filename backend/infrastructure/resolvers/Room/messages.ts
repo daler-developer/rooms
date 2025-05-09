@@ -12,8 +12,6 @@ type Args = InferType<typeof validationSchema>;
 
 type Parent = Room;
 
-const sleep = () => new Promise((resolve) => setTimeout(resolve, 300));
-
 const resolver = async (parent: Parent, args: Args, { messageService }: CustomContext) => {
   return messageService.fetchMessagesByRoomId(parent.id, { offset: args.offset });
 };

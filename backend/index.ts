@@ -93,43 +93,47 @@ const start = async () => {
   const serverCleanup = useServer(
     {
       schema,
-      context(ctx, msg, args) {
-        const authService = iocContainer.get<AuthService>(TYPES.AuthService);
-        const userService = iocContainer.get<UserService>(TYPES.UserService);
-        const roomService = iocContainer.get<RoomService>(TYPES.RoomService);
-        const invitationService = iocContainer.get<InvitationService>(TYPES.InvitationService);
-        const messageService = iocContainer.get<MessageService>(TYPES.MessageService);
-        const messageImageService = iocContainer.get<MessageImageService>(TYPES.MessageImageService);
-
-        const result = {
-          authService,
-          userService,
-          roomService,
-          invitationService,
-          messageService,
-          messageImageService,
-        };
-
+      context(ctx) {
         const authToken = ctx.connectionParams.authToken;
         const sessionToken = ctx.connectionParams.sessionToken;
 
-        if (authToken) {
-          try {
-            const { userId } = authService.decodeAuthToken(authToken);
-            result.userId = userId;
-          } catch {
-            return result;
-          }
-        }
-
-        if (sessionToken) {
-          try {
-            const { sessionId } = authService.decodeSessionToken(sessionToken);
-            result.sessionId = sessionId;
-          } catch (e) {}
-        }
-
-        return result;
+        return buildContext({ authToken, sessionToken });
+        // const authService = iocContainer.get<AuthService>(TYPES.AuthService);
+        // const userService = iocContainer.get<UserService>(TYPES.UserService);
+        // const roomService = iocContainer.get<RoomService>(TYPES.RoomService);
+        // const invitationService = iocContainer.get<InvitationService>(TYPES.InvitationService);
+        // const messageService = iocContainer.get<MessageService>(TYPES.MessageService);
+        // const messageImageService = iocContainer.get<MessageImageService>(TYPES.MessageImageService);
+        //
+        // const result = {
+        //   authService,
+        //   userService,
+        //   roomService,
+        //   invitationService,
+        //   messageService,
+        //   messageImageService,
+        // };
+        //
+        // const authToken = ctx.connectionParams.authToken;
+        // const sessionToken = ctx.connectionParams.sessionToken;
+        //
+        // if (authToken) {
+        //   try {
+        //     const { userId } = authService.decodeAuthToken(authToken);
+        //     result.userId = userId;
+        //   } catch {
+        //     return result;
+        //   }
+        // }
+        //
+        // if (sessionToken) {
+        //   try {
+        //     const { sessionId } = authService.decodeSessionToken(sessionToken);
+        //     result.sessionId = sessionId;
+        //   } catch (e) {}
+        // }
+        //
+        // return result;
       },
       onConnect(ctx) {
         console.log("connect");

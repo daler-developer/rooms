@@ -75,6 +75,9 @@ class InvitationService {
       roomParticipantJoined: user,
       roomId,
     });
+    pubsub.publish("ROOM_PARTICIPANTS_ONLINE_COUNT_CHANGE", {
+      roomId,
+    });
 
     return invitation;
   }

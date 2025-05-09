@@ -10,6 +10,6 @@ export default {
     },
   ),
   async resolve(payload, _, ctx: CustomContext) {
-    return await ctx.roomService.fetchRoomById(payload.roomId);
+    return await ctx.roomService.fetchRoomById({ currentUserId: ctx.userId, roomId: payload.roomId });
   },
 };

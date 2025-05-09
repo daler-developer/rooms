@@ -10,8 +10,6 @@ type Args = InferType<typeof validationSchema>;
 
 type Parent = Room;
 
-const sleep = () => new Promise((resolve) => setTimeout(resolve, 1000));
-
 const resolver = async (parent: Parent, args: Args, { messageService }: CustomContext) => {
   return await messageService.fetchInvitedUsers(parent.id);
 };

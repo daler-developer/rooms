@@ -13,8 +13,6 @@ const validationSchema = yup.object({
 
 type Args = InferType<typeof validationSchema>;
 
-const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-
 const resolver = async (_, { input }: Args, { roomService, userId, sessionId }: CustomContext) => {
   return await roomService.createRoom({
     name: input.name,

@@ -9,8 +9,6 @@ const validationSchema = yup.object({
 
 type Args = InferType<typeof validationSchema>;
 
-const sleep = () => new Promise((res) => setTimeout(res, 1500));
-
 const resolver = async (_, args: Args, { messageService, userId }: CustomContext) => {
   return await messageService.markMessageAsViewed({ messageId: args.messageId, currentUserId: userId });
 };
