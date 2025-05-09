@@ -1,11 +1,3 @@
-scalar Upload
-
-enum RoomsSortBy {
-    CREATED_AT_DESC
-    CREATED_AT_ASC
-    JOINED_AT_DESC
-    JOINED_AT_ASC
-}
 
 input LoginInput {
     email: String!
@@ -32,11 +24,6 @@ input CreateRoomInput {
     thumbnailUrl: String
 }
 
-input GetUserInvitationsInput {
-    limit: Int!
-    offset: Int!
-}
-
 type Invitation {
     userId: Int!
     roomId: Int!
@@ -52,11 +39,8 @@ type User {
     email: String!
     firstName: String!
     lastName: String!
-    password: String!
     passwordLength: Int!
-    isAdmin: Boolean!
     profilePictureUrl: String
-    isBlocked: Boolean!
     invitationsCount: Int!
     isOnline: Boolean!
 }
@@ -101,7 +85,6 @@ type Message {
     images: [MessageImage!]!
     viewsCount: Int!
     isViewedByMe: Boolean!
-    viewers: [User!]!
     scheduledAt: String
     sentAt: String
     sessionId: String!
@@ -126,19 +109,6 @@ type ReplyToInvitation {
     invitation: Invitation!
 }
 
-type NewMessageEvent {
-    message: Message!
-    room: Room!
-}
-
-type RejectedMyInvitationSubscriptionResult {
-    inviterId: Int!
-    userId: Int!
-    roomId: Int!
-    user: User!
-    room: Room!
-}
-
 type SearchUsersResult {
     data: [User!]!
     hasMore: Boolean!
@@ -146,10 +116,6 @@ type SearchUsersResult {
 
 type UserOnlineStatusChangeSubscriptionResult {
     isOnline: Boolean!
-}
-
-type RoomParticipantLeftEvent {
-    userId: Int!
 }
 
 input AcceptInvitationInput {
@@ -188,10 +154,6 @@ input UserOnlineStatusChangeSubscriptionInput {
     userId: Int!
 }
 
-input RoomParticipantLeftSubscriptionInput {
-    roomId: Int!
-}
-
 type UserTypingStatusChangeEvent {
     isTyping: Boolean!
     user: User!
@@ -213,11 +175,6 @@ input RegisterInput {
     password: String!
     passwordRepeat: String!
     profilePictureUrl: String
-}
-
-input TestInput {
-    foo: String!
-    bar: Int!
 }
 
 type StartSessionResult {

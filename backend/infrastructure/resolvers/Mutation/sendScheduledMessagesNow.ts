@@ -1,7 +1,7 @@
 import * as yup from "yup";
 import { InferType } from "yup";
 import { CustomContext } from "../../types";
-import { composeResolvers, authRequired, withValidation, checkBlockedStatus } from "../../lib/graphql/resolver-wrappers";
+import { composeResolvers, authRequired, withValidation } from "../../lib/graphql/resolver-wrappers";
 
 const validationSchema = yup.object({
   messageIds: yup.array().of(yup.number().required()),
@@ -15,4 +15,4 @@ const resolver = async (_, args: Args, { messageService, userId }: CustomContext
   return true;
 };
 
-export default composeResolvers(authRequired, checkBlockedStatus, withValidation(validationSchema))(resolver);
+export default composeResolvers(authRequired, withValidation(validationSchema))(resolver);

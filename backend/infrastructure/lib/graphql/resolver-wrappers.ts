@@ -22,20 +22,6 @@ export const authRequired = (resolver) => {
   };
 };
 
-export const checkBlockedStatus = (resolver: GraphQLFieldResolver<unknown, unknown, unknown>) => {
-  return async (parent, args, context: CustomContext, info) => {
-    const { userService, userId } = context;
-
-    const user = await userService.fetchUserById(userId);
-
-    if (user.isBlocked) {
-      throw new MeIsBlockedGraphQLError();
-    }
-
-    return resolver(parent, args, context, info);
-  };
-};
-
 export const handleErrors = (resolver: any) => {
   return async (parent: unknown, args: unknown, context: CustomContext, info: unknown) => {
     try {

@@ -353,18 +353,6 @@ export class MessageService {
     return Boolean(messageView);
   }
 
-  async fetchMessageViewers(messageId: number) {
-    const messageViews = await this.messageViewRepository.getManyByMessageId(messageId);
-
-    const userIds = messageViews.map((messageView) => messageView.userId);
-
-    if (!userIds.length) {
-      return [];
-    }
-
-    return this.userRepository.getManyByIds(userIds);
-  }
-
   async fetchMessageById(messageId: number) {
     return this.messageRepository.getOneById(messageId);
   }

@@ -1,7 +1,7 @@
 import * as yup from "yup";
 import { InferType } from "yup";
 import { CustomContext } from "../../types";
-import { composeResolvers, authRequired, withValidation, checkBlockedStatus } from "../../lib/graphql/resolver-wrappers";
+import { composeResolvers, authRequired, withValidation } from "../../lib/graphql/resolver-wrappers";
 import { Room } from "../../../core/entities/Room";
 
 const validationSchema = yup.object({
@@ -16,4 +16,4 @@ const resolver = async (parent: Parent, args: Args, { messageService }: CustomCo
   return messageService.fetchMessagesByRoomId(parent.id, { offset: args.offset });
 };
 
-export default composeResolvers(authRequired, checkBlockedStatus, withValidation(validationSchema))(resolver);
+export default composeResolvers(authRequired, withValidation(validationSchema))(resolver);

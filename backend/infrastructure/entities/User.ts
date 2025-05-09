@@ -10,8 +10,6 @@ const users = pgTable("users", {
   firstName: varchar("first_name", { length: 256 }),
   lastName: varchar("last_name", { length: 256 }),
   password: varchar("password", { length: 256 }),
-  isBlocked: boolean("is_blocked").default(false),
-  isAdmin: boolean("is_admin").default(false),
   profilePictureUrl: text("profile_picture_url").default(null),
   invitationsCount: integer("invitations_count").default(0),
   isOnline: boolean("is_online").default(false),

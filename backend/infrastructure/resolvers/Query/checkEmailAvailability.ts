@@ -1,7 +1,7 @@
 import * as yup from "yup";
 import { InferType } from "yup";
 import { CustomContext } from "../../types";
-import { composeResolvers, authRequired, withValidation, checkBlockedStatus } from "../../lib/graphql/resolver-wrappers";
+import { composeResolvers, withValidation } from "../../lib/graphql/resolver-wrappers";
 
 const validationSchema = yup.object({
   email: yup.string().email().required(),

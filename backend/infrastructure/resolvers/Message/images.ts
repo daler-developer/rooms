@@ -1,5 +1,5 @@
 import { CustomContext } from "../../types";
-import { authRequired, checkBlockedStatus, composeResolvers } from "../../lib/graphql/resolver-wrappers";
+import { authRequired, composeResolvers } from "../../lib/graphql/resolver-wrappers";
 import { Message } from "../../../core/entities/Message";
 
 const resolver = async (parent: Message, __, { messageImageService }: CustomContext) => {
@@ -8,4 +8,4 @@ const resolver = async (parent: Message, __, { messageImageService }: CustomCont
   return images;
 };
 
-export default composeResolvers(authRequired, checkBlockedStatus)(resolver);
+export default composeResolvers(authRequired)(resolver);
