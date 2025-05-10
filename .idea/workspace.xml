@@ -4,7 +4,15 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="9d8dd518-8c4b-4bd6-b4e8-e875abc9fa9e" name="Changes" comment="FEATURE: room chat header" />
+    <list default="true" id="9d8dd518-8c4b-4bd6-b4e8-e875abc9fa9e" name="Changes" comment="FEATURE: room chat header">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/core/services/RoomService/RoomService.ts" beforeDir="false" afterPath="$PROJECT_DIR$/backend/core/services/RoomService/RoomService.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/01.png" beforeDir="false" afterPath="$PROJECT_DIR$/images/01.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/02.png" beforeDir="false" afterPath="$PROJECT_DIR$/images/02.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/03.png" beforeDir="false" afterPath="$PROJECT_DIR$/images/03.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/04.png" beforeDir="false" afterPath="$PROJECT_DIR$/images/04.png" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -21,23 +29,23 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "WebServerToolWindowFactoryState": "false",
-    "git-widget-placeholder": "master",
-    "last_opened_file_path": "/Users/dalersaidov/Desktop/projects/rooms",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "ts.external.directory.path": "/Users/dalersaidov/Desktop/projects/audio-player/client/node_modules/typescript/lib",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/Users/dalersaidov/Desktop/projects/rooms&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;ts.external.directory.path&quot;: &quot;/Users/dalersaidov/Desktop/projects/audio-player/client/node_modules/typescript/lib&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/images" />
@@ -61,6 +69,7 @@
       <workItem from="1709570679846" duration="26000" />
       <workItem from="1738694212219" duration="1412000" />
       <workItem from="1743271118045" duration="2284000" />
+      <workItem from="1746871002209" duration="575000" />
     </task>
     <task id="LOCAL-00001" summary="Initial">
       <option name="closed" value="true" />

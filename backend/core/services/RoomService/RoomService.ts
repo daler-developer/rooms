@@ -209,6 +209,10 @@ export class RoomService {
 
     await this.userToRoomParticipationRepository.deleteOneByPk(userId, roomId);
 
+    pubsub.publish("ROOM_PARTICIPANTS_ONLINE_COUNT_CHANGE", {
+      roomId,
+      count: await this.fetchUsersOnlineCountInRoom(roomId),
+    });
     pubsub.publish("USER_EXCLUDED_FROM_ROOM", {
       room,
       user,
