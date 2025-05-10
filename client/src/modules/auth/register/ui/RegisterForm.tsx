@@ -9,6 +9,7 @@ import RegisterFormProfilePictureUpload from "./RegisterFormProfilePictureUpload
 import { SupabaseErrorDisplay, useSupabaseOperation } from "@/global/superbase";
 import { RegisterFromValues } from "../types";
 import { RegisterInput } from "@/__generated__/graphql.ts";
+import { buildRoutePath } from "@/shared/lib/router";
 
 const validationSchema = yup.object({
   email: yup.string().email().required().min(3),
@@ -61,6 +62,7 @@ const RegisterForm = () => {
         onCompleted(data) {
           localStorage.setItem("token", data.register.token);
           window.location.reload();
+          window.location.href = buildRoutePath.HOME();
         },
       });
     },
@@ -85,12 +87,12 @@ const RegisterForm = () => {
           ))}
           {form.renderField("password", ({ getFieldProps, errors }) => (
             <div>
-              <Input label="Password" {...getFieldProps()} errors={errors} />
+              <Input type="password" label="Password" {...getFieldProps()} errors={errors} />
             </div>
           ))}
           {form.renderField("passwordRepeat", ({ getFieldProps, errors }) => (
             <div>
-              <Input label="Repeat password" {...getFieldProps()} errors={errors} />
+              <Input type="password" label="Repeat password" {...getFieldProps()} errors={errors} />
             </div>
           ))}
 
