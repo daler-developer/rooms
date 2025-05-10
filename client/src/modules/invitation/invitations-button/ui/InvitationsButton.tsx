@@ -2,7 +2,7 @@ import { NetworkStatus } from "@apollo/client";
 import { FaRegEnvelope } from "react-icons/fa";
 import { IconButton, Skeleton } from "@/shared/ui";
 import useGetMeQuery from "../gql/useGetMeQuery.ts";
-import useNewInvitationSubscribe from "../gql/useNewInvitationSubscribe.ts";
+import useInvitationsCountUpdatedSub from "../gql/useInvitationsCountUpdatedSub.ts";
 
 type Props = {
   onClick: () => void;
@@ -13,7 +13,7 @@ const InvitationsButton = ({ onClick }: Props) => {
     me: useGetMeQuery(),
   };
 
-  useNewInvitationSubscribe();
+  useInvitationsCountUpdatedSub();
 
   if (queries.me.networkStatus === NetworkStatus.ready) {
     return (

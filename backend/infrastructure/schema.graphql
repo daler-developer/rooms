@@ -95,11 +95,6 @@ type LoginResult {
     token: String!
 }
 
-type MeIsBlockedStatusResult {
-    userId: Int!
-    isBlocked: Boolean!
-}
-
 type NewInvitationSub {
     invitation: Invitation!
 }
@@ -112,10 +107,6 @@ type ReplyToInvitation {
 type SearchUsersResult {
     data: [User!]!
     hasMore: Boolean!
-}
-
-type UserOnlineStatusChangeSubscriptionResult {
-    isOnline: Boolean!
 }
 
 input AcceptInvitationInput {
@@ -148,10 +139,6 @@ input SearchUsersFilterInput {
     offset: Int!
     limit: Int!
     excludeIds: [Int!]!
-}
-
-input UserOnlineStatusChangeSubscriptionInput {
-    userId: Int!
 }
 
 type UserTypingStatusChangeEvent {
@@ -227,21 +214,15 @@ type Mutation {
 }
 
 type Subscription {
-    meIsBlockedStatus: MeIsBlockedStatusResult!
     newInvitation: Invitation!
     invitationRejected: Invitation!
     invitationAccepted: Invitation!
-    invitationCountUpdated: User!
+    invitationCountUpdated: Int!
     meIsExcludedFromRoom: Room!
-    repliedToMyInvitation: ReplyToInvitation!
-    userOnlineStatusChange(input: UserOnlineStatusChangeSubscriptionInput!): UserOnlineStatusChangeSubscriptionResult!
     usersOnlineStatusChange(userIds: [Int!]!): User!
     roomParticipantLeft(roomId: Int!): User!
-    roomParticipantLeave(roomId: Int!): User!
     roomParticipantJoined(roomId: Int!): User!
-    roomParticipantJoin(roomId: Int!): User!
-    roomParticipantsCountChange(roomId: Int!): Room!
-    roomParticipantsOnlineCountChange(roomId: Int!): Room!
+    roomParticipantsOnlineCountChange(roomId: Int!): Int!
     roomScheduledMessagesCountChange(roomId: Int!): Int!
     roomNewMessagesCountChange(roomId: Int!): Int!
     roomLastMessageChange(roomId: Int!): Message
@@ -252,7 +233,7 @@ type Subscription {
     newRoom: Room!
     userTypingStatusChange(roomId: Int!): UserTypingStatusChangeEvent!
     messageViewsCountChange(messageId: Int!): Int!
-    roomPendingInvitationsCountChange(roomId: Int!): Room!
+    roomPendingInvitationsCountChange(roomId: Int!): Int!
     messagesDeleted(roomId: Int!): MessagesDeletedEvent!
     scheduledMessagesDeleted(roomId: Int!): [Int!]!
     roomCreated(skipFromCurrentSession: Boolean!): Room!

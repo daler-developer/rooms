@@ -9,6 +9,7 @@ import { ScheduledMessagesCountRepository } from "../../repositories/ScheduledMe
 import { UserRoomNewMessagesCountRepository } from "../../repositories/UserRoomNewMessagesCountRepository/UserRoomNewMessagesCountRepository";
 import { InvitationNotFound } from "../../errors/invitations";
 import { RoomNotFound } from "../../errors/rooms";
+import { RoomService } from "../RoomService/RoomService";
 
 @injectable()
 class InvitationService {
@@ -19,6 +20,7 @@ class InvitationService {
     @inject(TYPES.RoomRepository) private roomRepository: RoomRepository,
     @inject(TYPES.ScheduledMessagesCountRepository) private scheduledMessagesCountRepository: ScheduledMessagesCountRepository,
     @inject(TYPES.UserRoomNewMessagesCountRepository) private userRoomNewMessagesCountRepository: UserRoomNewMessagesCountRepository,
+    @inject(TYPES.RoomService) private roomService: RoomService,
   ) {}
 
   async fetchPendingInvitationsToRoom({ roomId, currentUserId }: { roomId: number; currentUserId: number }) {
@@ -69,14 +71,21 @@ class InvitationService {
 
     pubsub.publish("USER_ACCEPTED_INVITATION", invitation);
     pubsub.publish("NEW_ROOM", room);
-    pubsub.publish("USER_INVITATIONS_COUNT_UPDATED", user);
-    pubsub.publish("ROOM_PENDING_INVITATIONS_COUNT_CHANGE", room);
+    pubsub.publish("USER_INVITATIONS_COUNT_UPDATED", {
+      userId: user.id,
+      count: user.invitationsCount,
+    });
+    pubsub.publish("ROOM_PENDING_INVITATIONS_COUNT_CHANGE", {
+      roomId: room.id,
+      count: room.pendingInvitationsCount,
+    });
     pubsub.publish("ROOM_PARTICIPANT_JOINED", {
       roomParticipantJoined: user,
       roomId,
     });
     pubsub.publish("ROOM_PARTICIPANTS_ONLINE_COUNT_CHANGE", {
       roomId,
+      count: await this.roomService.fetchUsersOnlineCountInRoom(roomId),
     });
 
     return invitation;
@@ -100,13 +109,14 @@ class InvitationService {
       pendingInvitationsCount: room.pendingInvitationsCount - 1,
     });
 
-    const updatedRoom = await this.roomRepository.getOneById(roomId);
-
     pubsub.publish("USER_REJECTED_INVITATION", invitation);
-    pubsub.publish("USER_INVITATIONS_COUNT_UPDATED", user);
-    pubsub.publish("ROOM_PENDING_INVITATIONS_COUNT_CHANGE", room);
+    pubsub.publish("USER_INVITATIONS_COUNT_UPDATED", {
+      userId: user.id,
+      count: user.invitationsCount,
+    });
     pubsub.publish("ROOM_PENDING_INVITATIONS_COUNT_CHANGE", {
-      roomPendingInvitationsCountChange: updatedRoom,
+      roomId: room.id,
+      count: room.pendingInvitationsCount,
     });
 
     return invitation;

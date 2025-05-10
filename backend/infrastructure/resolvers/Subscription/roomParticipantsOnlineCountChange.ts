@@ -9,7 +9,7 @@ export default {
       return variables.roomId === payload.roomId;
     },
   ),
-  async resolve(payload, _, ctx: CustomContext) {
-    return await ctx.roomService.fetchRoomById({ currentUserId: ctx.userId, roomId: payload.roomId });
+  async resolve(payload) {
+    return payload.count;
   },
 };

@@ -89,7 +89,10 @@ export class RoomService {
       pendingInvitationsCount: room.pendingInvitationsCount + invitedUsersIds.length,
     });
 
-    pubsub.publish("ROOM_PENDING_INVITATIONS_COUNT_CHANGE", room);
+    pubsub.publish("ROOM_PENDING_INVITATIONS_COUNT_CHANGE", {
+      roomId: room.id,
+      count: room.pendingInvitationsCount,
+    });
 
     const invitedUsers: User[] = [];
 
@@ -110,6 +113,11 @@ export class RoomService {
     }
 
     for (const invitedUser of invitedUsers) {
+      pubsub.publish("USER_INVITATIONS_COUNT_UPDATED", {
+        userId: invitedUser.id,
+        count: invitedUser.invitationsCount + 1,
+      });
+
       const invitation = await this.invitationRepository.addOne({
         userId: invitedUser.id,
         roomId,
@@ -121,7 +129,6 @@ export class RoomService {
       });
 
       pubsub.publish("USER_INVITED_TO_ROOM", invitation);
-      pubsub.publish("USER_INVITATIONS_COUNT_UPDATED", invitedUser);
     }
   }
 
@@ -149,6 +156,7 @@ export class RoomService {
     });
     pubsub.publish("ROOM_PARTICIPANTS_ONLINE_COUNT_CHANGE", {
       roomId,
+      count: await this.fetchUsersOnlineCountInRoom(roomId),
     });
   }
 

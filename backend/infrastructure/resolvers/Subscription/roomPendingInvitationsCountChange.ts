@@ -5,10 +5,10 @@ export default {
   subscribe: withFilter(
     () => pubsub.asyncIterator(["ROOM_PENDING_INVITATIONS_COUNT_CHANGE"]),
     (payload, variables) => {
-      return variables.roomId === payload.id;
+      return variables.roomId === payload.roomId;
     },
   ),
   resolve(payload) {
-    return payload;
+    return payload.count;
   },
 };

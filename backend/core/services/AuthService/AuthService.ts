@@ -10,12 +10,14 @@ import { AddUserDto } from "../../repositories/UserRepository/dto/AddUserDto";
 import redisClient from "../../../infrastructure/db/redisClient";
 import pubsub from "../../../infrastructure/pubsub";
 import { UserToRoomParticipationRepository } from "../../repositories/UserToRoomParticipationRepository/UserToRoomParticipationRepository";
+import { RoomService } from "../RoomService/RoomService";
 
 @injectable()
 class AuthService {
   constructor(
     @inject(TYPES.UserRepository) private userRepository: UserRepository,
     @inject(TYPES.UserToRoomParticipationRepository) private userToRoomParticipationRepository: UserToRoomParticipationRepository,
+    @inject(TYPES.RoomService) private roomService: RoomService,
   ) {}
 
   async checkEmailAvailabilityForRegistration(email: string) {
@@ -79,8 +81,11 @@ class AuthService {
     const roomIds = participations.map((p) => p.roomId);
 
     for (const roomId of roomIds) {
+      const updatedOnlineCount = await this.roomService.fetchUsersOnlineCountInRoom(roomId);
+
       pubsub.publish("ROOM_PARTICIPANTS_ONLINE_COUNT_CHANGE", {
         roomId,
+        count: updatedOnlineCount,
       });
     }
   }
@@ -105,6 +110,13 @@ class AuthService {
           roomId,
         });
       }
+    }
+
+    for (const roomId of roomIds) {
+      pubsub.publish("ROOM_PARTICIPANTS_ONLINE_COUNT_CHANGE", {
+        roomId,
+        count: await this.roomService.fetchUsersOnlineCountInRoom(roomId),
+      });
     }
   }
 

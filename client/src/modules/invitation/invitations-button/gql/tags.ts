@@ -11,9 +11,6 @@ export const GET_ME = gql(`
 
 export const INVITATIONS_COUNT_UPDATED_SUB = gql(`
   subscription InvitationsCountUpdatedSub {
-    invitationCountUpdated {
-      id
-      invitationsCount
-    }
+    invitationCountUpdated
   }
 `);

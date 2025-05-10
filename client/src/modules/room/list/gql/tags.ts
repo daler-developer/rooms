@@ -21,15 +21,6 @@ export const ROOMS_LIST = gql(`
   }
 `);
 
-export const ROOM_PARTICIPANT_LEAVE_SUB = gql(`
-  subscription RoomsListParticipantLeave($roomId: Int!) {
-    roomParticipantLeave(roomId: $roomId) {
-      id
-      email
-    }
-  }
-`);
-
 export const ME_IS_EXCLUDED_FROM_ROOM = gql(`
     subscription MyRooms_MeIsExcludedFromRoomSub {
       meIsExcludedFromRoom {

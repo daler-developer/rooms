@@ -85,16 +85,6 @@ export const GET_ROOM_PARTICIPANTS_QUERY = gql(`
     }
 `);
 
-export const ROOM_PARTICIPANT_LEAVE_SUB = gql(`
-  subscription RoomChatParticipantLeave($roomId: Int!) {
-    roomParticipantLeave(roomId: $roomId) {
-      id
-      firstName
-      lastName
-    }
-  }
-`);
-
 export const MARK_MESSAGE_AS_VIEWED = gql(`
   mutation RoomChatMarkMessageAsViewed($messageId: Int!) {
     markMessageAsViewed(messageId: $messageId) {
@@ -271,19 +261,13 @@ export const SCHEDULED_MESSAGES_DELETED = gql(`
 
 export const ROOM_PARTICIPANTS_ONLINE_COUNT_CHANGE_SUB = gql(`
   subscription RoomParticipantsOnlineCountChange($roomId: Int!) {
-    roomParticipantsOnlineCountChange(roomId: $roomId) {
-      id
-      participantsOnlineCount       
-    }
+    roomParticipantsOnlineCountChange(roomId: $roomId)
   }
 `);
 
 export const ROOM_PENDING_INVITATIONS_COUNT_CHANGE_SUB = gql(`
   subscription RoomChatPendingInvitationsCountChange2($roomId: Int!) {
-    roomPendingInvitationsCountChange(roomId: $roomId) {
-      id
-      pendingInvitationsCount
-    }
+    roomPendingInvitationsCountChange(roomId: $roomId)
   }
 `);
 

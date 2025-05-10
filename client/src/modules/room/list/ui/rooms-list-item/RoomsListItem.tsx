@@ -1,6 +1,4 @@
-import { NavLink } from "react-router-dom";
 import cn from "@/shared/lib/classnames";
-import { buildRoutePath } from "@/shared/lib/router";
 import { RoomsListQuery } from "@/__generated__/graphql.ts";
 import RoomsListItemLastMessage from "./RoomsListItemLastMessage.tsx";
 import { Avatar, Badge } from "@/shared/ui";
