@@ -30,6 +30,7 @@ export const PARTICIPANT_JOINED_SUB = gql(`
         id
         firstName
         lastName
+        email
         profilePictureUrl
         isOnline
       }

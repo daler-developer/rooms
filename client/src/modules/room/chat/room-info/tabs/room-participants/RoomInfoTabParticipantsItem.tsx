@@ -61,9 +61,3 @@ const RoomInfoTabParticipantsItem = ({ participant }: Props) => {
 };
 
 export default RoomInfoTabParticipantsItem;
-
-/*
-26	163	2025-03-10 13:11:51.209656
-26	164	2025-03-10 13:47:17.009579
-26	165	2025-03-10 13:53:29.482655
-* */

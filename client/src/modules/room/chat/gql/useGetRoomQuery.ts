@@ -6,10 +6,10 @@ const useGetRoomQuery = () => {
   const roomId = useRoomId();
 
   return useQuery(GET_ROOM, {
+    notifyOnNetworkStatusChange: true,
     variables: {
       roomId,
     },
-    // fetchPolicy: "cache-and-network",
   });
 };
 

@@ -61,15 +61,6 @@ const client = new ApolloClient({
     typePolicies: {
       Query: {
         fields: {
-          // messages: {
-          //   keyArgs: false,
-          //   merge(existing, incoming) {
-          //     return {
-          //       data: [...(existing?.data || []), ...incoming.data],
-          //       hasMore: incoming.hasMore,
-          //     };
-          //   },
-          // },
           searchUsers: {
             keyArgs: false,
             merge(existing, incoming) {
@@ -119,16 +110,6 @@ const client = new ApolloClient({
     },
   }),
 });
-
-// ReactDOM.createRoot(document.getElementById("root")!).render(
-//   <React.StrictMode>
-//     <ApolloProvider client={client}>
-//       <Provider store={store}>
-//         <App />
-//       </Provider>
-//     </ApolloProvider>
-//   </React.StrictMode>,
-// );
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <ApolloProvider client={client}>

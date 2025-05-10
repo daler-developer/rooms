@@ -22,8 +22,6 @@ const useNewMessageSub = () => {
         return;
       }
 
-      console.log("newMessage", newMessage);
-
       emitter.emit("MESSAGE_INSERTED", {
         senderIsMe: false,
       });

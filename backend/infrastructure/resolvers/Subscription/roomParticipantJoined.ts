@@ -8,4 +8,7 @@ export default {
       return variables.roomId === payload.roomId;
     },
   ),
+  resolve(payload) {
+    return payload.user;
+  },
 };

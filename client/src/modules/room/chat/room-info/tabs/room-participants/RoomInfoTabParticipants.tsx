@@ -4,6 +4,7 @@ import { UserCardSkeletons } from "@/entities/user";
 import RoomInfoTabParticipantsItem from "./RoomInfoTabParticipantsItem";
 import { NetworkStatus } from "@apollo/client";
 import useGetRoomParticipantsQuery from "../../gql/useGetRoomParticipantsQuery";
+import useParticipantJoinedSub from "../../gql/useParticipantJoinedSub.ts";
 import useUserOnlineStatusChangeSub from "../../../gql/useUserOnlineStatusChangeSub";
 import { useRoomId } from "../../../context";
 
@@ -20,6 +21,9 @@ const RoomInfoTabParticipants = () => {
 
   useUserOnlineStatusChangeSub({
     userIds,
+  });
+  useParticipantJoinedSub({
+    roomId,
   });
 
   const showSkeletons = useMemo(() => {

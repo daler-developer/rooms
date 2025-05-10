@@ -86,8 +86,8 @@ class InvitationService {
       count: room.pendingInvitationsCount,
     });
     pubsub.publish("ROOM_PARTICIPANT_JOINED", {
-      roomParticipantJoined: user,
       roomId,
+      user,
     });
     pubsub.publish("ROOM_PARTICIPANTS_ONLINE_COUNT_CHANGE", {
       roomId,

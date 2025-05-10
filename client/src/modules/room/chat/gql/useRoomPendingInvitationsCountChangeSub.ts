@@ -17,7 +17,7 @@ const useParticipantsOnlineCountChangeSub = () => {
         id: client.cache.identify({ __typename: "Room", id: roomId }),
         fields: {
           pendingInvitationsCount() {
-            // return data.data!.roomPendingInvitationsCountChange.
+            return data.data!.roomPendingInvitationsCountChange;
           },
         },
       });

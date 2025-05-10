@@ -61,7 +61,7 @@ const documents = {
     "\n  subscription RoomChatScheduledMessagesCountChange($roomId: Int!) {\n    roomScheduledMessagesCountChange(roomId: $roomId)\n  }\n": types.RoomChatScheduledMessagesCountChangeDocument,
     "\n  mutation RoomChatLeaveRoom($input: LeaveRoomInput!) {\n    leaveRoom(input: $input)\n  }\n": types.RoomChatLeaveRoomDocument,
     "\n    mutation RoomChatExcludeUserFromRoom($roomId: Int!, $userId: Int!) {\n      excludeUserFromRoom(roomId: $roomId, userId: $userId) {\n        id\n        name\n      }\n    }\n": types.RoomChatExcludeUserFromRoomDocument,
-    "\n    subscription RoomChatParticipantJoined($roomId: Int!) {\n      roomParticipantJoined(roomId: $roomId) {\n        id\n        firstName\n        lastName\n        profilePictureUrl\n        isOnline\n      }\n    }\n": types.RoomChatParticipantJoinedDocument,
+    "\n    subscription RoomChatParticipantJoined($roomId: Int!) {\n      roomParticipantJoined(roomId: $roomId) {\n        id\n        firstName\n        lastName\n        email\n        profilePictureUrl\n        isOnline\n      }\n    }\n": types.RoomChatParticipantJoinedDocument,
     "\n    subscription RoomChatParticipantLeft($roomId: Int!) {\n      roomParticipantLeft(roomId: $roomId) {\n        id\n      }\n    }\n": types.RoomChatParticipantLeftDocument,
     "\n  query CreateRoomSearchUsers($filter: SearchUsersFilterInput!) {\n    searchUsers(filter: $filter) {\n      data {\n        id\n        email\n        firstName\n        lastName\n        profilePictureUrl\n        isOnline\n      }\n      hasMore\n    }\n  }\n": types.CreateRoomSearchUsersDocument,
     "\n  mutation CreateRoom($input: CreateRoomInput!) {\n    createRoom(input: $input) {\n      id\n      name\n      thumbnailUrl\n      participantsCount\n      newMessagesCount\n      lastMessage {\n        id\n        text\n        sender {\n          id\n          firstName\n          lastName\n        }\n      }\n    }\n  }\n": types.CreateRoomDocument,
@@ -287,7 +287,7 @@ export function gql(source: "\n    mutation RoomChatExcludeUserFromRoom($roomId:
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function gql(source: "\n    subscription RoomChatParticipantJoined($roomId: Int!) {\n      roomParticipantJoined(roomId: $roomId) {\n        id\n        firstName\n        lastName\n        profilePictureUrl\n        isOnline\n      }\n    }\n"): (typeof documents)["\n    subscription RoomChatParticipantJoined($roomId: Int!) {\n      roomParticipantJoined(roomId: $roomId) {\n        id\n        firstName\n        lastName\n        profilePictureUrl\n        isOnline\n      }\n    }\n"];
+export function gql(source: "\n    subscription RoomChatParticipantJoined($roomId: Int!) {\n      roomParticipantJoined(roomId: $roomId) {\n        id\n        firstName\n        lastName\n        email\n        profilePictureUrl\n        isOnline\n      }\n    }\n"): (typeof documents)["\n    subscription RoomChatParticipantJoined($roomId: Int!) {\n      roomParticipantJoined(roomId: $roomId) {\n        id\n        firstName\n        lastName\n        email\n        profilePictureUrl\n        isOnline\n      }\n    }\n"];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
