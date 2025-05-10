@@ -1,7 +1,7 @@
 import { NetworkStatus } from "@apollo/client";
 import { FaRegEnvelope } from "react-icons/fa";
 import { IconButton, Skeleton } from "@/shared/ui";
-import useGetMeQuery from "../gql/useGetMeQuery.ts";
+import useGetInvitationsCountQuery from "../gql/useGetInvitationsCountQuery.ts";
 import useInvitationsCountUpdatedSub from "../gql/useInvitationsCountUpdatedSub.ts";
 
 type Props = {
@@ -10,12 +10,12 @@ type Props = {
 
 const InvitationsButton = ({ onClick }: Props) => {
   const queries = {
-    me: useGetMeQuery(),
+    invitationsCount: useGetInvitationsCountQuery(),
   };
 
   useInvitationsCountUpdatedSub();
 
-  if (queries.me.networkStatus === NetworkStatus.ready) {
+  if (queries.invitationsCount.networkStatus === NetworkStatus.ready) {
     return (
       <IconButton
         color="light"
@@ -24,7 +24,7 @@ const InvitationsButton = ({ onClick }: Props) => {
         onClick={() => onClick()}
         withBadge
         badgeColor="blue"
-        badgeContent={queries.me.data!.me.invitationsCount}
+        badgeContent={queries.invitationsCount.data!.invitationsCount}
       />
     );
   }

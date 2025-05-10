@@ -1,17 +1,14 @@
 import { useSubscription } from "@apollo/client";
 import { INVITATIONS_COUNT_UPDATED_SUB } from "./tags";
-import { User } from "@/__generated__/graphql.ts";
-import { useAuth } from "@/modules/auth";
+import { type Query } from "@/__generated__/graphql.ts";
 
 const useInvitationsCountUpdatedSub = () => {
-  const { userId } = useAuth();
-
   return useSubscription(INVITATIONS_COUNT_UPDATED_SUB, {
     onData({ client, data }) {
       if (!data.data) return;
 
-      client.cache.modify<User>({
-        id: client.cache.identify({ __typename: "User", id: userId }),
+      client.cache.modify<Query>({
+        id: "ROOT_QUERY",
         fields: {
           invitationsCount() {
             return data.data!.invitationCountUpdated;

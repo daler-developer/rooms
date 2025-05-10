@@ -1,11 +1,8 @@
 import { gql } from "@/__generated__";
 
-export const GET_ME = gql(`
+export const GET_INVITATIONS_COUNT = gql(`
   query InvitationsButtonGetMe {
-    me {
-      id
-      invitationsCount
-    }
+    invitationsCount
   }
 `);
 

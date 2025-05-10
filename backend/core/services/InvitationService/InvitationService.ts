@@ -23,6 +23,12 @@ class InvitationService {
     @inject(TYPES.RoomService) private roomService: RoomService,
   ) {}
 
+  async fetchInvitationsCount({ currentUserId }: { currentUserId: number }) {
+    const user = await this.userRepository.getOneById(currentUserId);
+
+    return user.invitationsCount;
+  }
+
   async fetchPendingInvitationsToRoom({ roomId, currentUserId }: { roomId: number; currentUserId: number }) {
     const participation = await this.userToRoomParticipationRepository.getOneByPk({ roomId, userId: currentUserId });
 

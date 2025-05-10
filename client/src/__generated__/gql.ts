@@ -18,7 +18,7 @@ const documents = {
     "\n  mutation Login($input: LoginInput!) {\n    login(input: $input) {\n      user {\n        id\n      }\n      token\n    }\n  }\n": types.LoginDocument,
     "\n  mutation Register($input: RegisterInput!) {\n    register(input: $input) {\n      user {\n        id\n        email\n        firstName\n        lastName\n      }\n      token\n    }\n  }\n": types.RegisterDocument,
     "\n  query CheckEmailAvailability($email: String!) {\n    checkEmailAvailability(email: $email)\n  }\n": types.CheckEmailAvailabilityDocument,
-    "\n  query InvitationsButtonGetMe {\n    me {\n      id\n      invitationsCount\n    }\n  }\n": types.InvitationsButtonGetMeDocument,
+    "\n  query InvitationsButtonGetMe {\n    invitationsCount\n  }\n": types.InvitationsButtonGetMeDocument,
     "\n  subscription InvitationsCountUpdatedSub {\n    invitationCountUpdated\n  }\n": types.InvitationsCountUpdatedSubDocument,
     "\n  query InvitationsList {\n    invitations {\n      userId\n      roomId\n      room {\n        id\n        name\n        thumbnailUrl\n      }\n      inviter {\n        id\n        firstName\n        lastName\n      }\n      createdAt\n    }\n  }\n": types.InvitationsListDocument,
     "\n  mutation InvitationsListAcceptInvitation($input: AcceptInvitationInput!) {\n    acceptInvitation(input: $input) {\n      userId\n      roomId\n    }\n  }\n": types.InvitationsListAcceptInvitationDocument,
@@ -115,7 +115,7 @@ export function gql(source: "\n  query CheckEmailAvailability($email: String!) {
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function gql(source: "\n  query InvitationsButtonGetMe {\n    me {\n      id\n      invitationsCount\n    }\n  }\n"): (typeof documents)["\n  query InvitationsButtonGetMe {\n    me {\n      id\n      invitationsCount\n    }\n  }\n"];
+export function gql(source: "\n  query InvitationsButtonGetMe {\n    invitationsCount\n  }\n"): (typeof documents)["\n  query InvitationsButtonGetMe {\n    invitationsCount\n  }\n"];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
