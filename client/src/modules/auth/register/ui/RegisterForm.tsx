@@ -10,6 +10,7 @@ import { SupabaseErrorDisplay, useSupabaseOperation } from "@/global/superbase";
 import { RegisterFromValues } from "../types";
 import { RegisterInput } from "@/__generated__/graphql.ts";
 import { buildRoutePath } from "@/shared/lib/router";
+import { Link } from "react-router-dom";
 
 const validationSchema = yup.object({
   email: yup.string().email().required().min(3),
@@ -105,6 +106,9 @@ const RegisterForm = () => {
           </div>
           <ApolloErrorDisplay className="mt-1" error={mutations.register.error} />
           <SupabaseErrorDisplay error={supabaseAddOneProfilePicture.error} />
+          <Link to={buildRoutePath.LOGIN()} className="block mt-2 text-[14px] text-blue-600 text-center hover:underline">
+            Already have an account? Login
+          </Link>
         </div>
       </form>
     </FormProvider>

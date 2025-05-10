@@ -3,6 +3,8 @@ import { Button, Input } from "@/shared/ui";
 import { useForm } from "@/shared/lib/form";
 import { LOGIN } from "../gql";
 import { ApolloErrorDisplay, useCustomMutation } from "@/shared/lib/graphql";
+import { Link } from "react-router-dom";
+import { buildRoutePath } from "@/shared/lib/router";
 
 type Props = {
   onSuccess?: () => void;
@@ -60,6 +62,10 @@ const LoginForm = ({ onSuccess }: Props) => {
       </div>
 
       <ApolloErrorDisplay className="mt-1" error={mutations.login.error} />
+
+      <Link to={buildRoutePath.REGISTER()} className="block mt-2 text-[14px] text-blue-600 text-center hover:underline">
+        Don't have an account? Register
+      </Link>
     </form>
   );
 };
